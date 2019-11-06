@@ -4,13 +4,17 @@
     <title>InfoVisLanguages</title>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="https://d3js.org/topojson.v2.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <%= javascript_tag "window._token = '#{form_authenticity_token}'" %>
-
     <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
     <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
   </head>
 
   <body>
+    <svg width="960" height="600"></svg>
     <%= yield %>
   </body>
+  
 </html>
