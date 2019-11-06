@@ -1,0 +1,24 @@
+{
+  "application.js": "/packs/js/application-69d838aed0ec7344c467.js",
+  "application.js.map": "/packs/js/application-69d838aed0ec7344c467.js.map",
+  "censusData.js": "/packs/js/censusData-9c9c3998b1aae260db91.js",
+  "censusData.js.map": "/packs/js/censusData-9c9c3998b1aae260db91.js.map",
+  "entrypoints": {
+    "application": {
+      "js": [
+        "/packs/js/application-69d838aed0ec7344c467.js"
+      ],
+      "js.map": [
+        "/packs/js/application-69d838aed0ec7344c467.js.map"
+      ]
+    },
+    "censusData": {
+      "js": [
+        "/packs/js/censusData-9c9c3998b1aae260db91.js"
+      ],
+      "js.map": [
+        "/packs/js/censusData-9c9c3998b1aae260db91.js.map"
+      ]
+    }
+  }
+}
