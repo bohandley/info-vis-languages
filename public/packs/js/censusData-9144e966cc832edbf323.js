@@ -156,28 +156,13 @@ $(document).ready(function () {
     tooltip.append("rect").attr("width", 60).attr("height", 20).attr("fill", "white").style("opacity", 1); // TASK 2: configure the text for the tooltip
 
     tooltip.append("text").attr("x", 30).attr("dy", "1.2em").style("text-anchor", "middle").attr("font-size", "12px").attr("font-weight", "bold");
-    states.on('mouseover', function (d, i) {
-      // console.log(d.properties.name)
-      d3.select(this).style('fill', 'steelblue'); // tooltip.style("display", null)
-      // .select("text").text(d.properties.name);
-    }).on('mouseleave', function () {
-      d3.select(this).style('fill', 'grey');
-      tooltip.style("display", "none");
-    }).on("click", function (d) {
+    states.on("click", function (d) {
       var xPosition = d3.mouse(this)[0] - 5;
       var yPosition = d3.mouse(this)[1] - 5;
       tooltip.style("display", null);
       tooltip.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
       tooltip.select("text").text(d.properties.name);
-    }); // .on("mouseover", function() { tooltip.style("display", null); })
-    //   .on("mouseout", function() { tooltip.style("display", "none"); })
-    //   .on("mousemove", function(d) {
-    //       var xPosition = d3.mouse(this)[0] - 5;
-    //       var yPosition = d3.mouse(this)[1] - 5;
-    //       tooltip.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
-    //       tooltip.select("text").text((d[1]-d[0]).toFixed(2)+"m");
-    //   })
-
+    });
     var borders = buildBorders(svg, path, us);
     borders.transition(s).attr("transform", "scale(" + $("#container").width() / 970 + ")");
     $("svg").height($("#container").width() * 0.618);
@@ -193,7 +178,7 @@ function transition(delay, length) {
 }
 
 function buildStates(svg, path, us) {
-  return svg.append("g").attr("class", "states").selectAll("path").data(topojson.feature(us, us.objects.states).features).enter().append("path").attr("d", path).attr("transform", "scale(0)").style('fill', 'grey');
+  return svg.append("g").attr("class", "states").selectAll("path").data(topojson.feature(us, us.objects.states).features).enter().append("path").attr("d", path).attr("transform", "scale(0)"); // .style('fill', 'grey');
 }
 
 function buildBorders(svg, path, us) {
@@ -954,4 +939,4 @@ try {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=censusData-090ac01a655e9191018a.js.map
+//# sourceMappingURL=censusData-9144e966cc832edbf323.js.map

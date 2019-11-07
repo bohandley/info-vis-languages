@@ -224,9 +224,7 @@ $(document).ready(function () {
     tooltip.append("rect").attr("width", 60).attr("height", 20).attr("fill", "white").style("opacity", 1); // TASK 2: configure the text for the tooltip
 
     tooltip.append("text").attr("x", 30).attr("dy", "1.2em").style("text-anchor", "middle").attr("font-size", "12px").attr("font-weight", "bold");
-    states.on("mouseleave", function (d) {
-      tooltip.style("display", "none");
-    }).on("click", function (d) {
+    states.on("click", function (d) {
       var xPosition = d3.mouse(this)[0] - 5;
       var yPosition = d3.mouse(this)[1] - 5;
       tooltip.style("display", null);
@@ -4745,4 +4743,4 @@ module.exports = function(module) {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=application-9bbaf7043f22ab87f126.js.map
+//# sourceMappingURL=application-0dc1228115cc7235a8f4.js.map
