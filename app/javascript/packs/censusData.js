@@ -28,6 +28,8 @@ $(document).ready(function() {
 
     var s = transition(100, 1000);
 
+    var states = buildStates(svg, path, us);
+
     states.transition(s)
       .attr("transform", "scale(" + $("#container").width()/970 + ")");
 
@@ -48,6 +50,7 @@ $(document).ready(function() {
       .attr("transform", "scale(" + $("#container").width()/970 + ")");
 
     $("svg").height($("#container").width()*0.618);
+
   });
 });
 
