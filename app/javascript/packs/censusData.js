@@ -23,6 +23,8 @@ $(document).ready(function() {
 
   var path = d3.geoPath();
 
+
+
   d3.json("https://cdn.jsdelivr.net/npm/us-atlas@3/states-albers-10m.json", function(error, us) {
     if (error) throw error;
 
@@ -33,16 +35,35 @@ $(document).ready(function() {
     states.transition(s)
       .attr("transform", "scale(" + $("#container").width()/970 + ")");
 
+          // TASK 2: start to build the tooltips  
+  var tooltip = svg.append("g")
+      .attr("class", "tooltip")
+      .style("display", "none");
+      
+  // TASK 2: build rect display for the tool tip  
+  tooltip.append("rect")
+    .attr("width", 60)
+    .attr("height", 20)
+    .attr("fill", "white")
+    .style("opacity", 1);
+
+  // TASK 2: configure the text for the tooltip
+  tooltip.append("text")
+    .attr("x", 30)
+    .attr("dy", "1.2em")
+    .style("text-anchor", "middle")
+    .attr("font-size", "12px")
+    .attr("font-weight", "bold");
+
     states
-      .on('mouseover', function(d, i) {
-        console.log(d.properties.name)
-        d3.select(this)
-          .style('fill', 'steelblue');
+      .on("click", function(d) {
+        var xPosition = d3.mouse(this)[0] - 5;
+        var yPosition = d3.mouse(this)[1] - 5;
+        tooltip.style("display", null)
+        tooltip.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
+        tooltip.select("text").text(d.properties.name);
       })
-      .on('mouseleave', function() {
-        d3.select(this)
-          .style('fill', 'grey');
-      })
+
 
     var borders = buildBorders(svg, path, us);
 
@@ -74,7 +95,7 @@ function buildStates(svg, path, us) {
     .enter().append("path")
       .attr("d", path)
       .attr("transform", "scale(0)")
-      .style('fill', 'grey');
+      // .style('fill', 'grey');
 }
 
 function buildBorders(svg, path, us) {

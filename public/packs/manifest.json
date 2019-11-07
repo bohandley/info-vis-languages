@@ -1,23 +1,23 @@
 {
-  "application.js": "/packs/js/application-bbbf1d3694635125a1db.js",
-  "application.js.map": "/packs/js/application-bbbf1d3694635125a1db.js.map",
-  "censusData.js": "/packs/js/censusData-c99917f1e9120a88a38e.js",
-  "censusData.js.map": "/packs/js/censusData-c99917f1e9120a88a38e.js.map",
+  "application.js": "/packs/js/application-bf5499c939c71b14fd35.js",
+  "application.js.map": "/packs/js/application-bf5499c939c71b14fd35.js.map",
+  "censusData.js": "/packs/js/censusData-61f84d7301376d68a12d.js",
+  "censusData.js.map": "/packs/js/censusData-61f84d7301376d68a12d.js.map",
   "entrypoints": {
     "application": {
       "js": [
-        "/packs/js/application-bbbf1d3694635125a1db.js"
+        "/packs/js/application-bf5499c939c71b14fd35.js"
       ],
       "js.map": [
-        "/packs/js/application-bbbf1d3694635125a1db.js.map"
+        "/packs/js/application-bf5499c939c71b14fd35.js.map"
       ]
     },
     "censusData": {
       "js": [
-        "/packs/js/censusData-c99917f1e9120a88a38e.js"
+        "/packs/js/censusData-61f84d7301376d68a12d.js"
       ],
       "js.map": [
-        "/packs/js/censusData-c99917f1e9120a88a38e.js.map"
+        "/packs/js/censusData-61f84d7301376d68a12d.js.map"
       ]
     }
   }
