@@ -211,17 +211,41 @@ $(document).ready(function () {
 
   };
   callCensusData("/data", opts);
-  var svg = d3.select("svg");
+  var svg = appendSvg();
   var path = d3.geoPath();
-  d3.json("https://d3js.org/us-10m.v1.json", function (error, us) {
+  d3.json("https://cdn.jsdelivr.net/npm/us-atlas@3/states-albers-10m.json", function (error, us) {
     if (error) throw error;
-    console.log(us);
-    svg.append("g").attr("class", "states").selectAll("path").data(topojson.feature(us, us.objects.states).features).enter().append("path").attr("d", path);
-    svg.append("path").attr("class", "state-borders").attr("d", path(topojson.mesh(us, us.objects.states, function (a, b) {
-      return a !== b;
-    })));
+    var s = transition(100, 1000);
+    states.transition(s).attr("transform", "scale(" + $("#container").width() / 970 + ")");
+    states.on('mouseover', function (d, i) {
+      console.log(d.properties.name);
+      d3.select(this).style('fill', 'steelblue');
+    }).on('mouseleave', function () {
+      d3.select(this).style('fill', 'grey');
+    });
+    var borders = buildBorders(svg, path, us);
+    borders.transition(s).attr("transform", "scale(" + $("#container").width() / 970 + ")");
+    $("svg").height($("#container").width() * 0.618);
   });
 });
+
+function appendSvg() {
+  return d3.select("#container").append("svg").attr("width", "100%");
+}
+
+function transition(delay, length) {
+  return d3.transition().delay(delay).duration(length);
+}
+
+function buildStates(svg, path, us) {
+  return svg.append("g").attr("class", "states").selectAll("path").data(topojson.feature(us, us.objects.states).features).enter().append("path").attr("d", path).attr("transform", "scale(0)").style('fill', 'grey');
+}
+
+function buildBorders(svg, path, us) {
+  return svg.append("path").attr("class", "state-borders").attr("d", path(topojson.mesh(us, us.objects.states, function (a, b) {
+    return a !== b;
+  }))).attr("transform", "scale(0)");
+}
 
 /***/ }),
 
@@ -2269,7 +2293,7 @@ Released under the MIT license
 
 exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(true);
 // Module
-exports.push([module.i, ".states :hover {\n  fill: green;\n}\n\n.state-borders {\n  fill: none;\n  stroke: #fff;\n  stroke-width: 0.5px;\n  stroke-linejoin: round;\n  stroke-linecap: round;\n  pointer-events: none;\n}", "",{"version":3,"sources":["application.css"],"names":[],"mappings":"AAAA;EACE,WAAW;AACb;;AAEA;EACE,UAAU;EACV,YAAY;EACZ,mBAAmB;EACnB,sBAAsB;EACtB,qBAAqB;EACrB,oBAAoB;AACtB","file":"application.css","sourcesContent":[".states :hover {\n  fill: green;\n}\n\n.state-borders {\n  fill: none;\n  stroke: #fff;\n  stroke-width: 0.5px;\n  stroke-linejoin: round;\n  stroke-linecap: round;\n  pointer-events: none;\n}"]}]);
+exports.push([module.i, ".states :hover {\n  /*fill: green;*/\n}\n\n.state-borders {\n  fill: none;\n  stroke: #fff;\n  stroke-width: 0.5px;\n  stroke-linejoin: round;\n  stroke-linecap: round;\n  pointer-events: none;\n}\n\n#container {\n\tmargin:2%;\n\tpadding:20px;\n\tborder:2px solid #d0d0d0;\n\tborder-radius: 5px;\n}", "",{"version":3,"sources":["application.css"],"names":[],"mappings":"AAAA;EACE,eAAe;AACjB;;AAEA;EACE,UAAU;EACV,YAAY;EACZ,mBAAmB;EACnB,sBAAsB;EACtB,qBAAqB;EACrB,oBAAoB;AACtB;;AAEA;CACC,SAAS;CACT,YAAY;CACZ,wBAAwB;CACxB,kBAAkB;AACnB","file":"application.css","sourcesContent":[".states :hover {\n  /*fill: green;*/\n}\n\n.state-borders {\n  fill: none;\n  stroke: #fff;\n  stroke-width: 0.5px;\n  stroke-linejoin: round;\n  stroke-linecap: round;\n  pointer-events: none;\n}\n\n#container {\n\tmargin:2%;\n\tpadding:20px;\n\tborder:2px solid #d0d0d0;\n\tborder-radius: 5px;\n}"]}]);
 
 
 
@@ -4711,4 +4735,4 @@ module.exports = function(module) {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=application-adde9af62391ce8c3713.js.map
+//# sourceMappingURL=application-cdd81bd65af65fc9759b.js.map
