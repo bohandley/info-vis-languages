@@ -222,12 +222,10 @@ $(document).ready(function () {
         } else {
           var s = transition(0, 500);
           var states = buildStates(svg, path, us);
-          states.transition(s).attr("transform", "scale(" + 1 + ")"); // .attr("transform", "scale(" + $("#container").width()/970 + ")");
-          // TASK 2: start to build the tooltips  
+          states.transition(s).attr("transform", "scale(" + $("#container").width() / 970 + ")"); // TASK 2: start to build the tooltips  
 
           var borders = buildBorders(svg, path, us);
-          borders.transition(s).attr("transform", "scale(" + 1 + ")"); // .attr("transform", "scale(" + $("#container").width()/970 + ")");
-
+          borders.transition(s).attr("transform", "scale(" + $("#container").width() / 970 + ")");
           $("svg").height($("#container").width() * 0.618);
           resolve({
             svg: svg,
@@ -248,8 +246,8 @@ $(document).ready(function () {
 
     tooltip.append("text").attr("x", 30).attr("dy", "1.2em").style("text-anchor", "middle").attr("font-size", "12px").attr("font-weight", "bold");
     data.states.on("click", function (d) {
-      var xPosition = d3.mouse(this)[0] - 5;
-      var yPosition = d3.mouse(this)[1] - 5;
+      var xPosition = d3.mouse(this)[0] * $("#container").width() / 970 - 5;
+      var yPosition = d3.mouse(this)[1] * $("#container").width() / 970 - 5;
       tooltip.style("display", null);
       tooltip.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
       tooltip.select("text").text(d.properties.name);
@@ -2321,7 +2319,7 @@ Released under the MIT license
 
 exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(true);
 // Module
-exports.push([module.i, ".states {\n  fill: grey;\n}\n.states :hover {\n  fill: steelblue;\n}\n.state-borders {\n  fill: none;\n  stroke: #fff;\n  stroke-width: 0.5px;\n  stroke-linejoin: round;\n  stroke-linecap: round;\n  pointer-events: none;\n}\n#container {\n/*\tmargin:2%;\n\tpadding:20px;\n\tborder:2px solid #d0d0d0;\n\tborder-radius: 5px;*/\n}", "",{"version":3,"sources":["application.css"],"names":[],"mappings":"AAAA;EACE,UAAU;AACZ;AACA;EACE,eAAe;AACjB;AAEA;EACE,UAAU;EACV,YAAY;EACZ,mBAAmB;EACnB,sBAAsB;EACtB,qBAAqB;EACrB,oBAAoB;AACtB;AAEA;AACA;;;qBAGqB;AACrB","file":"application.css","sourcesContent":[".states {\n  fill: grey;\n}\n.states :hover {\n  fill: steelblue;\n}\n\n.state-borders {\n  fill: none;\n  stroke: #fff;\n  stroke-width: 0.5px;\n  stroke-linejoin: round;\n  stroke-linecap: round;\n  pointer-events: none;\n}\n\n#container {\n/*\tmargin:2%;\n\tpadding:20px;\n\tborder:2px solid #d0d0d0;\n\tborder-radius: 5px;*/\n}"]}]);
+exports.push([module.i, ".states {\n  fill: grey;\n}\n.states :hover {\n  fill: steelblue;\n}\n.state-borders {\n  fill: none;\n  stroke: #fff;\n  stroke-width: 0.5px;\n  stroke-linejoin: round;\n  stroke-linecap: round;\n  pointer-events: none;\n}\n#container {\n\tmargin:2%;\n\tpadding:20px;\n\tborder:2px solid #d0d0d0;\n\tborder-radius: 5px;\n}", "",{"version":3,"sources":["application.css"],"names":[],"mappings":"AAAA;EACE,UAAU;AACZ;AACA;EACE,eAAe;AACjB;AAEA;EACE,UAAU;EACV,YAAY;EACZ,mBAAmB;EACnB,sBAAsB;EACtB,qBAAqB;EACrB,oBAAoB;AACtB;AAEA;CACC,SAAS;CACT,YAAY;CACZ,wBAAwB;CACxB,kBAAkB;AACnB","file":"application.css","sourcesContent":[".states {\n  fill: grey;\n}\n.states :hover {\n  fill: steelblue;\n}\n\n.state-borders {\n  fill: none;\n  stroke: #fff;\n  stroke-width: 0.5px;\n  stroke-linejoin: round;\n  stroke-linecap: round;\n  pointer-events: none;\n}\n\n#container {\n\tmargin:2%;\n\tpadding:20px;\n\tborder:2px solid #d0d0d0;\n\tborder-radius: 5px;\n}"]}]);
 
 
 
@@ -4763,4 +4761,4 @@ module.exports = function(module) {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=application-cefd3a790760f76fa4a2.js.map
+//# sourceMappingURL=application-1ea8d9e2c41750b21909.js.map

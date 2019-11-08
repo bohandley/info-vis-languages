@@ -36,8 +36,7 @@ $(document).ready(function() {
           var states = buildStates(svg, path, us);
 
           states.transition(s)
-          .attr("transform", "scale(" + 1 + ")");
-            // .attr("transform", "scale(" + $("#container").width()/970 + ")");
+            .attr("transform", "scale(" + $("#container").width()/970 + ")");
 
                   // TASK 2: start to build the tooltips  
           
@@ -45,8 +44,7 @@ $(document).ready(function() {
           var borders = buildBorders(svg, path, us);
 
           borders.transition(s)
-          .attr("transform", "scale(" + 1 + ")");
-            // .attr("transform", "scale(" + $("#container").width()/970 + ")");
+            .attr("transform", "scale(" + $("#container").width()/970 + ")");
 
           $("svg").height($("#container").width()*0.618);
 
@@ -85,8 +83,8 @@ $(document).ready(function() {
 
       data.states
         .on("click", function(d) {
-          var xPosition = d3.mouse(this)[0] - 5;
-          var yPosition = d3.mouse(this)[1] - 5;
+          var xPosition = d3.mouse(this)[0]*$("#container").width()/970 - 5;
+          var yPosition = d3.mouse(this)[1]*$("#container").width()/970 - 5;
           tooltip.style("display", null)
           tooltip.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
           tooltip.select("text").text(d.properties.name);

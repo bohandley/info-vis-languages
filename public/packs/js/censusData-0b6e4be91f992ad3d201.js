@@ -154,12 +154,10 @@ $(document).ready(function () {
         } else {
           var s = transition(0, 500);
           var states = buildStates(svg, path, us);
-          states.transition(s).attr("transform", "scale(" + 1 + ")"); // .attr("transform", "scale(" + $("#container").width()/970 + ")");
-          // TASK 2: start to build the tooltips  
+          states.transition(s).attr("transform", "scale(" + $("#container").width() / 970 + ")"); // TASK 2: start to build the tooltips  
 
           var borders = buildBorders(svg, path, us);
-          borders.transition(s).attr("transform", "scale(" + 1 + ")"); // .attr("transform", "scale(" + $("#container").width()/970 + ")");
-
+          borders.transition(s).attr("transform", "scale(" + $("#container").width() / 970 + ")");
           $("svg").height($("#container").width() * 0.618);
           resolve({
             svg: svg,
@@ -180,8 +178,8 @@ $(document).ready(function () {
 
     tooltip.append("text").attr("x", 30).attr("dy", "1.2em").style("text-anchor", "middle").attr("font-size", "12px").attr("font-weight", "bold");
     data.states.on("click", function (d) {
-      var xPosition = d3.mouse(this)[0] - 5;
-      var yPosition = d3.mouse(this)[1] - 5;
+      var xPosition = d3.mouse(this)[0] * $("#container").width() / 970 - 5;
+      var yPosition = d3.mouse(this)[1] * $("#container").width() / 970 - 5;
       tooltip.style("display", null);
       tooltip.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
       tooltip.select("text").text(d.properties.name);
@@ -959,4 +957,4 @@ try {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=censusData-a8933189e94cd3514d8f.js.map
+//# sourceMappingURL=censusData-0b6e4be91f992ad3d201.js.map
