@@ -145,27 +145,45 @@ $(document).ready(function () {
   callCensusData("/data", opts);
   var svg = appendSvg();
   var path = d3.geoPath();
-  d3.json("https://cdn.jsdelivr.net/npm/us-atlas@3/states-albers-10m.json", function (error, us) {
-    if (error) throw error;
-    var s = transition(100, 1000);
-    var states = buildStates(svg, path, us);
-    states.transition(s).attr("transform", "scale(" + $("#container").width() / 970 + ")"); // TASK 2: start to build the tooltips  
 
-    var tooltip = svg.append("g").attr("class", "tooltip").style("display", "none"); // TASK 2: build rect display for the tool tip  
+  function buildMap(svg, path) {
+    return new Promise(function (resolve, reject) {
+      d3.json("https://cdn.jsdelivr.net/npm/us-atlas@3/states-albers-10m.json", function (error, us) {
+        if (error) {
+          reject(error);
+        } else {
+          var s = transition(100, 1000);
+          var states = buildStates(svg, path, us);
+          states.transition(s).attr("transform", "scale(" + $("#container").width() / 970 + ")"); // TASK 2: start to build the tooltips  
+
+          var borders = buildBorders(svg, path, us);
+          borders.transition(s).attr("transform", "scale(" + $("#container").width() / 970 + ")");
+          $("svg").height($("#container").width() * 0.618);
+          resolve({
+            svg: svg,
+            states: states
+          });
+        }
+      });
+    });
+  }
+
+  buildMap(svg, path).then(function (data) {
+    console.log(typeof data); // var data["svg"] = svg;
+    // var data["states"] = states;
+
+    var tooltip = data.svg.append("g").attr("class", "tooltip").style("display", "none"); // TASK 2: build rect display for the tool tip  
 
     tooltip.append("rect").attr("width", 60).attr("height", 20).attr("fill", "white").style("opacity", 1); // TASK 2: configure the text for the tooltip
 
     tooltip.append("text").attr("x", 30).attr("dy", "1.2em").style("text-anchor", "middle").attr("font-size", "12px").attr("font-weight", "bold");
-    states.on("click", function (d) {
+    data.states.on("click", function (d) {
       var xPosition = d3.mouse(this)[0] - 5;
       var yPosition = d3.mouse(this)[1] - 5;
       tooltip.style("display", null);
       tooltip.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
       tooltip.select("text").text(d.properties.name);
     });
-    var borders = buildBorders(svg, path, us);
-    borders.transition(s).attr("transform", "scale(" + $("#container").width() / 970 + ")");
-    $("svg").height($("#container").width() * 0.618);
   });
 });
 
@@ -939,4 +957,4 @@ try {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=censusData-9144e966cc832edbf323.js.map
+//# sourceMappingURL=censusData-1c2c6888adcf6270241f.js.map
