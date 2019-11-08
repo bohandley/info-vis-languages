@@ -220,12 +220,14 @@ $(document).ready(function () {
         if (error) {
           reject(error);
         } else {
-          var s = transition(0, 300);
+          var s = transition(0, 500);
           var states = buildStates(svg, path, us);
-          states.transition(s).attr("transform", "scale(" + $("#container").width() / 970 + ")"); // TASK 2: start to build the tooltips  
+          states.transition(s).attr("transform", "scale(" + 1 + ")"); // .attr("transform", "scale(" + $("#container").width()/970 + ")");
+          // TASK 2: start to build the tooltips  
 
           var borders = buildBorders(svg, path, us);
-          borders.transition(s).attr("transform", "scale(" + $("#container").width() / 970 + ")");
+          borders.transition(s).attr("transform", "scale(" + 1 + ")"); // .attr("transform", "scale(" + $("#container").width()/970 + ")");
+
           $("svg").height($("#container").width() * 0.618);
           resolve({
             svg: svg,
@@ -4761,4 +4763,4 @@ module.exports = function(module) {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=application-3b9d4927a6b6426f5736.js.map
+//# sourceMappingURL=application-d4f01d2a46d1780da740.js.map

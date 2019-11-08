@@ -31,12 +31,13 @@ $(document).ready(function() {
           reject(error);
         } else {
 
-          var s = transition(0, 300);
+          var s = transition(0, 500);
 
           var states = buildStates(svg, path, us);
 
           states.transition(s)
-            .attr("transform", "scale(" + $("#container").width()/970 + ")");
+          .attr("transform", "scale(" + 1 + ")");
+            // .attr("transform", "scale(" + $("#container").width()/970 + ")");
 
                   // TASK 2: start to build the tooltips  
           
@@ -44,7 +45,8 @@ $(document).ready(function() {
           var borders = buildBorders(svg, path, us);
 
           borders.transition(s)
-            .attr("transform", "scale(" + $("#container").width()/970 + ")");
+          .attr("transform", "scale(" + 1 + ")");
+            // .attr("transform", "scale(" + $("#container").width()/970 + ")");
 
           $("svg").height($("#container").width()*0.618);
 
