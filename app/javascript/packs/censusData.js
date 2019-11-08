@@ -57,8 +57,8 @@ $(document).ready(function() {
 
     states
       .on("click", function(d) {
-        var xPosition = d3.mouse(this)[0] - 5;
-        var yPosition = d3.mouse(this)[1] - 5;
+        var xPosition = d3.mouse(this)[0];
+        var yPosition = d3.mouse(this)[1];
         tooltip.style("display", null)
         tooltip.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
         tooltip.select("text").text(d.properties.name);
