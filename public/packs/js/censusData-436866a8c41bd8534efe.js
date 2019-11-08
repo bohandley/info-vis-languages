@@ -152,7 +152,7 @@ $(document).ready(function () {
         if (error) {
           reject(error);
         } else {
-          var s = transition(100, 1000);
+          var s = transition(0, 300);
           var states = buildStates(svg, path, us);
           states.transition(s).attr("transform", "scale(" + $("#container").width() / 970 + ")"); // TASK 2: start to build the tooltips  
 
@@ -957,4 +957,4 @@ try {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=censusData-1c2c6888adcf6270241f.js.map
+//# sourceMappingURL=censusData-436866a8c41bd8534efe.js.map

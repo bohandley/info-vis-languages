@@ -31,7 +31,7 @@ $(document).ready(function() {
           reject(error);
         } else {
 
-          var s = transition(100, 1000);
+          var s = transition(0, 300);
 
           var states = buildStates(svg, path, us);
 
