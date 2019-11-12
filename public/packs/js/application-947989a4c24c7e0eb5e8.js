@@ -166,6 +166,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
 
+var width = $("#container").width();
 $(document).ready(function () {
   function callCensusData(url, opts) {
     var params,
@@ -213,47 +214,50 @@ $(document).ready(function () {
   callCensusData("/data", opts);
   var svg = appendSvg();
   var path = d3.geoPath();
-
-  function buildMap(svg, path) {
-    return new Promise(function (resolve, reject) {
-      d3.json("https://cdn.jsdelivr.net/npm/us-atlas@3/states-albers-10m.json", function (error, us) {
-        if (error) {
-          reject(error);
-        } else {
-          var s = transition(0, 500);
-          var states = buildStates(svg, path, us);
-          states.transition(s).attr("transform", "scale(" + $("#container").width() / 970 + ")"); // TASK 2: start to build the tooltips  
-
-          var borders = buildBorders(svg, path, us);
-          borders.transition(s).attr("transform", "scale(" + $("#container").width() / 970 + ")");
-          $("svg").height($("#container").width() * 0.618);
-          resolve({
-            svg: svg,
-            states: states
-          });
-        }
-      });
-    });
-  }
-
   buildMap(svg, path).then(function (data) {
-    console.log(typeof data); // var data["svg"] = svg;
-    // var data["states"] = states;
-
-    var tooltip = data.svg.append("g").attr("class", "tooltip").style("display", "none"); // TASK 2: build rect display for the tool tip  
+    var svg = data["svg"],
+        states = data["states"];
+    var tooltip = svg.append("g").attr("class", "tooltip").style("display", "none"); // TASK 2: build rect display for the tool tip  
 
     tooltip.append("rect").attr("width", 60).attr("height", 20).attr("fill", "white").style("opacity", 1); // TASK 2: configure the text for the tooltip
 
     tooltip.append("text").attr("x", 30).attr("dy", "1.2em").style("text-anchor", "middle").attr("font-size", "12px").attr("font-weight", "bold");
-    data.states.on("click", function (d) {
+    states.on("click", function (d) {
       var xPosition = d3.mouse(this)[0] * $("#container").width() / 970 - 5;
       var yPosition = d3.mouse(this)[1] * $("#container").width() / 970 - 5;
       tooltip.style("display", null);
       tooltip.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
       tooltip.select("text").text(d.properties.name);
     });
+  })["catch"](function (error) {
+    console.error(error);
   });
+  d3.select(window).on('resize', resize);
 });
+
+function resize() {
+  d3.selectAll("path").attr("transform", "scale(" + $("#container").width() / 970 + ")");
+  $("svg").height($("#container").width() * 0.618);
+}
+
+function buildMap(svg, path, resize) {
+  return new Promise(function (resolve, reject) {
+    d3.json("https://cdn.jsdelivr.net/npm/us-atlas@3/states-albers-10m.json", function (error, us) {
+      if (error) {
+        reject(error);
+      } else {
+        var s = transition(0, 0);
+        var states = buildStates(svg, path, us);
+        var borders = buildBorders(svg, path, us);
+        $("svg").height($("#container").width() * 0.618);
+        resolve({
+          svg: svg,
+          states: states
+        });
+      }
+    });
+  });
+}
 
 function appendSvg() {
   return d3.select("#container").append("svg").attr("width", "100%");
@@ -264,13 +268,13 @@ function transition(delay, length) {
 }
 
 function buildStates(svg, path, us) {
-  return svg.append("g").attr("class", "states").selectAll("path").data(topojson.feature(us, us.objects.states).features).enter().append("path").attr("d", path).attr("transform", "scale(0)"); // .style('fill', 'grey');
+  return svg.append("g").attr("class", "states").selectAll("path").data(topojson.feature(us, us.objects.states).features).enter().append("path").attr("d", path).attr("transform", "scale(" + $("#container").width() / 970 + ")");
 }
 
 function buildBorders(svg, path, us) {
   return svg.append("path").attr("class", "state-borders").attr("d", path(topojson.mesh(us, us.objects.states, function (a, b) {
     return a !== b;
-  }))).attr("transform", "scale(0)");
+  }))).attr("transform", "scale(" + $("#container").width() / 970 + ")");
 }
 
 /***/ }),
@@ -2319,7 +2323,7 @@ Released under the MIT license
 
 exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(true);
 // Module
-exports.push([module.i, ".states {\n  fill: grey;\n}\n.states :hover {\n  fill: steelblue;\n}\n.state-borders {\n  fill: none;\n  stroke: #fff;\n  stroke-width: 0.5px;\n  stroke-linejoin: round;\n  stroke-linecap: round;\n  pointer-events: none;\n}\n#container {\n\tmargin:2%;\n\tpadding:20px;\n\tborder:2px solid #d0d0d0;\n\tborder-radius: 5px;\n}", "",{"version":3,"sources":["application.css"],"names":[],"mappings":"AAAA;EACE,UAAU;AACZ;AACA;EACE,eAAe;AACjB;AAEA;EACE,UAAU;EACV,YAAY;EACZ,mBAAmB;EACnB,sBAAsB;EACtB,qBAAqB;EACrB,oBAAoB;AACtB;AAEA;CACC,SAAS;CACT,YAAY;CACZ,wBAAwB;CACxB,kBAAkB;AACnB","file":"application.css","sourcesContent":[".states {\n  fill: grey;\n}\n.states :hover {\n  fill: steelblue;\n}\n\n.state-borders {\n  fill: none;\n  stroke: #fff;\n  stroke-width: 0.5px;\n  stroke-linejoin: round;\n  stroke-linecap: round;\n  pointer-events: none;\n}\n\n#container {\n\tmargin:2%;\n\tpadding:20px;\n\tborder:2px solid #d0d0d0;\n\tborder-radius: 5px;\n}"]}]);
+exports.push([module.i, ".states {\n  fill: grey;\n}\n.states :hover {\n  fill: steelblue;\n}\n.state-borders {\n  fill: none;\n  stroke: #fff;\n  stroke-width: 0.5px;\n  stroke-linejoin: round;\n  stroke-linecap: round;\n  pointer-events: none;\n}\n#container {\n\tmargin:2%;\n\tpadding:20px;\n\tborder:2px solid #d0d0d0;\n\tborder-radius: 5px;\n}\n.svg-container {\n  display: inline-block;\n  position: relative;\n  width: 100%;\n  padding-bottom: 100%; /* aspect ratio */\n  vertical-align: top;\n  overflow: hidden;\n}\n.svg-content-responsive {\n  display: inline-block;\n  position: absolute;\n  top: 10px;\n  left: 0;\n}", "",{"version":3,"sources":["application.css"],"names":[],"mappings":"AAAA;EACE,UAAU;AACZ;AACA;EACE,eAAe;AACjB;AAEA;EACE,UAAU;EACV,YAAY;EACZ,mBAAmB;EACnB,sBAAsB;EACtB,qBAAqB;EACrB,oBAAoB;AACtB;AAEA;CACC,SAAS;CACT,YAAY;CACZ,wBAAwB;CACxB,kBAAkB;AACnB;AAEA;EACE,qBAAqB;EACrB,kBAAkB;EAClB,WAAW;EACX,oBAAoB,EAAE,iBAAiB;EACvC,mBAAmB;EACnB,gBAAgB;AAClB;AACA;EACE,qBAAqB;EACrB,kBAAkB;EAClB,SAAS;EACT,OAAO;AACT","file":"application.css","sourcesContent":[".states {\n  fill: grey;\n}\n.states :hover {\n  fill: steelblue;\n}\n\n.state-borders {\n  fill: none;\n  stroke: #fff;\n  stroke-width: 0.5px;\n  stroke-linejoin: round;\n  stroke-linecap: round;\n  pointer-events: none;\n}\n\n#container {\n\tmargin:2%;\n\tpadding:20px;\n\tborder:2px solid #d0d0d0;\n\tborder-radius: 5px;\n}\n\n.svg-container {\n  display: inline-block;\n  position: relative;\n  width: 100%;\n  padding-bottom: 100%; /* aspect ratio */\n  vertical-align: top;\n  overflow: hidden;\n}\n.svg-content-responsive {\n  display: inline-block;\n  position: absolute;\n  top: 10px;\n  left: 0;\n}"]}]);
 
 
 
@@ -4761,4 +4765,4 @@ module.exports = function(module) {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=application-1ea8d9e2c41750b21909.js.map
+//# sourceMappingURL=application-947989a4c24c7e0eb5e8.js.map

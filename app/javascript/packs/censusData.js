@@ -1,3 +1,5 @@
+let width = $("#container").width();
+
 $(document).ready(function() {
 
   async function callCensusData(url, opts, params={}) {
@@ -23,46 +25,12 @@ $(document).ready(function() {
 
   var path = d3.geoPath();
 
-
-  function buildMap(svg, path) {
-    return new Promise(function(resolve, reject) {
-      d3.json("https://cdn.jsdelivr.net/npm/us-atlas@3/states-albers-10m.json", function(error, us) {
-        if (error) {
-          reject(error);
-        } else {
-
-          var s = transition(0, 500);
-
-          var states = buildStates(svg, path, us);
-
-          states.transition(s)
-            .attr("transform", "scale(" + $("#container").width()/970 + ")");
-
-                  // TASK 2: start to build the tooltips  
-          
-
-          var borders = buildBorders(svg, path, us);
-
-          borders.transition(s)
-            .attr("transform", "scale(" + $("#container").width()/970 + ")");
-
-          $("svg").height($("#container").width()*0.618);
-
-          resolve({svg: svg, states: states})
-        }
-
-      });
-
-    });
-  }
-
   buildMap(svg, path)
     .then(function(data){
-      console.log(typeof(data))
-      // var data["svg"] = svg;
-      // var data["states"] = states;
+      var svg = data["svg"],
+          states = data["states"];
 
-      var tooltip = data.svg.append("g")
+      var tooltip = svg.append("g")
             .attr("class", "tooltip")
             .style("display", "none");
             
@@ -81,7 +49,7 @@ $(document).ready(function() {
         .attr("font-size", "12px")
         .attr("font-weight", "bold");
 
-      data.states
+      states
         .on("click", function(d) {
           var xPosition = d3.mouse(this)[0]*$("#container").width()/970 - 5;
           var yPosition = d3.mouse(this)[1]*$("#container").width()/970 - 5;
@@ -89,11 +57,42 @@ $(document).ready(function() {
           tooltip.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
           tooltip.select("text").text(d.properties.name);
         });
-
-
+    })
+    .catch(function(error) {
+      console.error(error);
     });
+  
 
+  d3.select(window).on('resize', resize);
 });
+
+function resize(){
+  d3.selectAll("path").attr("transform", "scale(" + $("#container").width()/970 + ")");  
+  $("svg").height($("#container").width()*0.618);
+}
+
+function buildMap(svg, path, resize) {
+  return new Promise(function(resolve, reject) {
+    d3.json("https://cdn.jsdelivr.net/npm/us-atlas@3/states-albers-10m.json", function(error, us) {
+      if (error) {
+        reject(error);
+      } else {
+
+        var s = transition(0, 0);
+
+        var states = buildStates(svg, path, us);          
+
+        var borders = buildBorders(svg, path, us);
+
+        $("svg").height($("#container").width()*0.618);
+
+        resolve({svg: svg, states: states})
+      }
+    });
+  });
+}
+
+
 
 function appendSvg() {
   return d3.select("#container")
@@ -114,13 +113,12 @@ function buildStates(svg, path, us) {
     .data(topojson.feature(us, us.objects.states).features)
     .enter().append("path")
       .attr("d", path)
-      .attr("transform", "scale(0)")
-      // .style('fill', 'grey');
+      .attr("transform", "scale(" + $("#container").width()/970 + ")");
 }
 
 function buildBorders(svg, path, us) {
   return svg.append("path")
     .attr("class", "state-borders")
     .attr("d", path(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; })))
-    .attr("transform", "scale(0)");
+    .attr("transform", "scale(" + $("#container").width()/970 + ")");
 }
