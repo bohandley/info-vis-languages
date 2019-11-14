@@ -168,50 +168,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var width = $("#container").width();
 $(document).ready(function () {
-  function callCensusData(url, opts) {
-    var params,
-        response,
-        myJson,
-        _args = arguments;
-    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.async(function callCensusData$(_context) {
-      while (1) {
-        switch (_context.prev = _context.next) {
-          case 0:
-            params = _args.length > 2 && _args[2] !== undefined ? _args[2] : {};
-            _context.next = 3;
-            return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.awrap(fetch(url, opts));
-
-          case 3:
-            response = _context.sent;
-            _context.next = 6;
-            return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.awrap(response.json());
-
-          case 6:
-            myJson = _context.sent;
-            console.log(response);
-            console.log(JSON.stringify(myJson));
-
-          case 9:
-          case "end":
-            return _context.stop();
-        }
-      }
-    });
-  }
-
-  var opts = {
-    method: 'POST',
-    // *GET, POST, PUT, DELETE, etc.
-    credentials: 'same-origin',
-    // include, *same-origin, omit
-    headers: {
-      'Content-Type': 'application/json',
-      'X-CSRF-Token': window._token
-    },
-    body: JSON.stringify({}) // body data type must match "Content-Type" header
-
-  };
-  callCensusData("/data", opts);
+  // callCensusData("/data", opts());
   var svg = appendSvg();
   var path = d3.geoPath();
   buildMap(svg, path).then(function (data) {
@@ -223,6 +180,12 @@ $(document).ready(function () {
 
     tooltip.append("text").attr("x", 30).attr("dy", "1.2em").style("text-anchor", "middle").attr("font-size", "12px").attr("font-weight", "bold");
     states.on("click", function (d) {
+      var data = {
+        "get": "EST,LANLABEL,NAME",
+        "for": "state:" + d.id,
+        "LAN39": ""
+      };
+      callCensusData("/data", opts(data));
       var xPosition = d3.mouse(this)[0] * $("#container").width() / 970 - 5;
       var yPosition = d3.mouse(this)[1] * $("#container").width() / 970 - 5;
       tooltip.style("display", null);
@@ -234,6 +197,53 @@ $(document).ready(function () {
   });
   d3.select(window).on('resize', resize);
 });
+
+function callCensusData(url, opts) {
+  var params,
+      response,
+      myJson,
+      _args = arguments;
+  return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.async(function callCensusData$(_context) {
+    while (1) {
+      switch (_context.prev = _context.next) {
+        case 0:
+          params = _args.length > 2 && _args[2] !== undefined ? _args[2] : {};
+          _context.next = 3;
+          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.awrap(fetch(url, opts));
+
+        case 3:
+          response = _context.sent;
+          _context.next = 6;
+          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.awrap(response.json());
+
+        case 6:
+          myJson = _context.sent;
+          console.log(response);
+          console.log(JSON.stringify(myJson));
+
+        case 9:
+        case "end":
+          return _context.stop();
+      }
+    }
+  });
+}
+
+function opts() {
+  var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  return {
+    method: 'POST',
+    // *GET, POST, PUT, DELETE, etc.
+    credentials: 'same-origin',
+    // include, *same-origin, omit
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRF-Token': window._token
+    },
+    body: JSON.stringify(data) // body data type must match "Content-Type" header
+
+  };
+}
 
 function resize() {
   d3.selectAll("path").attr("transform", "scale(" + $("#container").width() / 970 + ")");
@@ -4765,4 +4775,4 @@ module.exports = function(module) {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=application-947989a4c24c7e0eb5e8.js.map
+//# sourceMappingURL=application-799c4e5069bf3b7fd0ab.js.map

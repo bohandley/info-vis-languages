@@ -2,24 +2,7 @@ let width = $("#container").width();
 
 $(document).ready(function() {
 
-  async function callCensusData(url, opts, params={}) {
-  	const response = await fetch(url, opts);
-  	const myJson = await response.json();
-  	console.log(response);
-  	console.log(JSON.stringify(myJson));
-  }
-
-  let opts = {
-      method: 'POST', // *GET, POST, PUT, DELETE, etc.
-      credentials: 'same-origin', // include, *same-origin, omit
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-Token': window._token
-      },
-      body: JSON.stringify({}) // body data type must match "Content-Type" header
-  };
-
-  callCensusData("/data", opts);
+  // callCensusData("/data", opts());
 
   var svg = appendSvg();
 
@@ -51,6 +34,13 @@ $(document).ready(function() {
 
       states
         .on("click", function(d) {
+          var data = {
+            "get": "EST,LANLABEL,NAME",
+            "for": "state:" + d.id,
+            "LAN39": ""
+          }
+          callCensusData("/data", opts(data));
+
           var xPosition = d3.mouse(this)[0]*$("#container").width()/970 - 5;
           var yPosition = d3.mouse(this)[1]*$("#container").width()/970 - 5;
           tooltip.style("display", null)
@@ -65,6 +55,25 @@ $(document).ready(function() {
 
   d3.select(window).on('resize', resize);
 });
+
+async function callCensusData(url, opts, params={}) {
+  const response = await fetch(url, opts);
+  const myJson = await response.json();
+  console.log(response);
+  console.log(JSON.stringify(myJson));
+}
+
+function opts(data={}) {
+  return {
+    method: 'POST', // *GET, POST, PUT, DELETE, etc.
+    credentials: 'same-origin', // include, *same-origin, omit
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRF-Token': window._token
+    },
+    body: JSON.stringify(data) // body data type must match "Content-Type" header
+  };
+}
 
 function resize(){
   d3.selectAll("path").attr("transform", "scale(" + $("#container").width()/970 + ")");  
