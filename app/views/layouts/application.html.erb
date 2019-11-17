@@ -7,6 +7,9 @@
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script src="https://d3js.org/topojson.v2.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://d3js.org/d3-color.v1.min.js"></script>
+    <script src="https://d3js.org/d3-interpolate.v1.min.js"></script>
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
     <%= javascript_tag "window._token = '#{form_authenticity_token}'" %>
     
     
@@ -14,6 +17,7 @@
   </head>
 
   <body>
+    <div id="select-language"></div>
     <div id="container"></div>
     <%= yield %>
   </body>

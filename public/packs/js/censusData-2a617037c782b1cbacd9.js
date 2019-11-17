@@ -98,25 +98,35 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
 
+
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+
+var colors = __webpack_require__(/*! ./colors.js */ "./app/javascript/packs/colors.js");
+
 var width = $("#container").width();
 $(document).ready(function () {
-  // callCensusData("/data", opts());
   var svg = appendSvg();
   var path = d3.geoPath();
   buildMap(svg, path).then(function (data) {
+    // build the tooltip
     var svg = data["svg"],
         states = data["states"];
-    var tooltip = svg.append("g").attr("class", "tooltip").style("display", "none"); // TASK 2: build rect display for the tool tip  
+    var tooltip = createTooltip(svg); // display the tooltip on clicking a state
 
-    tooltip.append("rect").attr("width", 60).attr("height", 20).attr("fill", "white").style("opacity", 1); // TASK 2: configure the text for the tooltip
-
-    tooltip.append("text").attr("x", 30).attr("dy", "1.2em").style("text-anchor", "middle").attr("font-size", "12px").attr("font-weight", "bold");
     states.on("click", function (d) {
       var data = {
         "get": "EST,LANLABEL,NAME",
         "for": "state:" + d.id,
         "LAN39": ""
-      };
+      }; // tooltip expands, shows text, shows select
+
+      tooltipEntrance(tooltip);
       callCensusData("/data", opts(data));
       var xPosition = d3.mouse(this)[0] * $("#container").width() / 970 - 5;
       var yPosition = d3.mouse(this)[1] * $("#container").width() / 970 - 5;
@@ -130,56 +140,37 @@ $(document).ready(function () {
   d3.select(window).on('resize', resize);
 });
 
-function callCensusData(url, opts) {
-  var params,
-      response,
-      myJson,
-      _args = arguments;
-  return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.async(function callCensusData$(_context) {
-    while (1) {
-      switch (_context.prev = _context.next) {
-        case 0:
-          params = _args.length > 2 && _args[2] !== undefined ? _args[2] : {};
-          _context.next = 3;
-          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.awrap(fetch(url, opts));
+function tooltipEntrance(tooltip) {
+  tooltip.select("rect").attr("width", 0).attr("height", 0);
+  tooltip.select("text").style("display", "none");
+  tooltip.select("select").style("display", "none");
+  var s = d3.transition().delay(0).duration(500);
+  tooltip.select("rect").transition(s).attr("width", 200).attr("height", 200);
+  var s2 = d3.transition().delay(300).duration(0);
+  tooltip.select("text").transition(s2).style("display", null);
+  tooltip.select("select").transition(s2).style("display", null);
+} // create a select with options
 
-        case 3:
-          response = _context.sent;
-          _context.next = 6;
-          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.awrap(response.json());
 
-        case 6:
-          myJson = _context.sent;
-          console.log(response);
-          console.log(JSON.stringify(myJson));
+function createTooltip(svg) {
+  var tooltip = svg.append("g").attr("class", "tooltip").style("display", "none"); // TASK 2: build rect display for the tool tip  
 
-        case 9:
-        case "end":
-          return _context.stop();
-      }
-    }
-  });
-}
+  tooltip.append("rect").attr("width", 0).attr("height", 0).attr("fill", "lightgrey").style("opacity", 1); // TASK 2: configure the text for the tooltip
 
-function opts() {
-  var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-  return {
-    method: 'POST',
-    // *GET, POST, PUT, DELETE, etc.
-    credentials: 'same-origin',
-    // include, *same-origin, omit
-    headers: {
-      'Content-Type': 'application/json',
-      'X-CSRF-Token': window._token
-    },
-    body: JSON.stringify(data) // body data type must match "Content-Type" header
+  tooltip.append("text").attr("x", 10).attr("dy", "1.2em").style("text-align", "center").attr("font-size", "12px").attr("font-weight", "bold"); // <foreignObject x="20" y="20" width="160" height="160">
 
-  };
-}
+  tooltip.append("foreignObject").attr("x", 20).attr("y", 20).attr("width", 160).attr("height", 160);
+  tooltip.select("foreignObject").append("xhtml:div").attr("id", "lan");
+  tooltip.select("#lan").append("xhtml:select");
+  tooltip.select("select").selectAll("option").data([1, 2, 3]).enter().append("xhtml:option").text(function (d) {
+    return d;
+  }).attr("value", function (d) {
+    return d;
+  }).attr("class", "year"); // start with a selected value
+  // d3.select("option[value='" + 1 + "']")
+  //   .attr("selected", true);
 
-function resize() {
-  d3.selectAll("path").attr("transform", "scale(" + $("#container").width() / 970 + ")");
-  $("svg").height($("#container").width() * 0.618);
+  return tooltip;
 }
 
 function buildMap(svg, path, resize) {
@@ -210,7 +201,10 @@ function transition(delay, length) {
 }
 
 function buildStates(svg, path, us) {
-  return svg.append("g").attr("class", "states").selectAll("path").data(topojson.feature(us, us.objects.states).features).enter().append("path").attr("d", path).attr("transform", "scale(" + $("#container").width() / 970 + ")");
+  var accent = d3.scaleOrdinal().range(colors).domain(_toConsumableArray(Array(50).keys()));
+  return svg.append("g").attr("class", "states").selectAll("path").data(topojson.feature(us, us.objects.states).features).enter().append("path").attr("fill", function (d) {
+    return accent(d.id);
+  }).attr("d", path).attr("transform", "scale(" + $("#container").width() / 970 + ")");
 }
 
 function buildBorders(svg, path, us) {
@@ -218,6 +212,116 @@ function buildBorders(svg, path, us) {
     return a !== b;
   }))).attr("transform", "scale(" + $("#container").width() / 970 + ")");
 }
+
+function callCensusData(url, opts) {
+  var params,
+      response,
+      myJson,
+      _args = arguments;
+  return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.async(function callCensusData$(_context) {
+    while (1) {
+      switch (_context.prev = _context.next) {
+        case 0:
+          params = _args.length > 2 && _args[2] !== undefined ? _args[2] : {};
+          _context.next = 3;
+          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.awrap(fetch(url, opts));
+
+        case 3:
+          response = _context.sent;
+          _context.next = 6;
+          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.awrap(response.json());
+
+        case 6:
+          myJson = _context.sent;
+          // console.log(response);
+          console.log(JSON.stringify(myJson));
+
+        case 8:
+        case "end":
+          return _context.stop();
+      }
+    }
+  });
+}
+
+function opts() {
+  var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  return {
+    method: 'POST',
+    // *GET, POST, PUT, DELETE, etc.
+    credentials: 'same-origin',
+    // include, *same-origin, omit
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRF-Token': window._token
+    },
+    body: JSON.stringify(data) // body data type must match "Content-Type" header
+
+  };
+}
+
+function resize() {
+  d3.selectAll("path").attr("transform", "scale(" + $("#container").width() / 970 + ")");
+  $("svg").height($("#container").width() * 0.618);
+}
+
+/***/ }),
+
+/***/ "./app/javascript/packs/colors.js":
+/*!****************************************!*\
+  !*** ./app/javascript/packs/colors.js ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+var colors = [//   '#3949AB',
+// '#303F9F',
+// '#283593',
+// '#1A237E',
+// '#8C9EFF',
+// '#536DFE',
+// '#3D5AFE',
+// '#304FFE',
+// '#E3F2FD',
+// '#BBDEFB',
+// '#90CAF9',
+// '#64B5F6',
+// '#42A5F5',
+// '#2196F3',
+// '#1E88E5',
+// '#1976D2',
+// '#1565C0',
+// '#0D47A1',
+// '#82B1FF',
+// '#448AFF',
+// '#2979FF',
+// '#2962FF',
+// '#E1F5FE',
+// '#B3E5FC',
+// '#81D4FA',
+'#4FC3F7', '#29B6F6', '#03A9F4', '#039BE5', '#0288D1', '#0277BD', '#01579B', '#80D8FF', '#40C4FF', '#00B0FF', '#0091EA', '#E0F7FA', '#B2EBF2', '#80DEEA', '#4DD0E1', '#26C6DA', '#00BCD4', '#00ACC1', '#0097A7', '#00838F', '#006064', '#84FFFF', '#18FFFF', '#00E5FF', '#00B8D4', '#E0F2F1', '#B2DFDB', '#80CBC4', '#4DB6AC', '#26A69A', '#009688', '#00897B', '#00796B', '#00695C', '#004D40', '#A7FFEB', '#64FFDA', '#1DE9B6', '#00BFA5', '#E8F5E9', '#C8E6C9', '#A5D6A7', '#81C784', '#66BB6A', '#4CAF50', '#43A047', '#388E3C', '#2E7D32', '#1B5E20', '#B9F6CA', '#69F0AE', '#00E676', '#00C853', '#F1F8E9', '#DCEDC8', '#C5E1A5', '#AED581', '#9CCC65', '#8BC34A', '#7CB342', '#689F38', '#558B2F', '#33691E', '#CCFF90', '#B2FF59', '#76FF03', '#64DD17', '#F9FBE7', '#F0F4C3', '#E6EE9C', '#DCE775', '#D4E157', '#CDDC39', '#C0CA33', '#AFB42B', '#9E9D24', '#827717', '#F4FF81', '#EEFF41' // '#C6FF00',
+// '#AEEA00',
+// '#FFFDE7',
+// '#FFF9C4',
+// '#FFF59D',
+// '#FFF176',
+// '#FFEE58',
+// '#FFEB3B',
+// '#FDD835',
+// '#FBC02D',
+// '#F9A825',
+// '#F57F17',
+// '#FFFF8D',
+// '#FFFF00',
+// '#FFEA00',
+// '#FFD600',
+// '#FFF8E1',
+// '#FFECB3',
+// '#FFE082',
+// '#FFD54F',
+// '#FFCA28',
+];
+module.exports = colors;
 
 /***/ }),
 
@@ -971,4 +1075,4 @@ try {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=censusData-e1edb218ba7cfe738b7c.js.map
+//# sourceMappingURL=censusData-2a617037c782b1cbacd9.js.map
