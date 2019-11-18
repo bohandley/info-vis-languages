@@ -9,6 +9,6 @@ class UsCensusController < ApplicationController
 
   private
   	def us_census_params
-  		params.require(:us_censu).permit(:for, :in, :get, :LAN39, :LAN)
+  		params.require(:us_censu).permit(:for, :in, :get, :LAN39, :LAN7, :LAN)
   	end
 end

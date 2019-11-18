@@ -1,36 +1,42 @@
-var colors = require('./colors.js');
+const colors = require('./colors.js');
 
 let width = $("#container").width();
 
-$(document).ready(function() {
-  var svg = appendSvg();
+let stateData = '';
 
-  var path = d3.geoPath();
+$(document).ready(function() {
+  let svg = appendSvg();
+
+  let path = d3.geoPath();
 
   buildMap(svg, path)
     .then(function(data){
       // build the tooltip
-      var svg = data["svg"],
+      let svg = data["svg"],
           states = data["states"];
       
-      var tooltip = createTooltip(svg);
+      let tooltip = createTooltip(svg);
 
       // display the tooltip on clicking a state
       states
-        .on("click", function(d) {
-          var data = {
-            "get": "EST,LANLABEL,NAME",
-            "for": "state:" + d.id,
-            "LAN39": ""
-          }
-
+        .on("click", function(d) {   
+          stateData = d.id;       
+          
           // tooltip expands, shows text, shows select
-          tooltipEntrance(tooltip);  
-      
-          callCensusData("/data", opts(data));
+          tooltipEntrance(tooltip);
 
-          var xPosition = d3.mouse(this)[0]*$("#container").width()/970 - 5;
-          var yPosition = d3.mouse(this)[1]*$("#container").width()/970 - 5;
+          getDataOnSelect();
+          
+          let xPosition = d3.mouse(this)[0]*$("#container").width()/970 - 5;
+          let yPosition = d3.mouse(this)[1]*$("#container").width()/970 - 5;
+
+          // debugger
+          if(xPosition > $("#container").width() - 260)
+            xPosition -= 260;
+
+          if(yPosition > $("#container").height() - 260)
+            yPosition -= 260;
+
           tooltip.style("display", null)
           tooltip.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
           tooltip.select("text").text(d.properties.name);
@@ -46,7 +52,7 @@ $(document).ready(function() {
 
 function tooltipEntrance(tooltip) {
   tooltip.select("rect")
-    .attr("width", 0)
+    .attr("width", 290)
     .attr("height", 0)
 
   tooltip.select("text")
@@ -55,16 +61,15 @@ function tooltipEntrance(tooltip) {
   tooltip.select("select")
     .style("display", "none")
 
-  var s = d3.transition()
+  let s = d3.transition()
     .delay(0)
-    .duration(500);
+    .duration(300);
 
   tooltip.select("rect")
     .transition(s)
-    .attr("width", 200)
-    .attr("height", 200)
+    .attr("height", 290)
 
-  var s2 = d3.transition()
+  let s2 = d3.transition()
     .delay(300)
     .duration(0);
 
@@ -79,7 +84,7 @@ function tooltipEntrance(tooltip) {
 
 // create a select with options
 function createTooltip(svg){
-  var tooltip = svg.append("g")
+  let tooltip = svg.append("g")
     .attr("class", "tooltip")
     .style("display", "none");
         
@@ -102,8 +107,8 @@ function createTooltip(svg){
   tooltip.append("foreignObject")
     .attr("x", 20)
     .attr("y", 20)
-    .attr("width", 160)
-    .attr("height", 160)
+    .attr("width", 250)
+    .attr("height", 250)
 
 
   tooltip.select("foreignObject")
@@ -112,25 +117,46 @@ function createTooltip(svg){
 
   tooltip.select("#lan")
     .append("xhtml:select")
+    .attr("id", "lan-select")
+
+  let selectOpts = [
+    ["Language families in 7 major categories", "LAN7"],
+    ["Language families in 39 major categories", "LAN39"],
+    ["Choose a detailed language", "LAN"]
+  ];
 
   tooltip.select("select")
     .selectAll("option")
-    .data([1,2,3])
+    .data(selectOpts)
     .enter()
     .append("xhtml:option")
     .text(function(d){
-      return d;
+      return d[0];
     })
     .attr("value", function(d){
-      return d;
+      return d[1];
     })
     .attr("class", "year");
 
-  // start with a selected value
-  // d3.select("option[value='" + 1 + "']")
-  //   .attr("selected", true);
+  tooltip.select("select")
+    .on("change", function(d) {
+      getDataOnSelect();
+    });
 
   return tooltip;
+}
+
+function getDataOnSelect(){
+  let choice = $("#lan-select").val();
+
+  var data = {
+        "get": "EST,LANLABEL,NAME",
+        "for": "state:" + stateData
+      };
+
+  data[choice] = '';
+  
+  USCensusShow("/data", opts(data));
 }
 
 function buildMap(svg, path, resize) {
@@ -140,11 +166,11 @@ function buildMap(svg, path, resize) {
         reject(error);
       } else {
 
-        var s = transition(0, 0);
+        let s = transition(0, 0);
 
-        var states = buildStates(svg, path, us);          
+        let states = buildStates(svg, path, us);          
 
-        var borders = buildBorders(svg, path, us);
+        let borders = buildBorders(svg, path, us);
 
         $("svg").height($("#container").width()*0.618);
 
@@ -167,7 +193,7 @@ function transition(delay, length) {
 }
 
 function buildStates(svg, path, us) {
-  var accent = d3.scaleOrdinal()
+  let accent = d3.scaleOrdinal()
     .range(colors)
     .domain([...Array(50).keys()]);
   
@@ -191,7 +217,7 @@ function buildBorders(svg, path, us) {
     .attr("transform", "scale(" + $("#container").width()/970 + ")");
 }
 
-async function callCensusData(url, opts, params={}) {
+async function USCensusShow(url, opts, params={}) {
   const response = await fetch(url, opts);
   const myJson = await response.json();
   // console.log(response);

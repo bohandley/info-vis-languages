@@ -110,6 +110,7 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 var colors = __webpack_require__(/*! ./colors.js */ "./app/javascript/packs/colors.js");
 
 var width = $("#container").width();
+var stateData = '';
 $(document).ready(function () {
   var svg = appendSvg();
   var path = d3.geoPath();
@@ -120,16 +121,15 @@ $(document).ready(function () {
     var tooltip = createTooltip(svg); // display the tooltip on clicking a state
 
     states.on("click", function (d) {
-      var data = {
-        "get": "EST,LANLABEL,NAME",
-        "for": "state:" + d.id,
-        "LAN39": ""
-      }; // tooltip expands, shows text, shows select
+      stateData = d.id; // tooltip expands, shows text, shows select
 
       tooltipEntrance(tooltip);
-      callCensusData("/data", opts(data));
+      getDataOnSelect();
       var xPosition = d3.mouse(this)[0] * $("#container").width() / 970 - 5;
-      var yPosition = d3.mouse(this)[1] * $("#container").width() / 970 - 5;
+      var yPosition = d3.mouse(this)[1] * $("#container").width() / 970 - 5; // debugger
+
+      if (xPosition > $("#container").width() - 260) xPosition -= 260;
+      if (yPosition > $("#container").height() - 260) yPosition -= 260;
       tooltip.style("display", null);
       tooltip.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
       tooltip.select("text").text(d.properties.name);
@@ -141,11 +141,11 @@ $(document).ready(function () {
 });
 
 function tooltipEntrance(tooltip) {
-  tooltip.select("rect").attr("width", 0).attr("height", 0);
+  tooltip.select("rect").attr("width", 290).attr("height", 0);
   tooltip.select("text").style("display", "none");
   tooltip.select("select").style("display", "none");
-  var s = d3.transition().delay(0).duration(500);
-  tooltip.select("rect").transition(s).attr("width", 200).attr("height", 200);
+  var s = d3.transition().delay(0).duration(300);
+  tooltip.select("rect").transition(s).attr("height", 290);
   var s2 = d3.transition().delay(300).duration(0);
   tooltip.select("text").transition(s2).style("display", null);
   tooltip.select("select").transition(s2).style("display", null);
@@ -159,18 +159,29 @@ function createTooltip(svg) {
 
   tooltip.append("text").attr("x", 10).attr("dy", "1.2em").style("text-align", "center").attr("font-size", "12px").attr("font-weight", "bold"); // <foreignObject x="20" y="20" width="160" height="160">
 
-  tooltip.append("foreignObject").attr("x", 20).attr("y", 20).attr("width", 160).attr("height", 160);
+  tooltip.append("foreignObject").attr("x", 20).attr("y", 20).attr("width", 250).attr("height", 250);
   tooltip.select("foreignObject").append("xhtml:div").attr("id", "lan");
-  tooltip.select("#lan").append("xhtml:select");
-  tooltip.select("select").selectAll("option").data([1, 2, 3]).enter().append("xhtml:option").text(function (d) {
-    return d;
+  tooltip.select("#lan").append("xhtml:select").attr("id", "lan-select");
+  var selectOpts = [["Language families in 7 major categories", "LAN7"], ["Language families in 39 major categories", "LAN39"], ["Choose a detailed language", "LAN"]];
+  tooltip.select("select").selectAll("option").data(selectOpts).enter().append("xhtml:option").text(function (d) {
+    return d[0];
   }).attr("value", function (d) {
-    return d;
-  }).attr("class", "year"); // start with a selected value
-  // d3.select("option[value='" + 1 + "']")
-  //   .attr("selected", true);
-
+    return d[1];
+  }).attr("class", "year");
+  tooltip.select("select").on("change", function (d) {
+    getDataOnSelect();
+  });
   return tooltip;
+}
+
+function getDataOnSelect() {
+  var choice = $("#lan-select").val();
+  var data = {
+    "get": "EST,LANLABEL,NAME",
+    "for": "state:" + stateData
+  };
+  data[choice] = '';
+  USCensusShow("/data", opts(data));
 }
 
 function buildMap(svg, path, resize) {
@@ -213,12 +224,12 @@ function buildBorders(svg, path, us) {
   }))).attr("transform", "scale(" + $("#container").width() / 970 + ")");
 }
 
-function callCensusData(url, opts) {
+function USCensusShow(url, opts) {
   var params,
       response,
       myJson,
       _args = arguments;
-  return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.async(function callCensusData$(_context) {
+  return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.async(function USCensusShow$(_context) {
     while (1) {
       switch (_context.prev = _context.next) {
         case 0:
@@ -1075,4 +1086,4 @@ try {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=censusData-2a617037c782b1cbacd9.js.map
+//# sourceMappingURL=censusData-86baec984fd1c8764837.js.map
