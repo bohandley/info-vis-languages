@@ -1,33 +1,33 @@
 {
-  "application.js": "/packs/js/application-65d85c2da23d6d90e36a.js",
-  "application.js.map": "/packs/js/application-65d85c2da23d6d90e36a.js.map",
-  "censusData.js": "/packs/js/censusData-86baec984fd1c8764837.js",
-  "censusData.js.map": "/packs/js/censusData-86baec984fd1c8764837.js.map",
-  "colors.js": "/packs/js/colors-d3bfbfb0ecf7415326bf.js",
-  "colors.js.map": "/packs/js/colors-d3bfbfb0ecf7415326bf.js.map",
+  "application.js": "/packs/js/application-435d8a7649bf79c3c3db.js",
+  "application.js.map": "/packs/js/application-435d8a7649bf79c3c3db.js.map",
+  "censusData.js": "/packs/js/censusData-9771943d63fa386b2c5f.js",
+  "censusData.js.map": "/packs/js/censusData-9771943d63fa386b2c5f.js.map",
+  "colors.js": "/packs/js/colors-03427b5c148b38710063.js",
+  "colors.js.map": "/packs/js/colors-03427b5c148b38710063.js.map",
   "entrypoints": {
     "application": {
       "js": [
-        "/packs/js/application-65d85c2da23d6d90e36a.js"
+        "/packs/js/application-435d8a7649bf79c3c3db.js"
       ],
       "js.map": [
-        "/packs/js/application-65d85c2da23d6d90e36a.js.map"
+        "/packs/js/application-435d8a7649bf79c3c3db.js.map"
       ]
     },
     "censusData": {
       "js": [
-        "/packs/js/censusData-86baec984fd1c8764837.js"
+        "/packs/js/censusData-9771943d63fa386b2c5f.js"
       ],
       "js.map": [
-        "/packs/js/censusData-86baec984fd1c8764837.js.map"
+        "/packs/js/censusData-9771943d63fa386b2c5f.js.map"
       ]
     },
     "colors": {
       "js": [
-        "/packs/js/colors-d3bfbfb0ecf7415326bf.js"
+        "/packs/js/colors-03427b5c148b38710063.js"
       ],
       "js.map": [
-        "/packs/js/colors-d3bfbfb0ecf7415326bf.js.map"
+        "/packs/js/colors-03427b5c148b38710063.js.map"
       ]
     }
   }

@@ -109,8 +109,12 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 var colors = __webpack_require__(/*! ./colors.js */ "./app/javascript/packs/colors.js");
 
-var width = $("#container").width();
-var stateData = '';
+var width = $("#container").width(); // let state.id = '';
+
+var state = {
+  id: "",
+  data: []
+};
 $(document).ready(function () {
   var svg = appendSvg();
   var path = d3.geoPath();
@@ -118,13 +122,14 @@ $(document).ready(function () {
     // build the tooltip
     var svg = data["svg"],
         states = data["states"];
-    var tooltip = createTooltip(svg); // display the tooltip on clicking a state
+    var tooltip = createTooltip(svg, state); // display the tooltip on clicking a state
 
     states.on("click", function (d) {
-      stateData = d.id; // tooltip expands, shows text, shows select
+      state.id = d.id; // tooltip expands, shows text, shows select
 
       tooltipEntrance(tooltip);
-      getDataOnSelect();
+      getDataOnSelect(state);
+      lanSevenPieChart(tooltip);
       var xPosition = d3.mouse(this)[0] * $("#container").width() / 970 - 5;
       var yPosition = d3.mouse(this)[1] * $("#container").width() / 970 - 5; // debugger
 
@@ -140,6 +145,37 @@ $(document).ready(function () {
   d3.select(window).on('resize', resize);
 });
 
+function lanSevenPieChart(tooltip) {
+  // set the dimensions and margins of the graph
+  var width = 290,
+      height = 290,
+      margin = 40; // The radius of the pieplot is half the width or half the height (smallest one). I subtract a bit of margin.
+
+  var radius = Math.min(width, height) / 2 - margin; // append the svg object to the div called 'my_dataviz'
+
+  var svg = tooltip.append("svg").attr("width", width).attr("height", height).append("g").attr("transform", "translate(" + width / 2 + "," + (height / 2 + 15) + ")"); // Create dummy data
+
+  var data = {
+    a: 9,
+    b: 20,
+    c: 30,
+    d: 8,
+    e: 12
+  }; // set the color scale
+
+  var color = d3.scaleOrdinal().domain(data).range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56"]); // Compute the position of each group on the pie:
+
+  var pie = d3.pie().value(function (d) {
+    return d.value;
+  });
+  var data_ready = pie(d3.entries(data));
+  setTimeout(function () {
+    svg.selectAll('whatever').data(data_ready).enter().append('path').attr('d', d3.arc().innerRadius(0).outerRadius(radius)).attr('fill', function (d) {
+      return color(d.data.key);
+    }).attr("stroke", "black").style("stroke-width", "2px").style("opacity", 0.7);
+  }, 300); // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
+}
+
 function tooltipEntrance(tooltip) {
   tooltip.select("rect").attr("width", 290).attr("height", 0);
   tooltip.select("text").style("display", "none");
@@ -152,36 +188,41 @@ function tooltipEntrance(tooltip) {
 } // create a select with options
 
 
-function createTooltip(svg) {
+function createTooltip(svg, state) {
   var tooltip = svg.append("g").attr("class", "tooltip").style("display", "none"); // TASK 2: build rect display for the tool tip  
 
   tooltip.append("rect").attr("width", 0).attr("height", 0).attr("fill", "lightgrey").style("opacity", 1); // TASK 2: configure the text for the tooltip
 
-  tooltip.append("text").attr("x", 10).attr("dy", "1.2em").style("text-align", "center").attr("font-size", "12px").attr("font-weight", "bold"); // <foreignObject x="20" y="20" width="160" height="160">
+  tooltip.append("text").attr("x", 10).attr("dy", "1.2em").style("text-align", "center").attr("font-size", "12px").attr("font-weight", "bold");
+  tooltip = createSelect(tooltip, state);
+  return tooltip;
+}
 
-  tooltip.append("foreignObject").attr("x", 20).attr("y", 20).attr("width", 250).attr("height", 250);
-  tooltip.select("foreignObject").append("xhtml:div").attr("id", "lan");
-  tooltip.select("#lan").append("xhtml:select").attr("id", "lan-select");
+function createSelect(object, state) {
+  // <foreignObject x="20" y="20" width="160" height="160">
+  object.append("foreignObject").attr("x", 20).attr("y", 20).attr("width", 250).attr("height", 250);
+  object.select("foreignObject").append("xhtml:div").attr("id", "lan");
+  object.select("#lan").append("xhtml:select").attr("id", "lan-select");
   var selectOpts = [["Language families in 7 major categories", "LAN7"], ["Language families in 39 major categories", "LAN39"], ["Choose a detailed language", "LAN"]];
-  tooltip.select("select").selectAll("option").data(selectOpts).enter().append("xhtml:option").text(function (d) {
+  object.select("select").selectAll("option").data(selectOpts).enter().append("xhtml:option").text(function (d) {
     return d[0];
   }).attr("value", function (d) {
     return d[1];
   }).attr("class", "year");
-  tooltip.select("select").on("change", function (d) {
-    getDataOnSelect();
+  object.select("select").on("change", function (d) {
+    getDataOnSelect(state);
   });
-  return tooltip;
+  return object;
 }
 
-function getDataOnSelect() {
+function getDataOnSelect(state) {
   var choice = $("#lan-select").val();
-  var data = {
+  var params = {
     "get": "EST,LANLABEL,NAME",
-    "for": "state:" + stateData
+    "for": "state:" + state.id
   };
-  data[choice] = '';
-  USCensusShow("/data", opts(data));
+  params[choice] = '';
+  state.data = USCensusShow("/data", opts(params));
 }
 
 function buildMap(svg, path, resize) {
@@ -227,7 +268,7 @@ function buildBorders(svg, path, us) {
 function USCensusShow(url, opts) {
   var params,
       response,
-      myJson,
+      stateData,
       _args = arguments;
   return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.async(function USCensusShow$(_context) {
     while (1) {
@@ -243,11 +284,11 @@ function USCensusShow(url, opts) {
           return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.awrap(response.json());
 
         case 6:
-          myJson = _context.sent;
-          // console.log(response);
-          console.log(JSON.stringify(myJson));
+          stateData = _context.sent;
+          console.log(stateData);
+          return _context.abrupt("return", stateData);
 
-        case 8:
+        case 9:
         case "end":
           return _context.stop();
       }
@@ -310,7 +351,10 @@ var colors = [//   '#3949AB',
 // '#E1F5FE',
 // '#B3E5FC',
 // '#81D4FA',
-'#4FC3F7', '#29B6F6', '#03A9F4', '#039BE5', '#0288D1', '#0277BD', '#01579B', '#80D8FF', '#40C4FF', '#00B0FF', '#0091EA', '#E0F7FA', '#B2EBF2', '#80DEEA', '#4DD0E1', '#26C6DA', '#00BCD4', '#00ACC1', '#0097A7', '#00838F', '#006064', '#84FFFF', '#18FFFF', '#00E5FF', '#00B8D4', '#E0F2F1', '#B2DFDB', '#80CBC4', '#4DB6AC', '#26A69A', '#009688', '#00897B', '#00796B', '#00695C', '#004D40', '#A7FFEB', '#64FFDA', '#1DE9B6', '#00BFA5', '#E8F5E9', '#C8E6C9', '#A5D6A7', '#81C784', '#66BB6A', '#4CAF50', '#43A047', '#388E3C', '#2E7D32', '#1B5E20', '#B9F6CA', '#69F0AE', '#00E676', '#00C853', '#F1F8E9', '#DCEDC8', '#C5E1A5', '#AED581', '#9CCC65', '#8BC34A', '#7CB342', '#689F38', '#558B2F', '#33691E', '#CCFF90', '#B2FF59', '#76FF03', '#64DD17', '#F9FBE7', '#F0F4C3', '#E6EE9C', '#DCE775', '#D4E157', '#CDDC39', '#C0CA33', '#AFB42B', '#9E9D24', '#827717', '#F4FF81', '#EEFF41' // '#C6FF00',
+'#4FC3F7', '#29B6F6', '#03A9F4', '#039BE5', '#0288D1', '#0277BD', '#01579B', '#80D8FF', '#40C4FF', '#00B0FF', '#0091EA', '#E0F7FA', '#B2EBF2', '#80DEEA', '#4DD0E1', '#26C6DA', '#00BCD4', '#00ACC1', '#0097A7', '#00838F', '#006064', '#84FFFF', '#18FFFF', '#00E5FF', '#00B8D4', // '#E0F2F1',
+'#B2DFDB', '#80CBC4', '#4DB6AC', '#26A69A', '#009688', '#00897B', '#00796B', '#00695C', '#004D40', '#A7FFEB', '#64FFDA', '#1DE9B6', '#00BFA5', // '#E8F5E9',
+'#C8E6C9', '#A5D6A7', '#81C784', '#66BB6A', '#4CAF50', '#43A047', '#388E3C', '#2E7D32', '#1B5E20', '#B9F6CA', '#69F0AE', '#00E676', '#00C853', // '#F1F8E9',
+'#DCEDC8', '#C5E1A5', '#AED581', '#9CCC65', '#8BC34A', '#7CB342', '#689F38', '#558B2F', '#33691E', '#CCFF90', '#B2FF59', '#76FF03', '#64DD17', '#F9FBE7', '#F0F4C3', '#E6EE9C', '#DCE775', '#D4E157', '#CDDC39', '#C0CA33', '#AFB42B', '#9E9D24', '#827717', '#F4FF81', '#EEFF41' // '#C6FF00',
 // '#AEEA00',
 // '#FFFDE7',
 // '#FFF9C4',
@@ -1086,4 +1130,4 @@ try {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=censusData-86baec984fd1c8764837.js.map
+//# sourceMappingURL=censusData-9771943d63fa386b2c5f.js.map
