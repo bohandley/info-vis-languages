@@ -26,26 +26,33 @@ $(document).ready(function() {
         .on("click", function(d) {   
           state.id = d.id;       
           
+          tooltip.select("#pie-graph").remove();
           // tooltip expands, shows text, shows select
           tooltipEntrance(tooltip);
 
-          getDataOnSelect(state);
-
-          lanSevenPieChart(tooltip);
-
           let xPosition = d3.mouse(this)[0]*$("#container").width()/970 - 5;
-          let yPosition = d3.mouse(this)[1]*$("#container").width()/970 - 5;
+              let yPosition = d3.mouse(this)[1]*$("#container").width()/970 - 5;
 
-          // debugger
-          if(xPosition > $("#container").width() - 260)
-            xPosition -= 260;
+              // debugger
+              if(xPosition > $("#container").width() - 260)
+                xPosition -= 260;
 
-          if(yPosition > $("#container").height() - 260)
-            yPosition -= 260;
+              if(yPosition > $("#container").height() - 260)
+                yPosition -= 260;
 
-          tooltip.style("display", null)
-          tooltip.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
-          tooltip.select("text").text(d.properties.name);
+              tooltip.style("display", null)
+              tooltip.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
+              tooltip.select("text").text(d.properties.name);
+
+          getDataOnSelect(state)
+            .then(data=>{
+              state.data = data;
+              
+              lanSevenPieChart(tooltip, state);
+
+              
+            });
+          
         });
     })
     .catch(function(error) {
@@ -55,7 +62,9 @@ $(document).ready(function() {
   d3.select(window).on('resize', resize);
 });
 
-function lanSevenPieChart(tooltip) {
+function lanSevenPieChart(tooltip, state) {
+  console.log(state)
+  
   // set the dimensions and margins of the graph
   var width = 290,
       height = 290,
@@ -67,18 +76,40 @@ function lanSevenPieChart(tooltip) {
   // append the svg object to the div called 'my_dataviz'
   var svg = tooltip
     .append("svg")
+      .attr("id", "pie-graph")
       .attr("width", width)
       .attr("height", height)
     .append("g")
       .attr("transform", "translate(" + width / 2 + "," + ((height / 2) + 15) + ")");
 
   // Create dummy data
-  var data = {a: 9, b: 20, c:30, d:8, e:12};
+  // var data = {a: 9, b: 20, c:30, d:8, e:12};
 
+  // create real data
+  var key1 = state.data[2][1], 
+    key2 = state.data[4][1],
+    key3 = state.data[5][1],
+    key4 = state.data[6][1];
+
+  var keys = [key1, key2, key3, key4];
+
+  var val1 = state.data[2][0],
+    val2 = state.data[4][0],
+    val3 = state.data[5][0],
+    val4 = state.data[6][0];
+
+  var vals = [val1, val2, val3, val4];
+
+  var data = {};
+
+  keys.forEach((el, i)=>{
+    data[el] = vals[i];
+  })
+  
   // set the color scale
   var color = d3.scaleOrdinal()
     .domain(data)
-    .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56"]);
+    .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b"]);
 
   // Compute the position of each group on the pie:
   var pie = d3.pie()
@@ -87,7 +118,7 @@ function lanSevenPieChart(tooltip) {
   var data_ready = pie(d3.entries(data));
 
   // make this into a function to rebuild the graph every time USCensu is called
-  setTimeout(function(){ 
+  // setTimeout(function(){ 
     svg
       .selectAll('whatever')
       .data(data_ready)
@@ -101,7 +132,7 @@ function lanSevenPieChart(tooltip) {
       .attr("stroke", "black")
       .style("stroke-width", "2px")
       .style("opacity", 0.7)
-  }, 300);
+  // }, 100);
   // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
 
 }
@@ -201,13 +232,14 @@ function createSelect(object, state) {
 
   object.select("select")
     .on("change", function(d) {
-      getDataOnSelect(state);
+      getDataOnSelect(state)
+        .then(data=> state.data = data);
     });
 
   return object;
 }
 
-function getDataOnSelect(state){
+async function getDataOnSelect(state){
   let choice = $("#lan-select").val();
 
   var params = {
@@ -217,7 +249,29 @@ function getDataOnSelect(state){
 
   params[choice] = '';
   
-  state.data = USCensusShow("/data", opts(params));
+  const response = await fetch("/data", opts(params));
+  const stateData = await response.json();
+  
+  return stateData; 
+}
+
+// async function USCensusShow(url, opts) {
+//   const response = await fetch(url, opts);
+//   const stateData = await response.json();
+  
+//   return stateData;
+// }
+
+function opts(data={}) {
+  return {
+    method: 'POST', // *GET, POST, PUT, DELETE, etc.
+    credentials: 'same-origin', // include, *same-origin, omit
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRF-Token': window._token
+    },
+    body: JSON.stringify(data) // body data type must match "Content-Type" header
+  };
 }
 
 function buildMap(svg, path, resize) {
@@ -276,26 +330,6 @@ function buildBorders(svg, path, us) {
     .attr("class", "state-borders")
     .attr("d", path(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; })))
     .attr("transform", "scale(" + $("#container").width()/970 + ")");
-}
-
-async function USCensusShow(url, opts, params={}) {
-  const response = await fetch(url, opts);
-  const stateData = await response.json();
-  
-  console.log(stateData);
-  return stateData;
-}
-
-function opts(data={}) {
-  return {
-    method: 'POST', // *GET, POST, PUT, DELETE, etc.
-    credentials: 'same-origin', // include, *same-origin, omit
-    headers: {
-      'Content-Type': 'application/json',
-      'X-CSRF-Token': window._token
-    },
-    body: JSON.stringify(data) // body data type must match "Content-Type" header
-  };
 }
 
 function resize(){

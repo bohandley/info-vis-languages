@@ -193,11 +193,10 @@ $(document).ready(function () {
     var tooltip = createTooltip(svg, state); // display the tooltip on clicking a state
 
     states.on("click", function (d) {
-      state.id = d.id; // tooltip expands, shows text, shows select
+      state.id = d.id;
+      tooltip.select("#pie-graph").remove(); // tooltip expands, shows text, shows select
 
       tooltipEntrance(tooltip);
-      getDataOnSelect(state);
-      lanSevenPieChart(tooltip);
       var xPosition = d3.mouse(this)[0] * $("#container").width() / 970 - 5;
       var yPosition = d3.mouse(this)[1] * $("#container").width() / 970 - 5; // debugger
 
@@ -206,6 +205,10 @@ $(document).ready(function () {
       tooltip.style("display", null);
       tooltip.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
       tooltip.select("text").text(d.properties.name);
+      getDataOnSelect(state).then(function (data) {
+        state.data = data;
+        lanSevenPieChart(tooltip, state);
+      });
     });
   })["catch"](function (error) {
     console.error(error);
@@ -213,35 +216,46 @@ $(document).ready(function () {
   d3.select(window).on('resize', resize);
 });
 
-function lanSevenPieChart(tooltip) {
-  // set the dimensions and margins of the graph
+function lanSevenPieChart(tooltip, state) {
+  console.log(state); // set the dimensions and margins of the graph
+
   var width = 290,
       height = 290,
       margin = 40; // The radius of the pieplot is half the width or half the height (smallest one). I subtract a bit of margin.
 
   var radius = Math.min(width, height) / 2 - margin; // append the svg object to the div called 'my_dataviz'
 
-  var svg = tooltip.append("svg").attr("width", width).attr("height", height).append("g").attr("transform", "translate(" + width / 2 + "," + (height / 2 + 15) + ")"); // Create dummy data
+  var svg = tooltip.append("svg").attr("id", "pie-graph").attr("width", width).attr("height", height).append("g").attr("transform", "translate(" + width / 2 + "," + (height / 2 + 15) + ")"); // Create dummy data
+  // var data = {a: 9, b: 20, c:30, d:8, e:12};
+  // create real data
 
-  var data = {
-    a: 9,
-    b: 20,
-    c: 30,
-    d: 8,
-    e: 12
-  }; // set the color scale
+  var key1 = state.data[2][1],
+      key2 = state.data[4][1],
+      key3 = state.data[5][1],
+      key4 = state.data[6][1];
+  var keys = [key1, key2, key3, key4];
+  var val1 = state.data[2][0],
+      val2 = state.data[4][0],
+      val3 = state.data[5][0],
+      val4 = state.data[6][0];
+  var vals = [val1, val2, val3, val4];
+  var data = {};
+  keys.forEach(function (el, i) {
+    data[el] = vals[i];
+  }); // set the color scale
 
-  var color = d3.scaleOrdinal().domain(data).range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56"]); // Compute the position of each group on the pie:
+  var color = d3.scaleOrdinal().domain(data).range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b"]); // Compute the position of each group on the pie:
 
   var pie = d3.pie().value(function (d) {
     return d.value;
   });
-  var data_ready = pie(d3.entries(data));
-  setTimeout(function () {
-    svg.selectAll('whatever').data(data_ready).enter().append('path').attr('d', d3.arc().innerRadius(0).outerRadius(radius)).attr('fill', function (d) {
-      return color(d.data.key);
-    }).attr("stroke", "black").style("stroke-width", "2px").style("opacity", 0.7);
-  }, 300); // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
+  var data_ready = pie(d3.entries(data)); // make this into a function to rebuild the graph every time USCensu is called
+  // setTimeout(function(){ 
+
+  svg.selectAll('whatever').data(data_ready).enter().append('path').attr('d', d3.arc().innerRadius(0).outerRadius(radius)).attr('fill', function (d) {
+    return color(d.data.key);
+  }).attr("stroke", "black").style("stroke-width", "2px").style("opacity", 0.7); // }, 100);
+  // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
 }
 
 function tooltipEntrance(tooltip) {
@@ -278,19 +292,64 @@ function createSelect(object, state) {
     return d[1];
   }).attr("class", "year");
   object.select("select").on("change", function (d) {
-    getDataOnSelect(state);
+    getDataOnSelect(state).then(function (data) {
+      return state.data = data;
+    });
   });
   return object;
 }
 
 function getDataOnSelect(state) {
-  var choice = $("#lan-select").val();
-  var params = {
-    "get": "EST,LANLABEL,NAME",
-    "for": "state:" + state.id
+  var choice, params, response, stateData;
+  return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.async(function getDataOnSelect$(_context) {
+    while (1) {
+      switch (_context.prev = _context.next) {
+        case 0:
+          choice = $("#lan-select").val();
+          params = {
+            "get": "EST,LANLABEL,NAME",
+            "for": "state:" + state.id
+          };
+          params[choice] = '';
+          _context.next = 5;
+          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.awrap(fetch("/data", opts(params)));
+
+        case 5:
+          response = _context.sent;
+          _context.next = 8;
+          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.awrap(response.json());
+
+        case 8:
+          stateData = _context.sent;
+          return _context.abrupt("return", stateData);
+
+        case 10:
+        case "end":
+          return _context.stop();
+      }
+    }
+  });
+} // async function USCensusShow(url, opts) {
+//   const response = await fetch(url, opts);
+//   const stateData = await response.json();
+//   return stateData;
+// }
+
+
+function opts() {
+  var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  return {
+    method: 'POST',
+    // *GET, POST, PUT, DELETE, etc.
+    credentials: 'same-origin',
+    // include, *same-origin, omit
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRF-Token': window._token
+    },
+    body: JSON.stringify(data) // body data type must match "Content-Type" header
+
   };
-  params[choice] = '';
-  state.data = USCensusShow("/data", opts(params));
 }
 
 function buildMap(svg, path, resize) {
@@ -331,53 +390,6 @@ function buildBorders(svg, path, us) {
   return svg.append("path").attr("class", "state-borders").attr("d", path(topojson.mesh(us, us.objects.states, function (a, b) {
     return a !== b;
   }))).attr("transform", "scale(" + $("#container").width() / 970 + ")");
-}
-
-function USCensusShow(url, opts) {
-  var params,
-      response,
-      stateData,
-      _args = arguments;
-  return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.async(function USCensusShow$(_context) {
-    while (1) {
-      switch (_context.prev = _context.next) {
-        case 0:
-          params = _args.length > 2 && _args[2] !== undefined ? _args[2] : {};
-          _context.next = 3;
-          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.awrap(fetch(url, opts));
-
-        case 3:
-          response = _context.sent;
-          _context.next = 6;
-          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.awrap(response.json());
-
-        case 6:
-          stateData = _context.sent;
-          console.log(stateData);
-          return _context.abrupt("return", stateData);
-
-        case 9:
-        case "end":
-          return _context.stop();
-      }
-    }
-  });
-}
-
-function opts() {
-  var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-  return {
-    method: 'POST',
-    // *GET, POST, PUT, DELETE, etc.
-    credentials: 'same-origin',
-    // include, *same-origin, omit
-    headers: {
-      'Content-Type': 'application/json',
-      'X-CSRF-Token': window._token
-    },
-    body: JSON.stringify(data) // body data type must match "Content-Type" header
-
-  };
 }
 
 function resize() {
@@ -4934,4 +4946,4 @@ module.exports = function(module) {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=application-435d8a7649bf79c3c3db.js.map
+//# sourceMappingURL=application-0e71b4c99f6c9df71c5e.js.map
