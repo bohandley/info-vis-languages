@@ -35,3 +35,7 @@
   top: 10px;
   left: 0;
 }
+
+.hover-info {
+	z-index: 1;
+}

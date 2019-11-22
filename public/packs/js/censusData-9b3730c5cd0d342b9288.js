@@ -126,7 +126,7 @@ $(document).ready(function () {
 
     states.on("click", function (d) {
       state.id = d.id;
-      tooltip.select("#pie-graph").remove(); // tooltip expands, shows text, shows select
+      tooltip.selectAll("#pie-graph").remove(); // tooltip expands, shows text, shows select
 
       tooltipEntrance(tooltip);
       var xPosition = d3.mouse(this)[0] * $("#container").width() / 970 - 5;
@@ -149,7 +149,8 @@ $(document).ready(function () {
 });
 
 function lanSevenPieChart(tooltip, state) {
-  console.log(state); // set the dimensions and margins of the graph
+  console.log(state);
+  tooltip.selectAll("#pie-graph").remove(); // set the dimensions and margins of the graph
 
   var width = 290,
       height = 290,
@@ -157,26 +158,24 @@ function lanSevenPieChart(tooltip, state) {
 
   var radius = Math.min(width, height) / 2 - margin; // append the svg object to the div called 'my_dataviz'
 
-  var svg = tooltip.append("svg").attr("id", "pie-graph").attr("width", width).attr("height", height).append("g").attr("transform", "translate(" + width / 2 + "," + (height / 2 + 15) + ")"); // Create dummy data
-  // var data = {a: 9, b: 20, c:30, d:8, e:12};
-  // create real data
+  var svg = tooltip.append("svg").attr("id", "pie-graph").attr("width", width).attr("height", height).append("g").attr("transform", "translate(" + width / 2 + "," + (height / 2 + 15) + ")"); // create real data
 
-  var key1 = state.data[2][1],
-      key2 = state.data[4][1],
+  var //key1 = state.data[2][1], 
+  key2 = state.data[4][1],
       key3 = state.data[5][1],
       key4 = state.data[6][1];
-  var keys = [key1, key2, key3, key4];
-  var val1 = state.data[2][0],
-      val2 = state.data[4][0],
+  var keys = [key2, key3, key4];
+  var //val1 = state.data[2][0],
+  val2 = state.data[4][0],
       val3 = state.data[5][0],
       val4 = state.data[6][0];
-  var vals = [val1, val2, val3, val4];
+  var vals = [val2, val3, val4];
   var data = {};
   keys.forEach(function (el, i) {
     data[el] = vals[i];
   }); // set the color scale
 
-  var color = d3.scaleOrdinal().domain(data).range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b"]); // Compute the position of each group on the pie:
+  var color = d3.scaleOrdinal().domain(data).range(["#8a89a6", "#7b6888", "#6b486b"]); // Compute the position of each group on the pie:
 
   var pie = d3.pie().value(function (d) {
     return d.value;
@@ -186,8 +185,21 @@ function lanSevenPieChart(tooltip, state) {
 
   svg.selectAll('whatever').data(data_ready).enter().append('path').attr('d', d3.arc().innerRadius(0).outerRadius(radius)).attr('fill', function (d) {
     return color(d.data.key);
-  }).attr("stroke", "black").style("stroke-width", "2px").style("opacity", 0.7); // }, 100);
-  // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
+  }).attr("stroke", "black").style("stroke-width", "2px").on("click", function (d) {
+    hoverInfo.style("display", "none");
+    hoverInfo.style("display", null);
+    var xPosition = d3.mouse(this)[0] - 5;
+    var yPosition = d3.mouse(this)[1] - 5;
+    hoverInfo.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
+    hoverInfo.select("text").text(d.value);
+  }); // .style("opacity", 0.7)
+  // create hover info
+
+  var hoverInfo = svg.append("g").attr("class", "hover-info").style("display", "none"); // TASK 2: build rect display for the tool tip  
+
+  hoverInfo.append("rect").attr("width", 60).attr("height", 20).attr("fill", "white").style("opacity", 1); // TASK 2: configure the text for the hoverInfo
+
+  hoverInfo.append("text").attr("x", 30).attr("dy", "1.2em").style("text-anchor", "middle").attr("font-size", "12px").attr("font-weight", "bold");
 }
 
 function tooltipEntrance(tooltip) {
@@ -225,7 +237,8 @@ function createSelect(object, state) {
   }).attr("class", "year");
   object.select("select").on("change", function (d) {
     getDataOnSelect(state).then(function (data) {
-      return state.data = data;
+      state.data = data;
+      lanSevenPieChart(object, state);
     });
   });
   return object;
@@ -1142,4 +1155,4 @@ try {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=censusData-33f0193854706a9b4134.js.map
+//# sourceMappingURL=censusData-9b3730c5cd0d342b9288.js.map
