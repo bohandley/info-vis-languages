@@ -1,16 +1,15 @@
 const pieGraph = {
-	buildPieGraph: function(tooltip, state) {
-	  tooltip.selectAll("#pie-graph").remove();
+	buildPieGraph: function(stateDisplay, state) {
 	  // set the dimensions and margins of the graph
-	  var width = 290,
-	      height = 220,
+	  var width = 330,
+	      height = 270,
 	      margin = 40;
 
 	  // The radius of the pieplot is half the width or half the height (smallest one). I subtract a bit of margin.
 	  var radius = Math.min(width, height) / 2 - margin;
 
 	  // append the svg object to the div called 'my_dataviz'
-	  var svg = tooltip
+	  var svg = stateDisplay
 	    .append("svg")
 	      .attr("id", "pie-graph")
 	      .attr("width", width)
@@ -73,8 +72,7 @@ const pieGraph = {
 	        hoverInfo.select("text").text(d.value);
 	    });
 
-	  tooltip.selectAll("#legend").remove();
-	  tooltip.append('svg')
+	  stateDisplay.append('svg')
 	    .attr("id", "legend")
 	    .attr("dy", width)
 	      // .attr("height", height)
@@ -86,8 +84,8 @@ const pieGraph = {
 	    .enter()
 	    .append("circle")
 	      .attr("class", "circle")
-	      .attr("cx", 20)
-	      .attr("cy", function(d,i){ return 220 + i*25}) // 100 is where the first dot appears. 25 is the distance between dots
+	      .attr("cx", 40)
+	      .attr("cy", function(d,i){ return 265 + i*25}) // 100 is where the first dot appears. 25 is the distance between dots
 	      .attr("r", 7)
 	      .style("fill", function(d){ return color(d)})
 
@@ -96,8 +94,8 @@ const pieGraph = {
 	    .data(keys)//data)
 	    .enter()
 	    .append("text")
-	      .attr("x", 40)
-	      .attr("y", function(d,i){ return 220 + i*25}) // 100 is where the first dot appears. 25 is the distance between dots
+	      .attr("x", 60)
+	      .attr("y", function(d,i){ return 265 + i*25}) // 100 is where the first dot appears. 25 is the distance between dots
 	      .style("fill", function(d){ return color(d)})
 	      .text(function(d){ return d})
 	      .attr("text-anchor", "left")

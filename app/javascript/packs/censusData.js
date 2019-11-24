@@ -1,9 +1,8 @@
 const colors = require('./colors.js');
 const sD = require('./stateDisplay');
 const pG = require('./pieGraph');
+const bG = require('./barGraph');
 const usMap = require('./usMap');
-
-// let width = $("#container").width();
 
 // let state.id = '';
 let state = {
@@ -26,26 +25,32 @@ $(document).ready(function() {
       
 
 
-      let stateDisplay = sD.buildStateDisplay(svg, state, getDataOnSelect, pG);
+      let stateDisplay = sD.buildStateDisplay(svg, state, getDataOnSelect, pG, bG);
 
       // display the stateDisplay on clicking a state
       states
-        .on("click", function(d) {   
+        .on("click", function(d) {
+          d3.selectAll(".state-shapes")
+            .attr("fill", "#00acc1")
+
+          $(this).attr("fill", "steelblue");  
+
           state.id = d.id;       
           
           stateDisplay.selectAll("#pie-graph").remove();
           stateDisplay.selectAll("#legend").remove();
+          stateDisplay.selectAll(".bar-graph").remove();
           // stateDisplay expands, shows text, shows select
           sD.stateDisplayEntrance(stateDisplay);
 
           let xPosition = d3.mouse(this)[0]*$("#container").width()/970 - 5;
           let yPosition = d3.mouse(this)[1]*$("#container").width()/970 - 5;
 
-          if(xPosition > $("#container").width() - 260)
-            xPosition -= 260;
+          if(xPosition > $("#container").width() - 300)
+            xPosition -= 300;
 
-          if(yPosition > $("#container").height() - 260)
-            yPosition -= 260;
+          if(yPosition > $("#container").height() - 300)
+            yPosition -= 300;
 
           stateDisplay.style("display", null)
           stateDisplay.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
@@ -58,7 +63,10 @@ $(document).ready(function() {
               console.log(data);
               state.data = data;
               
-              pG.buildPieGraph(stateDisplay, state);
+              if(choice == 'LAN7')
+                pG.buildPieGraph(stateDisplay, state)
+              else if(choice == 'LAN39')
+                bG.buildBarGraph(stateDisplay, state)
 
             });
           
@@ -79,7 +87,7 @@ async function getDataOnSelect(state, choice){
   
   const response = await fetch("/data", opts(params));
   const stateData = await response.json();
-  
+  console.log(stateData)
   return stateData; 
 }
 

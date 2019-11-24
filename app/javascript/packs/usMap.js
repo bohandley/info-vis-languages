@@ -37,8 +37,10 @@ const usMap = {
 	    .selectAll("path")
 	    .data(topojson.feature(us, us.objects.states).features)
 	    .enter().append("path")
+	    	.attr("class", "state-shapes")
 	      .attr("fill", function(d) { 
-	        return accent(d.id);
+	      	return "#00acc1";
+	        // return accent(d.id);
 	      })
 	      .attr("d", path)
 	      .attr("transform", "scale(" + $("#container").width()/970 + ")");

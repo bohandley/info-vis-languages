@@ -154,6 +154,33 @@ __webpack_require__(/*! packs/censusData */ "./app/javascript/packs/censusData.j
 
 /***/ }),
 
+/***/ "./app/javascript/packs/barGraph.js":
+/*!******************************************!*\
+  !*** ./app/javascript/packs/barGraph.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+var barGraph = {
+  buildBarGraph: function buildBarGraph(stateDisplay, state) {
+    var rects = stateDisplay.selectAll('rect').data(state.data.slice(1)).enter().append("rect").attr("class", "bar-graph").attr("transform", "translate(0, 20)").attr("x", 10).attr("y", function (d, i) {
+      return 10 + i * (10 + 10); // return padding + i * (barHeight + padding);
+    }).attr("height", 15).style("fill", "orange");
+    var s = d3.transition().delay(1000).duration(1000);
+    rects.transition(s).attr("width", function (d, i) {
+      return d[0] * .001;
+    });
+    var texts = stateDisplay.selectAll('text').data(state.data.slice(1)).enter().append("text").attr("class", "bar-graph").attr("transform", "translate(0, 20)").attr('x', 10).attr('y', function (d, i) {
+      return (i + 1) * (10 + 10);
+    }).attr('font-size', 12).text(function (d) {
+      return d[1];
+    });
+  }
+};
+module.exports = barGraph;
+
+/***/ }),
+
 /***/ "./app/javascript/packs/censusData.js":
 /*!********************************************!*\
   !*** ./app/javascript/packs/censusData.js ***!
@@ -173,8 +200,9 @@ var sD = __webpack_require__(/*! ./stateDisplay */ "./app/javascript/packs/state
 
 var pG = __webpack_require__(/*! ./pieGraph */ "./app/javascript/packs/pieGraph.js");
 
-var usMap = __webpack_require__(/*! ./usMap */ "./app/javascript/packs/usMap.js"); // let width = $("#container").width();
-// let state.id = '';
+var bG = __webpack_require__(/*! ./barGraph */ "./app/javascript/packs/barGraph.js");
+
+var usMap = __webpack_require__(/*! ./usMap */ "./app/javascript/packs/usMap.js"); // let state.id = '';
 
 
 var state = {
@@ -189,18 +217,21 @@ $(document).ready(function () {
     // build the stateDisplay
     var svg = data["svg"],
         states = data["states"];
-    var stateDisplay = sD.buildStateDisplay(svg, state, getDataOnSelect, pG); // display the stateDisplay on clicking a state
+    var stateDisplay = sD.buildStateDisplay(svg, state, getDataOnSelect, pG, bG); // display the stateDisplay on clicking a state
 
     states.on("click", function (d) {
+      d3.selectAll(".state-shapes").attr("fill", "#00acc1");
+      $(this).attr("fill", "steelblue");
       state.id = d.id;
       stateDisplay.selectAll("#pie-graph").remove();
-      stateDisplay.selectAll("#legend").remove(); // stateDisplay expands, shows text, shows select
+      stateDisplay.selectAll("#legend").remove();
+      stateDisplay.selectAll(".bar-graph").remove(); // stateDisplay expands, shows text, shows select
 
       sD.stateDisplayEntrance(stateDisplay);
       var xPosition = d3.mouse(this)[0] * $("#container").width() / 970 - 5;
       var yPosition = d3.mouse(this)[1] * $("#container").width() / 970 - 5;
-      if (xPosition > $("#container").width() - 260) xPosition -= 260;
-      if (yPosition > $("#container").height() - 260) yPosition -= 260;
+      if (xPosition > $("#container").width() - 300) xPosition -= 300;
+      if (yPosition > $("#container").height() - 300) yPosition -= 300;
       stateDisplay.style("display", null);
       stateDisplay.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
       stateDisplay.select("text").text(d.properties.name);
@@ -208,7 +239,7 @@ $(document).ready(function () {
       getDataOnSelect(state, choice).then(function (data) {
         console.log(data);
         state.data = data;
-        pG.buildPieGraph(stateDisplay, state);
+        if (choice == 'LAN7') pG.buildPieGraph(stateDisplay, state);else if (choice == 'LAN39') bG.buildBarGraph(stateDisplay, state);
       });
     });
   })["catch"](function (error) {
@@ -222,22 +253,22 @@ function getDataOnSelect(state, choice) {
     while (1) {
       switch (_context.prev = _context.next) {
         case 0:
-          debugger;
           params = {
             "get": "EST,LANLABEL,NAME",
             "for": "state:" + state.id
           };
           params[choice] = '';
-          _context.next = 5;
+          _context.next = 4;
           return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.awrap(fetch("/data", opts(params)));
 
-        case 5:
+        case 4:
           response = _context.sent;
-          _context.next = 8;
+          _context.next = 7;
           return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.awrap(response.json());
 
-        case 8:
+        case 7:
           stateData = _context.sent;
+          console.log(stateData);
           return _context.abrupt("return", stateData);
 
         case 10:
@@ -344,16 +375,15 @@ module.exports = colors;
 /***/ (function(module, exports) {
 
 var pieGraph = {
-  buildPieGraph: function buildPieGraph(tooltip, state) {
-    tooltip.selectAll("#pie-graph").remove(); // set the dimensions and margins of the graph
-
-    var width = 290,
-        height = 220,
+  buildPieGraph: function buildPieGraph(stateDisplay, state) {
+    // set the dimensions and margins of the graph
+    var width = 330,
+        height = 270,
         margin = 40; // The radius of the pieplot is half the width or half the height (smallest one). I subtract a bit of margin.
 
     var radius = Math.min(width, height) / 2 - margin; // append the svg object to the div called 'my_dataviz'
 
-    var svg = tooltip.append("svg").attr("id", "pie-graph").attr("width", width).attr("height", height).append("g").attr("transform", "translate(" + width / 2 + "," + (height / 2 + 15) + ")"); // create real data
+    var svg = stateDisplay.append("svg").attr("id", "pie-graph").attr("width", width).attr("height", height).append("g").attr("transform", "translate(" + width / 2 + "," + (height / 2 + 15) + ")"); // create real data
 
     var //key1 = state.data[2][1], 
     key2 = state.data[4][1],
@@ -388,22 +418,21 @@ var pieGraph = {
       hoverInfo.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
       hoverInfo.select("text").text(d.value);
     });
-    tooltip.selectAll("#legend").remove();
-    tooltip.append('svg').attr("id", "legend").attr("dy", width); // .attr("height", height)
+    stateDisplay.append('svg').attr("id", "legend").attr("dy", width); // .attr("height", height)
     // Add one dot in the legend for each name.
 
     var legend = d3.select("#legend");
     legend.selectAll("mydots").data(keys) //data)
-    .enter().append("circle").attr("class", "circle").attr("cx", 20).attr("cy", function (d, i) {
-      return 220 + i * 25;
+    .enter().append("circle").attr("class", "circle").attr("cx", 40).attr("cy", function (d, i) {
+      return 265 + i * 25;
     }) // 100 is where the first dot appears. 25 is the distance between dots
     .attr("r", 7).style("fill", function (d) {
       return color(d);
     }); // Add one dot in the legend for each name.
 
     legend.selectAll("mylabels").data(keys) //data)
-    .enter().append("text").attr("x", 40).attr("y", function (d, i) {
-      return 220 + i * 25;
+    .enter().append("text").attr("x", 60).attr("y", function (d, i) {
+      return 265 + i * 25;
     }) // 100 is where the first dot appears. 25 is the distance between dots
     .style("fill", function (d) {
       return color(d);
@@ -431,29 +460,29 @@ module.exports = pieGraph;
 /***/ (function(module, exports) {
 
 var stateDisplay = {
-  buildStateDisplay: function buildStateDisplay(svg, state, callback, graph) {
+  buildStateDisplay: function buildStateDisplay(svg, state, callback, pG, bG) {
     var stateDisplay = svg.append("g").attr("class", "state-display").style("display", "none"); // TASK 2: build rect display for the tool tip  
 
     stateDisplay.append("rect").attr("width", 0).attr("height", 0).attr("rx", 5).attr("ry", 5).attr("fill", "lightgrey").style("opacity", 1); // TASK 2: configure the text for the stateDisplay
 
     stateDisplay.append("text").attr("x", 10).attr("dy", "1.2em").style("text-align", "center").attr("font-size", "12px").attr("font-weight", "bold");
-    stateDisplay = this.createSelect(stateDisplay, state, callback, graph);
+    stateDisplay = this.createSelect(stateDisplay, state, callback, pG, bG);
     return stateDisplay;
   },
   stateDisplayEntrance: function stateDisplayEntrance(stateDisplay) {
-    stateDisplay.select("rect").attr("width", 290).attr("height", 0);
+    stateDisplay.select("rect").attr("width", 330).attr("height", 0);
     stateDisplay.select("text").style("display", "none");
     stateDisplay.select("select").style("display", "none");
     var s = d3.transition().delay(0).duration(300);
-    stateDisplay.select("rect").transition(s).attr("height", 290);
+    stateDisplay.select("rect").transition(s).attr("height", 330);
     var s2 = d3.transition().delay(300).duration(0);
     stateDisplay.select("text").transition(s2).style("display", null);
     stateDisplay.select("select").transition(s2).style("display", null);
   },
-  createSelect: function createSelect(object, state, callback, graph) {
+  createSelect: function createSelect(object, state, callback, pG, bG) {
     var opts = [["Language Snapshot", "LAN7"], ["Language families in 39 major categories", "LAN39"], ["Choose a detailed language", "LAN"]]; // <foreignObject x="20" y="20" width="160" height="160">
 
-    object.append("foreignObject").attr("x", 20).attr("y", 20).attr("width", 250).attr("height", 250);
+    object.append("foreignObject").attr("x", 40).attr("y", 20).attr("width", 250).attr("height", 250);
     object.select("foreignObject").append("xhtml:div").attr("id", "lan");
     object.select("#lan").append("xhtml:select").attr("id", "lan-select");
     object.select("select").selectAll("option").data(opts).enter().append("xhtml:option").text(function (d) {
@@ -463,9 +492,12 @@ var stateDisplay = {
     }).attr("class", "year");
     object.select("select").on("change", function (d) {
       var choice = $("#lan-select").val();
+      object.selectAll("#pie-graph").remove();
+      object.selectAll("#legend").remove();
+      object.selectAll(".bar-graph").remove();
       callback(state, choice).then(function (data) {
         state.data = data;
-        if (choice == 'LAN7') graph.buildPieGraph(object, state);
+        if (choice == 'LAN7') pG.buildPieGraph(object, state);else if (choice == 'LAN39') bG.buildBarGraph(object, state);
       });
     });
     return object;
@@ -516,8 +548,8 @@ var usMap = {
   // },
   buildStates: function buildStates(svg, path, us, colors) {
     var accent = d3.scaleOrdinal().range(colors).domain(_toConsumableArray(Array(50).keys()));
-    return svg.append("g").attr("class", "states").selectAll("path").data(topojson.feature(us, us.objects.states).features).enter().append("path").attr("fill", function (d) {
-      return accent(d.id);
+    return svg.append("g").attr("class", "states").selectAll("path").data(topojson.feature(us, us.objects.states).features).enter().append("path").attr("class", "state-shapes").attr("fill", function (d) {
+      return "#00acc1"; // return accent(d.id);
     }).attr("d", path).attr("transform", "scale(" + $("#container").width() / 970 + ")");
   },
   buildBorders: function buildBorders(svg, path, us) {
@@ -5016,4 +5048,4 @@ module.exports = function(module) {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=application-6a75284eabf165884a43.js.map
+//# sourceMappingURL=application-d17d0cdc88eba077de01.js.map

@@ -1,5 +1,5 @@
 const stateDisplay = {
-	buildStateDisplay: function(svg, state, callback, graph){
+	buildStateDisplay: function(svg, state, callback, pG, bG){
 	  let stateDisplay = svg.append("g")
 	    .attr("class", "state-display")
 	    .style("display", "none");
@@ -21,14 +21,14 @@ const stateDisplay = {
 	    .attr("font-size", "12px")
 	    .attr("font-weight", "bold")
 
-	  stateDisplay = this.createSelect(stateDisplay, state, callback, graph);
+	  stateDisplay = this.createSelect(stateDisplay, state, callback, pG, bG);
 
 	  return stateDisplay;
 	},
 
 	stateDisplayEntrance: function(stateDisplay) {
 	  stateDisplay.select("rect")
-	    .attr("width", 290)
+	    .attr("width", 330)
 	    .attr("height", 0)
 
 	  stateDisplay.select("text")
@@ -43,7 +43,7 @@ const stateDisplay = {
 
 	  stateDisplay.select("rect")
 	    .transition(s)
-	    .attr("height", 290)
+	    .attr("height", 330)
 
 	  let s2 = d3.transition()
 	    .delay(300)
@@ -58,7 +58,7 @@ const stateDisplay = {
 	    .style("display", null)
 	},
 
-	createSelect: function(object, state, callback, graph) {
+	createSelect: function(object, state, callback, pG, bG) {
     let opts = [
       ["Language Snapshot", "LAN7"],
       ["Language families in 39 major categories", "LAN39"],
@@ -67,7 +67,7 @@ const stateDisplay = {
 
 	  // <foreignObject x="20" y="20" width="160" height="160">
 	  object.append("foreignObject")
-	    .attr("x", 20)
+	    .attr("x", 40)
 	    .attr("y", 20)
 	    .attr("width", 250)
 	    .attr("height", 250)
@@ -97,12 +97,21 @@ const stateDisplay = {
 	    .on("change", function(d) {
 	    	let choice = $("#lan-select").val();
 
+        object.selectAll("#pie-graph").remove();
+        object.selectAll("#legend").remove();
+        object.selectAll(".bar-graph").remove();
+
 	      callback(state, choice)
 	        .then(data=>{
 	          state.data = data;
 
+
+
+
 	          if(choice == 'LAN7')
-	          	graph.buildPieGraph(object, state)
+	          	pG.buildPieGraph(object, state)
+	          else if(choice == 'LAN39')
+	          	bG.buildBarGraph(object, state)
 	        });
 	    });
 

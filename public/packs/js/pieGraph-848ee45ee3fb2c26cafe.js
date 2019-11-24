@@ -94,16 +94,15 @@
 /***/ (function(module, exports) {
 
 var pieGraph = {
-  buildPieGraph: function buildPieGraph(tooltip, state) {
-    tooltip.selectAll("#pie-graph").remove(); // set the dimensions and margins of the graph
-
-    var width = 290,
-        height = 220,
+  buildPieGraph: function buildPieGraph(stateDisplay, state) {
+    // set the dimensions and margins of the graph
+    var width = 330,
+        height = 270,
         margin = 40; // The radius of the pieplot is half the width or half the height (smallest one). I subtract a bit of margin.
 
     var radius = Math.min(width, height) / 2 - margin; // append the svg object to the div called 'my_dataviz'
 
-    var svg = tooltip.append("svg").attr("id", "pie-graph").attr("width", width).attr("height", height).append("g").attr("transform", "translate(" + width / 2 + "," + (height / 2 + 15) + ")"); // create real data
+    var svg = stateDisplay.append("svg").attr("id", "pie-graph").attr("width", width).attr("height", height).append("g").attr("transform", "translate(" + width / 2 + "," + (height / 2 + 15) + ")"); // create real data
 
     var //key1 = state.data[2][1], 
     key2 = state.data[4][1],
@@ -138,22 +137,21 @@ var pieGraph = {
       hoverInfo.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
       hoverInfo.select("text").text(d.value);
     });
-    tooltip.selectAll("#legend").remove();
-    tooltip.append('svg').attr("id", "legend").attr("dy", width); // .attr("height", height)
+    stateDisplay.append('svg').attr("id", "legend").attr("dy", width); // .attr("height", height)
     // Add one dot in the legend for each name.
 
     var legend = d3.select("#legend");
     legend.selectAll("mydots").data(keys) //data)
-    .enter().append("circle").attr("class", "circle").attr("cx", 20).attr("cy", function (d, i) {
-      return 220 + i * 25;
+    .enter().append("circle").attr("class", "circle").attr("cx", 40).attr("cy", function (d, i) {
+      return 265 + i * 25;
     }) // 100 is where the first dot appears. 25 is the distance between dots
     .attr("r", 7).style("fill", function (d) {
       return color(d);
     }); // Add one dot in the legend for each name.
 
     legend.selectAll("mylabels").data(keys) //data)
-    .enter().append("text").attr("x", 40).attr("y", function (d, i) {
-      return 220 + i * 25;
+    .enter().append("text").attr("x", 60).attr("y", function (d, i) {
+      return 265 + i * 25;
     }) // 100 is where the first dot appears. 25 is the distance between dots
     .style("fill", function (d) {
       return color(d);
@@ -174,4 +172,4 @@ module.exports = pieGraph;
 /***/ })
 
 /******/ });
-//# sourceMappingURL=pieGraph-6926fdee14844295be22.js.map
+//# sourceMappingURL=pieGraph-848ee45ee3fb2c26cafe.js.map
