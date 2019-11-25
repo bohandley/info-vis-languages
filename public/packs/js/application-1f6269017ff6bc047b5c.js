@@ -163,14 +163,14 @@ __webpack_require__(/*! packs/censusData */ "./app/javascript/packs/censusData.j
 
 var barGraph = {
   buildBarGraph: function buildBarGraph(stateDisplay, state) {
-    var rects = stateDisplay.selectAll('rect').data(state.data.slice(1)).enter().append("rect").attr("class", "bar-graph").attr("transform", "translate(0, 20)").attr("x", 10).attr("y", function (d, i) {
+    var rects = stateDisplay.selectAll('this').data(state.data.slice(1)).enter().append("rect").attr("class", "bar-graph").attr("transform", "translate(0, 40)").attr("x", 10).attr("y", function (d, i) {
       return 10 + i * (10 + 10); // return padding + i * (barHeight + padding);
     }).attr("height", 15).style("fill", "orange");
     var s = d3.transition().delay(1000).duration(1000);
     rects.transition(s).attr("width", function (d, i) {
       return d[0] * .001;
     });
-    var texts = stateDisplay.selectAll('text').data(state.data.slice(1)).enter().append("text").attr("class", "bar-graph").attr("transform", "translate(0, 20)").attr('x', 10).attr('y', function (d, i) {
+    var texts = stateDisplay.selectAll('thing').data(state.data.slice(1)).enter().append("text").attr("class", "bar-graph").attr("transform", "translate(0, 40)").attr('x', 10).attr('y', function (d, i) {
       return (i + 1) * (10 + 10);
     }).attr('font-size', 12).text(function (d) {
       return d[1];
@@ -231,10 +231,15 @@ $(document).ready(function () {
       var xPosition = d3.mouse(this)[0] * $("#container").width() / 970 - 5;
       var yPosition = d3.mouse(this)[1] * $("#container").width() / 970 - 5;
       if (xPosition > $("#container").width() - 300) xPosition -= 300;
-      if (yPosition > $("#container").height() - 300) yPosition -= 300;
+      if (yPosition > $("#container").height() - 330) yPosition -= 330;
       stateDisplay.style("display", null);
       stateDisplay.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
-      stateDisplay.select("text").text(d.properties.name);
+      stateDisplay.select(".state-name").text(d.properties.name);
+      stateDisplay.select(".exit").text("X").on("click", function () {
+        d3.selectAll(".state-display").style("display", "none");
+        d3.selectAll(".state-shapes").attr("fill", "#00acc1");
+      });
+      ;
       var choice = $("#lan-select").val();
       getDataOnSelect(state, choice).then(function (data) {
         console.log(data);
@@ -465,7 +470,9 @@ var stateDisplay = {
 
     stateDisplay.append("rect").attr("width", 0).attr("height", 0).attr("rx", 5).attr("ry", 5).attr("fill", "lightgrey").style("opacity", 1); // TASK 2: configure the text for the stateDisplay
 
-    stateDisplay.append("text").attr("x", 10).attr("dy", "1.2em").style("text-align", "center").attr("font-size", "12px").attr("font-weight", "bold");
+    stateDisplay.append("text").attr("class", "state-name").attr("x", 10).attr("dy", "1.2em").style("text-align", "center").attr("font-size", "12px").attr("font-weight", "bold"); // // TASK 2: configure the text for the stateDisplay
+
+    stateDisplay.append("text").attr("class", "exit").attr("x", 300).attr("dy", "1.2em").style("text-align", "center").attr("font-size", "12px").attr("font-weight", "bold");
     stateDisplay = this.createSelect(stateDisplay, state, callback, pG, bG);
     return stateDisplay;
   },
@@ -474,7 +481,7 @@ var stateDisplay = {
     stateDisplay.select("text").style("display", "none");
     stateDisplay.select("select").style("display", "none");
     var s = d3.transition().delay(0).duration(300);
-    stateDisplay.select("rect").transition(s).attr("height", 330);
+    stateDisplay.select("rect").transition(s).attr("height", 350);
     var s2 = d3.transition().delay(300).duration(0);
     stateDisplay.select("text").transition(s2).style("display", null);
     stateDisplay.select("select").transition(s2).style("display", null);
@@ -497,6 +504,9 @@ var stateDisplay = {
       object.selectAll(".bar-graph").remove();
       callback(state, choice).then(function (data) {
         state.data = data;
+        object.selectAll("#pie-graph").remove();
+        object.selectAll("#legend").remove();
+        object.selectAll(".bar-graph").remove();
         if (choice == 'LAN7') pG.buildPieGraph(object, state);else if (choice == 'LAN39') bG.buildBarGraph(object, state);
       });
     });
@@ -2606,7 +2616,7 @@ Released under the MIT license
 
 exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(true);
 // Module
-exports.push([module.i, ".states {\n  /*fill: grey;*/\n}\n.states :hover {\n  fill: steelblue;\n}\n.state-borders {\n  fill: none;\n  stroke: #fff;\n  stroke-width: 0.5px;\n  stroke-linejoin: round;\n  stroke-linecap: round;\n  pointer-events: none;\n}\n#container {\n\tmargin:2%;\n\tpadding:20px;\n\tborder:2px solid #d0d0d0;\n\tborder-radius: 5px;\n}\n.svg-container {\n  display: inline-block;\n  position: relative;\n  width: 100%;\n  padding-bottom: 100%; /* aspect ratio */\n  vertical-align: top;\n  overflow: hidden;\n}\n.svg-content-responsive {\n  display: inline-block;\n  position: absolute;\n  top: 10px;\n  left: 0;\n}\n.hover-info {\n\tz-index: 1;\n}", "",{"version":3,"sources":["application.css"],"names":[],"mappings":"AAAA;EACE,cAAc;AAChB;AACA;EACE,eAAe;AACjB;AAEA;EACE,UAAU;EACV,YAAY;EACZ,mBAAmB;EACnB,sBAAsB;EACtB,qBAAqB;EACrB,oBAAoB;AACtB;AAEA;CACC,SAAS;CACT,YAAY;CACZ,wBAAwB;CACxB,kBAAkB;AACnB;AAEA;EACE,qBAAqB;EACrB,kBAAkB;EAClB,WAAW;EACX,oBAAoB,EAAE,iBAAiB;EACvC,mBAAmB;EACnB,gBAAgB;AAClB;AACA;EACE,qBAAqB;EACrB,kBAAkB;EAClB,SAAS;EACT,OAAO;AACT;AAEA;CACC,UAAU;AACX","file":"application.css","sourcesContent":[".states {\n  /*fill: grey;*/\n}\n.states :hover {\n  fill: steelblue;\n}\n\n.state-borders {\n  fill: none;\n  stroke: #fff;\n  stroke-width: 0.5px;\n  stroke-linejoin: round;\n  stroke-linecap: round;\n  pointer-events: none;\n}\n\n#container {\n\tmargin:2%;\n\tpadding:20px;\n\tborder:2px solid #d0d0d0;\n\tborder-radius: 5px;\n}\n\n.svg-container {\n  display: inline-block;\n  position: relative;\n  width: 100%;\n  padding-bottom: 100%; /* aspect ratio */\n  vertical-align: top;\n  overflow: hidden;\n}\n.svg-content-responsive {\n  display: inline-block;\n  position: absolute;\n  top: 10px;\n  left: 0;\n}\n\n.hover-info {\n\tz-index: 1;\n}"]}]);
+exports.push([module.i, ".states {\n  /*fill: grey;*/\n}\n.states :hover {\n  fill: steelblue;\n}\n.state-borders {\n  fill: none;\n  stroke: #fff;\n  stroke-width: 0.5px;\n  stroke-linejoin: round;\n  stroke-linecap: round;\n  pointer-events: none;\n}\n#container {\n\tmargin:2%;\n\tpadding:20px;\n\tborder:2px solid #d0d0d0;\n\tborder-radius: 5px;\n}\n.svg-container {\n  display: inline-block;\n  position: relative;\n  width: 100%;\n  padding-bottom: 100%; /* aspect ratio */\n  vertical-align: top;\n  overflow: hidden;\n}\n.svg-content-responsive {\n  display: inline-block;\n  position: absolute;\n  top: 10px;\n  left: 0;\n}\n.hover-info {\n\tz-index: 1;\n}\n.exit {\n\tcursor: default; \n}\n", "",{"version":3,"sources":["application.css"],"names":[],"mappings":"AAAA;EACE,cAAc;AAChB;AACA;EACE,eAAe;AACjB;AAEA;EACE,UAAU;EACV,YAAY;EACZ,mBAAmB;EACnB,sBAAsB;EACtB,qBAAqB;EACrB,oBAAoB;AACtB;AAEA;CACC,SAAS;CACT,YAAY;CACZ,wBAAwB;CACxB,kBAAkB;AACnB;AAEA;EACE,qBAAqB;EACrB,kBAAkB;EAClB,WAAW;EACX,oBAAoB,EAAE,iBAAiB;EACvC,mBAAmB;EACnB,gBAAgB;AAClB;AACA;EACE,qBAAqB;EACrB,kBAAkB;EAClB,SAAS;EACT,OAAO;AACT;AAEA;CACC,UAAU;AACX;AAEA;CACC,eAAe;AAChB","file":"application.css","sourcesContent":[".states {\n  /*fill: grey;*/\n}\n.states :hover {\n  fill: steelblue;\n}\n\n.state-borders {\n  fill: none;\n  stroke: #fff;\n  stroke-width: 0.5px;\n  stroke-linejoin: round;\n  stroke-linecap: round;\n  pointer-events: none;\n}\n\n#container {\n\tmargin:2%;\n\tpadding:20px;\n\tborder:2px solid #d0d0d0;\n\tborder-radius: 5px;\n}\n\n.svg-container {\n  display: inline-block;\n  position: relative;\n  width: 100%;\n  padding-bottom: 100%; /* aspect ratio */\n  vertical-align: top;\n  overflow: hidden;\n}\n.svg-content-responsive {\n  display: inline-block;\n  position: absolute;\n  top: 10px;\n  left: 0;\n}\n\n.hover-info {\n\tz-index: 1;\n}\n\n.exit {\n\tcursor: default; \n}\n"]}]);
 
 
 
@@ -5048,4 +5058,4 @@ module.exports = function(module) {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=application-d17d0cdc88eba077de01.js.map
+//# sourceMappingURL=application-1f6269017ff6bc047b5c.js.map

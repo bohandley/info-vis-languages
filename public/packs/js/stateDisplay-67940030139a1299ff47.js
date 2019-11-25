@@ -99,7 +99,9 @@ var stateDisplay = {
 
     stateDisplay.append("rect").attr("width", 0).attr("height", 0).attr("rx", 5).attr("ry", 5).attr("fill", "lightgrey").style("opacity", 1); // TASK 2: configure the text for the stateDisplay
 
-    stateDisplay.append("text").attr("x", 10).attr("dy", "1.2em").style("text-align", "center").attr("font-size", "12px").attr("font-weight", "bold");
+    stateDisplay.append("text").attr("class", "state-name").attr("x", 10).attr("dy", "1.2em").style("text-align", "center").attr("font-size", "12px").attr("font-weight", "bold"); // // TASK 2: configure the text for the stateDisplay
+
+    stateDisplay.append("text").attr("class", "exit").attr("x", 300).attr("dy", "1.2em").style("text-align", "center").attr("font-size", "12px").attr("font-weight", "bold");
     stateDisplay = this.createSelect(stateDisplay, state, callback, pG, bG);
     return stateDisplay;
   },
@@ -108,7 +110,7 @@ var stateDisplay = {
     stateDisplay.select("text").style("display", "none");
     stateDisplay.select("select").style("display", "none");
     var s = d3.transition().delay(0).duration(300);
-    stateDisplay.select("rect").transition(s).attr("height", 330);
+    stateDisplay.select("rect").transition(s).attr("height", 350);
     var s2 = d3.transition().delay(300).duration(0);
     stateDisplay.select("text").transition(s2).style("display", null);
     stateDisplay.select("select").transition(s2).style("display", null);
@@ -131,6 +133,9 @@ var stateDisplay = {
       object.selectAll(".bar-graph").remove();
       callback(state, choice).then(function (data) {
         state.data = data;
+        object.selectAll("#pie-graph").remove();
+        object.selectAll("#legend").remove();
+        object.selectAll(".bar-graph").remove();
         if (choice == 'LAN7') pG.buildPieGraph(object, state);else if (choice == 'LAN39') bG.buildBarGraph(object, state);
       });
     });
@@ -142,4 +147,4 @@ module.exports = stateDisplay;
 /***/ })
 
 /******/ });
-//# sourceMappingURL=stateDisplay-73bc9538504448189470.js.map
+//# sourceMappingURL=stateDisplay-67940030139a1299ff47.js.map

@@ -15,11 +15,22 @@ const stateDisplay = {
 
 	  // TASK 2: configure the text for the stateDisplay
 	  stateDisplay.append("text")
+	  	.attr("class", "state-name")
 	    .attr("x", 10)
 	    .attr("dy", "1.2em")
 	    .style("text-align", "center")
 	    .attr("font-size", "12px")
 	    .attr("font-weight", "bold")
+
+	  // // TASK 2: configure the text for the stateDisplay
+	  stateDisplay.append("text")
+	  	.attr("class", "exit")
+	    .attr("x", 300)
+	    .attr("dy", "1.2em")
+	    .style("text-align", "center")
+	    .attr("font-size", "12px")
+	    .attr("font-weight", "bold")
+	    
 
 	  stateDisplay = this.createSelect(stateDisplay, state, callback, pG, bG);
 
@@ -43,7 +54,7 @@ const stateDisplay = {
 
 	  stateDisplay.select("rect")
 	    .transition(s)
-	    .attr("height", 330)
+	    .attr("height", 350)
 
 	  let s2 = d3.transition()
 	    .delay(300)
@@ -105,8 +116,9 @@ const stateDisplay = {
 	        .then(data=>{
 	          state.data = data;
 
-
-
+	          object.selectAll("#pie-graph").remove();
+				    object.selectAll("#legend").remove();
+				    object.selectAll(".bar-graph").remove();
 
 	          if(choice == 'LAN7')
 	          	pG.buildPieGraph(object, state)
@@ -116,7 +128,7 @@ const stateDisplay = {
 	    });
 
 	  return object;
-	}
+	},
 };
 
 module.exports = stateDisplay;

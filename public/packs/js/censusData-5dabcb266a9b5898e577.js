@@ -95,14 +95,14 @@
 
 var barGraph = {
   buildBarGraph: function buildBarGraph(stateDisplay, state) {
-    var rects = stateDisplay.selectAll('rect').data(state.data.slice(1)).enter().append("rect").attr("class", "bar-graph").attr("transform", "translate(0, 20)").attr("x", 10).attr("y", function (d, i) {
+    var rects = stateDisplay.selectAll('this').data(state.data.slice(1)).enter().append("rect").attr("class", "bar-graph").attr("transform", "translate(0, 40)").attr("x", 10).attr("y", function (d, i) {
       return 10 + i * (10 + 10); // return padding + i * (barHeight + padding);
     }).attr("height", 15).style("fill", "orange");
     var s = d3.transition().delay(1000).duration(1000);
     rects.transition(s).attr("width", function (d, i) {
       return d[0] * .001;
     });
-    var texts = stateDisplay.selectAll('text').data(state.data.slice(1)).enter().append("text").attr("class", "bar-graph").attr("transform", "translate(0, 20)").attr('x', 10).attr('y', function (d, i) {
+    var texts = stateDisplay.selectAll('thing').data(state.data.slice(1)).enter().append("text").attr("class", "bar-graph").attr("transform", "translate(0, 40)").attr('x', 10).attr('y', function (d, i) {
       return (i + 1) * (10 + 10);
     }).attr('font-size', 12).text(function (d) {
       return d[1];
@@ -163,10 +163,15 @@ $(document).ready(function () {
       var xPosition = d3.mouse(this)[0] * $("#container").width() / 970 - 5;
       var yPosition = d3.mouse(this)[1] * $("#container").width() / 970 - 5;
       if (xPosition > $("#container").width() - 300) xPosition -= 300;
-      if (yPosition > $("#container").height() - 300) yPosition -= 300;
+      if (yPosition > $("#container").height() - 330) yPosition -= 330;
       stateDisplay.style("display", null);
       stateDisplay.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
-      stateDisplay.select("text").text(d.properties.name);
+      stateDisplay.select(".state-name").text(d.properties.name);
+      stateDisplay.select(".exit").text("X").on("click", function () {
+        d3.selectAll(".state-display").style("display", "none");
+        d3.selectAll(".state-shapes").attr("fill", "#00acc1");
+      });
+      ;
       var choice = $("#lan-select").val();
       getDataOnSelect(state, choice).then(function (data) {
         console.log(data);
@@ -397,7 +402,9 @@ var stateDisplay = {
 
     stateDisplay.append("rect").attr("width", 0).attr("height", 0).attr("rx", 5).attr("ry", 5).attr("fill", "lightgrey").style("opacity", 1); // TASK 2: configure the text for the stateDisplay
 
-    stateDisplay.append("text").attr("x", 10).attr("dy", "1.2em").style("text-align", "center").attr("font-size", "12px").attr("font-weight", "bold");
+    stateDisplay.append("text").attr("class", "state-name").attr("x", 10).attr("dy", "1.2em").style("text-align", "center").attr("font-size", "12px").attr("font-weight", "bold"); // // TASK 2: configure the text for the stateDisplay
+
+    stateDisplay.append("text").attr("class", "exit").attr("x", 300).attr("dy", "1.2em").style("text-align", "center").attr("font-size", "12px").attr("font-weight", "bold");
     stateDisplay = this.createSelect(stateDisplay, state, callback, pG, bG);
     return stateDisplay;
   },
@@ -406,7 +413,7 @@ var stateDisplay = {
     stateDisplay.select("text").style("display", "none");
     stateDisplay.select("select").style("display", "none");
     var s = d3.transition().delay(0).duration(300);
-    stateDisplay.select("rect").transition(s).attr("height", 330);
+    stateDisplay.select("rect").transition(s).attr("height", 350);
     var s2 = d3.transition().delay(300).duration(0);
     stateDisplay.select("text").transition(s2).style("display", null);
     stateDisplay.select("select").transition(s2).style("display", null);
@@ -429,6 +436,9 @@ var stateDisplay = {
       object.selectAll(".bar-graph").remove();
       callback(state, choice).then(function (data) {
         state.data = data;
+        object.selectAll("#pie-graph").remove();
+        object.selectAll("#legend").remove();
+        object.selectAll(".bar-graph").remove();
         if (choice == 'LAN7') pG.buildPieGraph(object, state);else if (choice == 'LAN39') bG.buildBarGraph(object, state);
       });
     });
@@ -1244,4 +1254,4 @@ try {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=censusData-faa1b7a897280a822fb0.js.map
+//# sourceMappingURL=censusData-5dabcb266a9b5898e577.js.map

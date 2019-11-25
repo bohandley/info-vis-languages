@@ -49,12 +49,21 @@ $(document).ready(function() {
           if(xPosition > $("#container").width() - 300)
             xPosition -= 300;
 
-          if(yPosition > $("#container").height() - 300)
-            yPosition -= 300;
+          if(yPosition > $("#container").height() - 330)
+            yPosition -= 330;
 
           stateDisplay.style("display", null)
           stateDisplay.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
-          stateDisplay.select("text").text(d.properties.name);
+          stateDisplay.select(".state-name").text(d.properties.name);
+          
+          stateDisplay.select(".exit").text("X")
+            .on("click", ()=>{
+              d3.selectAll(".state-display")
+                .style("display", "none");
+
+              d3.selectAll(".state-shapes")
+                .attr("fill", "#00acc1");
+            });;
 
           let choice = $("#lan-select").val();
 

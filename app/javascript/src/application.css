@@ -39,3 +39,7 @@
 .hover-info {
 	z-index: 1;
 }
+
+.exit {
+	cursor: default; 
+}

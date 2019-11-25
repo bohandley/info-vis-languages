@@ -1,11 +1,11 @@
 const barGraph = {
 	buildBarGraph: function(stateDisplay, state){
-		var rects = stateDisplay.selectAll('rect')
+		var rects = stateDisplay.selectAll('this')
 			.data(state.data.slice(1))
 	    	.enter()
 	        .append("rect")
 			.attr("class", "bar-graph")
-			.attr("transform", "translate(0, 20)")
+			.attr("transform", "translate(0, 40)")
 			.attr("x", 10)
 			.attr("y", function(d, i) {
 				return 10 + i * (10 + 10);
@@ -24,11 +24,11 @@ const barGraph = {
 				return d[0] * .001;
 			});	
 
-		var texts = stateDisplay.selectAll('text')
+		var texts = stateDisplay.selectAll('thing')
 			.data(state.data.slice(1))
 			.enter().append("text")
 			.attr("class", "bar-graph")
-			.attr("transform", "translate(0, 20)")
+			.attr("transform", "translate(0, 40)")
 			.attr('x', 10)
 			.attr('y', function(d, i) {
 				return (i + 1) * (10 + 10);
