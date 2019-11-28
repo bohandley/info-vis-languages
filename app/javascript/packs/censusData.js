@@ -7,7 +7,9 @@ const usMap = require('./usMap');
 // let state.id = '';
 let state = {
   id: "",
-  data: []
+  data: [],
+  filtered: [],
+  leftovers: [],
 };
 
 $(document).ready(function() {
@@ -73,11 +75,42 @@ $(document).ready(function() {
               state.data = data;
               
               if(choice == 'LAN7')
-                pG.buildPieGraph(stateDisplay, state)
+                pG.buildPieGraph(stateDisplay, state, choice)
               else if(choice == 'LAN39')
                 bG.buildBarGraph(stateDisplay, state)
+              else if(choice == 'LAN'){
+                // remove headers and null values
+                let preData = data.slice(1).filter(el=> el[0] != null)
+
+
+                preData.sort((a,b) => {
+                    if (+b[0] < +a[0])
+                      return -1;
+
+                    if (+b[0] > +a[0])
+                      return 1;
+
+                    return 0;
+                });
+
+                // group into top 5 languages plus other
+                let top5 = preData.slice(0,5);
+                let other = preData.slice(5);
+
+                let otherVal = other.reduce((acc, cur)=> +cur[0] + acc, 0)
+                let otherArray = [[otherVal].concat(['Other'])];
+
+                let top5PlusOther = top5.concat(otherArray);
+
+                state.filtered = top5PlusOther;
+                state.leftovers = other;
+
+                pG.buildPieGraph(stateDisplay, state, choice);
+
+              }
 
             });
+              
           
         });
     })

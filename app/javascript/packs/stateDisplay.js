@@ -10,7 +10,7 @@ const stateDisplay = {
 	    .attr("height", 0)
 	    .attr("rx", 5)
 	    .attr("ry", 5)
-	    .attr("fill", "lightgrey")
+	    .attr("fill", "#fffff7")
 	    .style("opacity", 1);
 
 	  // TASK 2: configure the text for the stateDisplay
@@ -121,9 +121,43 @@ const stateDisplay = {
 				    object.selectAll(".bar-graph").remove();
 
 	          if(choice == 'LAN7')
-	          	pG.buildPieGraph(object, state)
+	          	pG.buildPieGraph(object, state, choice)
 	          else if(choice == 'LAN39')
 	          	bG.buildBarGraph(object, state)
+	          else if(choice == 'LAN'){
+	          	// remove headers and null values
+	          	let preData = data.slice(1).filter(el=> el[0] != null)
+
+
+              preData.sort((a,b) => {
+                  if (+b[0] < +a[0])
+                    return -1;
+
+                  if (+b[0] > +a[0])
+                    return 1;
+
+                  return 0;
+              });
+
+            	// group into top 5 languages plus other
+	            let top5 = preData.slice(0,5);
+	            let other = preData.slice(5);
+
+	            let otherVal = other.reduce((acc, cur)=> +cur[0] + acc, 0)
+	            let otherArray = [[otherVal].concat(['Other'])];
+
+	            let top5PlusOther = top5.concat(otherArray);
+
+	            state.filtered = top5PlusOther;
+
+	            state.leftovers = other;
+	            
+	            pG.buildPieGraph(object, state, choice)
+                // sort the data 
+                // create new data collection of top 5 with 'other'
+                // save original data to expand the other category
+
+            }
 	        });
 	    });
 

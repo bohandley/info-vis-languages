@@ -97,7 +97,7 @@ var stateDisplay = {
   buildStateDisplay: function buildStateDisplay(svg, state, callback, pG, bG) {
     var stateDisplay = svg.append("g").attr("class", "state-display").style("display", "none"); // TASK 2: build rect display for the tool tip  
 
-    stateDisplay.append("rect").attr("width", 0).attr("height", 0).attr("rx", 5).attr("ry", 5).attr("fill", "lightgrey").style("opacity", 1); // TASK 2: configure the text for the stateDisplay
+    stateDisplay.append("rect").attr("width", 0).attr("height", 0).attr("rx", 5).attr("ry", 5).attr("fill", "#fffff7").style("opacity", 1); // TASK 2: configure the text for the stateDisplay
 
     stateDisplay.append("text").attr("class", "state-name").attr("x", 10).attr("dy", "1.2em").style("text-align", "center").attr("font-size", "12px").attr("font-weight", "bold"); // // TASK 2: configure the text for the stateDisplay
 
@@ -136,7 +136,30 @@ var stateDisplay = {
         object.selectAll("#pie-graph").remove();
         object.selectAll("#legend").remove();
         object.selectAll(".bar-graph").remove();
-        if (choice == 'LAN7') pG.buildPieGraph(object, state);else if (choice == 'LAN39') bG.buildBarGraph(object, state);
+        if (choice == 'LAN7') pG.buildPieGraph(object, state, choice);else if (choice == 'LAN39') bG.buildBarGraph(object, state);else if (choice == 'LAN') {
+          // remove headers and null values
+          var preData = data.slice(1).filter(function (el) {
+            return el[0] != null;
+          });
+          preData.sort(function (a, b) {
+            if (+b[0] < +a[0]) return -1;
+            if (+b[0] > +a[0]) return 1;
+            return 0;
+          }); // group into top 5 languages plus other
+
+          var top5 = preData.slice(0, 5);
+          var other = preData.slice(5);
+          var otherVal = other.reduce(function (acc, cur) {
+            return +cur[0] + acc;
+          }, 0);
+          var otherArray = [[otherVal].concat(['Other'])];
+          var top5PlusOther = top5.concat(otherArray);
+          state.filtered = top5PlusOther;
+          state.leftovers = other;
+          pG.buildPieGraph(object, state, choice); // sort the data 
+          // create new data collection of top 5 with 'other'
+          // save original data to expand the other category
+        }
       });
     });
     return object;
@@ -147,4 +170,4 @@ module.exports = stateDisplay;
 /***/ })
 
 /******/ });
-//# sourceMappingURL=stateDisplay-67940030139a1299ff47.js.map
+//# sourceMappingURL=stateDisplay-4e4bd7460fb782fa8ee4.js.map

@@ -1,7 +1,9 @@
 const barGraph = {
 	buildBarGraph: function(stateDisplay, state){
+		var data = state.data.slice(1);
+		
 		var rects = stateDisplay.selectAll('this')
-			.data(state.data.slice(1))
+			.data(data)
 	    	.enter()
 	        .append("rect")
 			.attr("class", "bar-graph")
@@ -25,7 +27,7 @@ const barGraph = {
 			});	
 
 		var texts = stateDisplay.selectAll('thing')
-			.data(state.data.slice(1))
+			.data(data)
 			.enter().append("text")
 			.attr("class", "bar-graph")
 			.attr("transform", "translate(0, 40)")
