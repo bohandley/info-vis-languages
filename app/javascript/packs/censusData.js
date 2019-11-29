@@ -25,8 +25,6 @@ $(document).ready(function() {
       let svg = data["svg"],
           states = data["states"];
       
-
-
       let stateDisplay = sD.buildStateDisplay(svg, state, getDataOnSelect, pG, bG);
 
       // display the stateDisplay on clicking a state
@@ -38,7 +36,8 @@ $(document).ready(function() {
           $(this).attr("fill", "steelblue");  
 
           state.id = d.id;       
-          
+
+          stateDisplay.select("#revert").remove();
           stateDisplay.selectAll("#pie-graph").remove();
           stateDisplay.selectAll("#legend").remove();
           stateDisplay.selectAll(".bar-graph").remove();
@@ -82,16 +81,7 @@ $(document).ready(function() {
                 // remove headers and null values
                 let preData = data.slice(1).filter(el=> el[0] != null)
 
-
-                preData.sort((a,b) => {
-                    if (+b[0] < +a[0])
-                      return -1;
-
-                    if (+b[0] > +a[0])
-                      return 1;
-
-                    return 0;
-                });
+                preData.sort((a,b) => +b[0] - +a[0]);
 
                 // group into top 5 languages plus other
                 let top5 = preData.slice(0,5);

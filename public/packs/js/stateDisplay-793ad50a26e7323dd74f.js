@@ -101,7 +101,10 @@ var stateDisplay = {
 
     stateDisplay.append("text").attr("class", "state-name").attr("x", 10).attr("dy", "1.2em").style("text-align", "center").attr("font-size", "12px").attr("font-weight", "bold"); // // TASK 2: configure the text for the stateDisplay
 
-    stateDisplay.append("text").attr("class", "exit").attr("x", 300).attr("dy", "1.2em").style("text-align", "center").attr("font-size", "12px").attr("font-weight", "bold");
+    stateDisplay.append("foreignObject").attr("id", "close").attr("x", 300).attr("y", 5).attr("width", 25).attr("height", 20);
+    stateDisplay.select("#close").append("xhtml:button").attr("class", "exit") // stateDisplay.append("text")
+    // 	.attr("class", "exit")
+    .attr("x", 300).attr("dy", "1.2em").style("text-align", "center").attr("font-size", "12px").attr("font-weight", "bold");
     stateDisplay = this.createSelect(stateDisplay, state, callback, pG, bG);
     return stateDisplay;
   },
@@ -118,8 +121,8 @@ var stateDisplay = {
   createSelect: function createSelect(object, state, callback, pG, bG) {
     var opts = [["Language Snapshot", "LAN7"], ["Language families in 39 major categories", "LAN39"], ["Choose a detailed language", "LAN"]]; // <foreignObject x="20" y="20" width="160" height="160">
 
-    object.append("foreignObject").attr("x", 40).attr("y", 20).attr("width", 250).attr("height", 250);
-    object.select("foreignObject").append("xhtml:div").attr("id", "lan");
+    object.append("foreignObject").attr("id", "dropdown").attr("x", 40).attr("y", 20).attr("width", 250).attr("height", 250);
+    object.select("#dropdown").append("xhtml:div").attr("id", "lan");
     object.select("#lan").append("xhtml:select").attr("id", "lan-select");
     object.select("select").selectAll("option").data(opts).enter().append("xhtml:option").text(function (d) {
       return d[0];
@@ -128,6 +131,7 @@ var stateDisplay = {
     }).attr("class", "year");
     object.select("select").on("change", function (d) {
       var choice = $("#lan-select").val();
+      object.select("#revert").remove();
       object.selectAll("#pie-graph").remove();
       object.selectAll("#legend").remove();
       object.selectAll(".bar-graph").remove();
@@ -140,11 +144,6 @@ var stateDisplay = {
           // remove headers and null values
           var preData = data.slice(1).filter(function (el) {
             return el[0] != null;
-          });
-          preData.sort(function (a, b) {
-            if (+b[0] < +a[0]) return -1;
-            if (+b[0] > +a[0]) return 1;
-            return 0;
           }); // group into top 5 languages plus other
 
           var top5 = preData.slice(0, 5);
@@ -156,9 +155,7 @@ var stateDisplay = {
           var top5PlusOther = top5.concat(otherArray);
           state.filtered = top5PlusOther;
           state.leftovers = other;
-          pG.buildPieGraph(object, state, choice); // sort the data 
-          // create new data collection of top 5 with 'other'
-          // save original data to expand the other category
+          pG.buildPieGraph(object, state, choice);
         }
       });
     });
@@ -170,4 +167,4 @@ module.exports = stateDisplay;
 /***/ })
 
 /******/ });
-//# sourceMappingURL=stateDisplay-4e4bd7460fb782fa8ee4.js.map
+//# sourceMappingURL=stateDisplay-793ad50a26e7323dd74f.js.map

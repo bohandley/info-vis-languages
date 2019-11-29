@@ -23,8 +23,18 @@ const stateDisplay = {
 	    .attr("font-weight", "bold")
 
 	  // // TASK 2: configure the text for the stateDisplay
-	  stateDisplay.append("text")
-	  	.attr("class", "exit")
+	  stateDisplay.append("foreignObject")
+	  	.attr("id", "close")
+	    .attr("x", 300)
+	    .attr("y", 5)
+	    .attr("width", 25)
+	    .attr("height", 20)
+
+	  stateDisplay.select("#close")
+	    .append("xhtml:button")
+	    .attr("class","exit")
+	  // stateDisplay.append("text")
+	  // 	.attr("class", "exit")
 	    .attr("x", 300)
 	    .attr("dy", "1.2em")
 	    .style("text-align", "center")
@@ -78,12 +88,13 @@ const stateDisplay = {
 
 	  // <foreignObject x="20" y="20" width="160" height="160">
 	  object.append("foreignObject")
+	  	.attr("id", "dropdown")
 	    .attr("x", 40)
 	    .attr("y", 20)
 	    .attr("width", 250)
 	    .attr("height", 250)
 
-	  object.select("foreignObject")
+	  object.select("#dropdown")
 	    .append("xhtml:div")
 	    .attr("id","lan")
 
@@ -108,12 +119,14 @@ const stateDisplay = {
 	    .on("change", function(d) {
 	    	let choice = $("#lan-select").val();
 
+	    	object.select("#revert").remove();
         object.selectAll("#pie-graph").remove();
         object.selectAll("#legend").remove();
         object.selectAll(".bar-graph").remove();
 
 	      callback(state, choice)
 	        .then(data=>{
+	        	// REFACTOR THIS
 	          state.data = data;
 
 	          object.selectAll("#pie-graph").remove();
@@ -128,17 +141,6 @@ const stateDisplay = {
 	          	// remove headers and null values
 	          	let preData = data.slice(1).filter(el=> el[0] != null)
 
-
-              preData.sort((a,b) => {
-                  if (+b[0] < +a[0])
-                    return -1;
-
-                  if (+b[0] > +a[0])
-                    return 1;
-
-                  return 0;
-              });
-
             	// group into top 5 languages plus other
 	            let top5 = preData.slice(0,5);
 	            let other = preData.slice(5);
@@ -152,11 +154,7 @@ const stateDisplay = {
 
 	            state.leftovers = other;
 	            
-	            pG.buildPieGraph(object, state, choice)
-                // sort the data 
-                // create new data collection of top 5 with 'other'
-                // save original data to expand the other category
-
+	            pG.buildPieGraph(object, state, choice);
             }
 	        });
 	    });
