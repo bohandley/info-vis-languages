@@ -1,19 +1,19 @@
 {
-  "application.js": "/packs/js/application-80e04a193953a908e896.js",
-  "application.js.map": "/packs/js/application-80e04a193953a908e896.js.map",
+  "application.js": "/packs/js/application-ad93ad7562d485336aec.js",
+  "application.js.map": "/packs/js/application-ad93ad7562d485336aec.js.map",
   "barGraph.js": "/packs/js/barGraph-b1adb1aa3a70126c1d24.js",
   "barGraph.js.map": "/packs/js/barGraph-b1adb1aa3a70126c1d24.js.map",
-  "censusData.js": "/packs/js/censusData-acc6adf594ae2f438311.js",
-  "censusData.js.map": "/packs/js/censusData-acc6adf594ae2f438311.js.map",
+  "censusData.js": "/packs/js/censusData-e6dd71926921f4561434.js",
+  "censusData.js.map": "/packs/js/censusData-e6dd71926921f4561434.js.map",
   "colors.js": "/packs/js/colors-03427b5c148b38710063.js",
   "colors.js.map": "/packs/js/colors-03427b5c148b38710063.js.map",
   "entrypoints": {
     "application": {
       "js": [
-        "/packs/js/application-80e04a193953a908e896.js"
+        "/packs/js/application-ad93ad7562d485336aec.js"
       ],
       "js.map": [
-        "/packs/js/application-80e04a193953a908e896.js.map"
+        "/packs/js/application-ad93ad7562d485336aec.js.map"
       ]
     },
     "barGraph": {
@@ -26,10 +26,10 @@
     },
     "censusData": {
       "js": [
-        "/packs/js/censusData-acc6adf594ae2f438311.js"
+        "/packs/js/censusData-e6dd71926921f4561434.js"
       ],
       "js.map": [
-        "/packs/js/censusData-acc6adf594ae2f438311.js.map"
+        "/packs/js/censusData-e6dd71926921f4561434.js.map"
       ]
     },
     "colors": {
@@ -42,18 +42,18 @@
     },
     "pieGraph": {
       "js": [
-        "/packs/js/pieGraph-821825566f1e15db5860.js"
+        "/packs/js/pieGraph-10879df5819eb2cb1042.js"
       ],
       "js.map": [
-        "/packs/js/pieGraph-821825566f1e15db5860.js.map"
+        "/packs/js/pieGraph-10879df5819eb2cb1042.js.map"
       ]
     },
     "stateDisplay": {
       "js": [
-        "/packs/js/stateDisplay-793ad50a26e7323dd74f.js"
+        "/packs/js/stateDisplay-974f291e2f83a36a27c4.js"
       ],
       "js.map": [
-        "/packs/js/stateDisplay-793ad50a26e7323dd74f.js.map"
+        "/packs/js/stateDisplay-974f291e2f83a36a27c4.js.map"
       ]
     },
     "usMap": {
@@ -65,10 +65,10 @@
       ]
     }
   },
-  "pieGraph.js": "/packs/js/pieGraph-821825566f1e15db5860.js",
-  "pieGraph.js.map": "/packs/js/pieGraph-821825566f1e15db5860.js.map",
-  "stateDisplay.js": "/packs/js/stateDisplay-793ad50a26e7323dd74f.js",
-  "stateDisplay.js.map": "/packs/js/stateDisplay-793ad50a26e7323dd74f.js.map",
+  "pieGraph.js": "/packs/js/pieGraph-10879df5819eb2cb1042.js",
+  "pieGraph.js.map": "/packs/js/pieGraph-10879df5819eb2cb1042.js.map",
+  "stateDisplay.js": "/packs/js/stateDisplay-974f291e2f83a36a27c4.js",
+  "stateDisplay.js.map": "/packs/js/stateDisplay-974f291e2f83a36a27c4.js.map",
   "usMap.js": "/packs/js/usMap-b8fc583153939a020538.js",
   "usMap.js.map": "/packs/js/usMap-b8fc583153939a020538.js.map"
 }

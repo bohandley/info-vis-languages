@@ -118,6 +118,7 @@ const stateDisplay = {
 	  object.select("select")
 	    .on("change", function(d) {
 	    	let choice = $("#lan-select").val();
+	    	state.choice = choice;
 
 	    	object.select("#revert").remove();
         object.selectAll("#pie-graph").remove();
@@ -128,6 +129,7 @@ const stateDisplay = {
 	        .then(data=>{
 	        	// REFACTOR THIS
 	          state.data = data;
+
 
 	          object.selectAll("#pie-graph").remove();
 				    object.selectAll("#legend").remove();
@@ -141,6 +143,7 @@ const stateDisplay = {
 	          	// remove headers and null values
 	          	let preData = data.slice(1).filter(el=> el[0] != null)
 
+	          	preData.sort((a,b) => +b[0] - +a[0]);
             	// group into top 5 languages plus other
 	            let top5 = preData.slice(0,5);
 	            let other = preData.slice(5);

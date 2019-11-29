@@ -121,7 +121,7 @@ var pieGraph = {
 
     stateDisplay.append('svg').attr("id", "legend").attr("dy", width); // create the first pie graph with transition
 
-    pieGraph.update(data, svg, radius, state, stateDisplay); // the transition function
+    pieGraph.update(data, svg, radius, state, stateDisplay);
   },
   createPieData: function createPieData(customArray, data) {
     var keys = customArray.map(function (el) {
@@ -139,6 +139,7 @@ var pieGraph = {
     });
     return [newData, keys];
   },
+  // DEFINE THIS
   mergeWithFirstEqualZero: function mergeWithFirstEqualZero(first, second) {
     var secondSet = d3.set();
     second.forEach(function (d) {
@@ -157,7 +158,9 @@ var pieGraph = {
     });
     return sortedMerge;
   },
+  // REFACTOR THIS
   update: function update(data, svg, radius, state, stateDisplay) {
+    var choice = state.choice;
     var pie = d3.pie().sort(null).value(function (d) {
       return d.value;
     });
@@ -187,7 +190,7 @@ var pieGraph = {
         customArray = state.leftovers.map(function (el, i) {
           return i;
         });
-        pieGraph.update(pieGraph.createPieData(customArray, state.leftovers), svg, radius);
+        pieGraph.update(pieGraph.createPieData(customArray, state.leftovers), svg, radius, state, stateDisplay);
         stateDisplay.append("foreignObject").attr("id", "revert").attr("x", 20).attr("y", 100).attr("width", 60).attr("height", 20);
         stateDisplay.select("#revert").append("xhtml:button").attr("class", "rev").text("Revert").attr("x", 300).attr("dy", "1.2em").style("text-align", "center").attr("font-size", "12px").attr("font-weight", "bold").on("click", function (d) {
           stateDisplay.select("#revert").remove();
@@ -202,7 +205,8 @@ var pieGraph = {
         var xPosition = d3.mouse(this)[0] - 5;
         var yPosition = d3.mouse(this)[1] - 5;
         hoverInfo.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
-        hoverInfo.select("text").text(d.value);
+        hoverInfo.select("#hover-state-pop").text(d.value);
+        hoverInfo.select("#hover-state-name").text(d.data.label);
       }
     });
     slice = svg.select(".slices").selectAll("path").data(pie(is), function (d) {
@@ -247,11 +251,29 @@ var pieGraph = {
     }).attr("text-anchor", "left").attr("font-size", "12px").style("alignment-baseline", "middle");
     svg.selectAll(".hover-info").remove(); // create hover info
 
-    var hoverInfo = svg.append("g").attr("class", "hover-info").style("display", "none"); // TASK 2: build rect display for the tool tip  
+    var hoverInfo = svg.append("g").attr("class", "hover-info").style("display", "none");
+    var width, height, x, dy;
 
-    hoverInfo.append("rect").attr("width", 60).attr("height", 20).attr("rx", 5).attr("ry", 5).attr("fill", "white").style("opacity", 1); // TASK 2: configure the text for the hoverInfo
+    if (choice == "LAN7") {
+      width = 60;
+      height = 20;
+      x = 30;
+      dy = "1.2em";
+    } else if (choice == "LAN") {
+      width = 80;
+      height = 33;
+      x = 40;
+      dy = "2.2em";
+    } // TASK 2: build rect display for the tool tip  
 
-    hoverInfo.append("text").attr("x", 30).attr("dy", "1.2em").style("text-anchor", "middle").attr("font-size", "12px").attr("font-weight", "bold");
+
+    hoverInfo.append("rect").attr("id", "hover-info-rect").attr("width", width).attr("height", height).attr("rx", 5).attr("ry", 5).attr("fill", "white").style("opacity", 1); // TASK 2: configure the text for the hoverInfo
+
+    if (choice == "LAN") {
+      hoverInfo.append("text").attr("id", "hover-state-name").attr("x", x).attr("dy", "1.2em").style("text-anchor", "middle").attr("font-size", "12px").attr("font-weight", "bold");
+    }
+
+    hoverInfo.append("text").attr("id", "hover-state-pop").attr("x", x).attr("dy", dy).style("text-anchor", "middle").attr("font-size", "12px").attr("font-weight", "bold");
   }
 };
 module.exports = pieGraph;
@@ -259,4 +281,4 @@ module.exports = pieGraph;
 /***/ })
 
 /******/ });
-//# sourceMappingURL=pieGraph-821825566f1e15db5860.js.map
+//# sourceMappingURL=pieGraph-10879df5819eb2cb1042.js.map

@@ -131,11 +131,13 @@ var stateDisplay = {
     }).attr("class", "year");
     object.select("select").on("change", function (d) {
       var choice = $("#lan-select").val();
+      state.choice = choice;
       object.select("#revert").remove();
       object.selectAll("#pie-graph").remove();
       object.selectAll("#legend").remove();
       object.selectAll(".bar-graph").remove();
       callback(state, choice).then(function (data) {
+        // REFACTOR THIS
         state.data = data;
         object.selectAll("#pie-graph").remove();
         object.selectAll("#legend").remove();
@@ -144,6 +146,9 @@ var stateDisplay = {
           // remove headers and null values
           var preData = data.slice(1).filter(function (el) {
             return el[0] != null;
+          });
+          preData.sort(function (a, b) {
+            return +b[0] - +a[0];
           }); // group into top 5 languages plus other
 
           var top5 = preData.slice(0, 5);
@@ -167,4 +172,4 @@ module.exports = stateDisplay;
 /***/ })
 
 /******/ });
-//# sourceMappingURL=stateDisplay-793ad50a26e7323dd74f.js.map
+//# sourceMappingURL=stateDisplay-974f291e2f83a36a27c4.js.map

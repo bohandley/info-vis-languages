@@ -2,7 +2,7 @@ const pieGraph = {
 	buildPieGraph: function(stateDisplay, state, choice) {
 		// create data for either LAN& or LAN choice
 	  let customArray, data;
-
+	  
 	  // create data for building the pie graph
 	  // need array to map over data, 
 	  if(choice == 'LAN7'){
@@ -73,6 +73,8 @@ const pieGraph = {
 	},
 	// REFACTOR THIS
 	update: function(data, svg, radius, state, stateDisplay) {
+			let choice = state.choice;
+
 			var pie = d3.pie()
 			  .sort(null)
 			  .value(function(d) {
@@ -120,7 +122,7 @@ const pieGraph = {
 	      	hoverInfo.style("display", "none");
 	      	if(d.data.label=="Other"){
 	      		customArray = state.leftovers.map((el,i)=> i);
-	      		pieGraph.update(pieGraph.createPieData(customArray, state.leftovers), svg, radius)
+	      		pieGraph.update(pieGraph.createPieData(customArray, state.leftovers), svg, radius, state, stateDisplay)
 
 	      		stateDisplay.append("foreignObject")
 					  	.attr("id", "revert")
@@ -150,7 +152,8 @@ const pieGraph = {
 		        var xPosition = d3.mouse(this)[0] - 5;
 		        var yPosition = d3.mouse(this)[1] - 5;
 		        hoverInfo.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
-		        hoverInfo.select("text").text(d.value);
+		        hoverInfo.select("#hover-state-pop").text(d.value);
+		        hoverInfo.select("#hover-state-name").text(d.data.label);
 	      	}
 	    });
 
@@ -234,19 +237,43 @@ const pieGraph = {
 		    .attr("class", "hover-info")
 		    .style("display", "none");
 		      
+		  let width, height, x, dy;
+		  if(choice=="LAN7"){
+		  	width = 60;
+		  	height = 20;
+		  	x = 30;
+		  	dy = "1.2em"; 
+		  } else if(choice=="LAN"){
+		  	width = 80;
+		  	height = 33;
+		  	x = 40;
+		  	dy = "2.2em";
+		  }
 		  // TASK 2: build rect display for the tool tip  
 		  hoverInfo.append("rect")
-		    .attr("width", 60)
-		    .attr("height", 20)
+		  	.attr("id", "hover-info-rect")
+		    .attr("width", width)
+		    .attr("height", height)
 		    .attr("rx", 5)
 		    .attr("ry", 5)
 		    .attr("fill", "white")
 		    .style("opacity", 1);
 
 		  // TASK 2: configure the text for the hoverInfo
+		  if(choice=="LAN"){
 		  hoverInfo.append("text")
-		    .attr("x", 30)
+		  	.attr("id", "hover-state-name")
+		    .attr("x", x)
 		    .attr("dy", "1.2em")
+		    .style("text-anchor", "middle")
+		    .attr("font-size", "12px")
+		    .attr("font-weight", "bold");
+		  }
+
+		  hoverInfo.append("text")
+		  	.attr("id", "hover-state-pop")
+		    .attr("x", x)
+		    .attr("dy", dy)
 		    .style("text-anchor", "middle")
 		    .attr("font-size", "12px")
 		    .attr("font-weight", "bold");

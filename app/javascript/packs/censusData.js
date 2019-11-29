@@ -67,7 +67,8 @@ $(document).ready(function() {
             });;
 
           let choice = $("#lan-select").val();
-
+          state.choice = choice;
+          
           getDataOnSelect(state, choice)
             .then(data=>{
               console.log(data);
