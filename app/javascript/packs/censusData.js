@@ -49,10 +49,10 @@ $(document).ready(function() {
           let xPosition = d3.mouse(this)[0]*$("#container").width()/970 - 5;
           let yPosition = d3.mouse(this)[1]*$("#container").width()/970 - 5;
 
-          if(xPosition > $("#container").width() - 300)
+          if(xPosition > $("#container").width() - 330)
             xPosition -= 300;
 
-          if(yPosition > $("#container").height() - 330)
+          if(yPosition > $("#container").height() - 350)
             yPosition -= 330;
 
           stateDisplay.style("display", null)

@@ -218,8 +218,8 @@ $(document).ready(function () {
       sD.stateDisplayEntrance(stateDisplay);
       var xPosition = d3.mouse(this)[0] * $("#container").width() / 970 - 5;
       var yPosition = d3.mouse(this)[1] * $("#container").width() / 970 - 5;
-      if (xPosition > $("#container").width() - 300) xPosition -= 300;
-      if (yPosition > $("#container").height() - 330) yPosition -= 330;
+      if (xPosition > $("#container").width() - 330) xPosition -= 300;
+      if (yPosition > $("#container").height() - 350) yPosition -= 330;
       stateDisplay.style("display", null);
       stateDisplay.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
       stateDisplay.select(".state-name").text(d.properties.name);
@@ -1514,4 +1514,4 @@ try {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=censusData-6a547f301e8060071679.js.map
+//# sourceMappingURL=censusData-f03e9a2b6001d40e375a.js.map
