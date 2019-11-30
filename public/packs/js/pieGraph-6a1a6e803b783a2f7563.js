@@ -190,6 +190,7 @@ var pieGraph = {
       this._current = d;
     }).on("click", function (d) {
       hoverInfo.style("display", "none");
+      d3.selectAll(".slice").style("stroke", "none").style("stroke-width", 0);
 
       if (d.data.label == "Other") {
         customArray = state.leftovers.map(function (el, i) {
@@ -213,6 +214,7 @@ var pieGraph = {
         hoverInfo.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
         hoverInfo.select("#hover-state-pop").text(d.value);
         hoverInfo.select("#hover-state-name").text(d.data.label);
+        d3.select("#" + d.data.label.replace(/[,\s]+/g, "")).style("stroke", "black").style("stroke-width", 2);
       }
     });
     slice = svg.select(".slices").selectAll("path").data(pie(is), function (d) {
@@ -287,6 +289,7 @@ var pieGraph = {
         return d[1];
       }).attr("class", "year");
       oDisplay.select("select").on("change", function (d) {
+        hoverInfo.style("display", "none");
         var val = this.value.replace(/[,\s]+/g, "");
         d3.selectAll(".slice").style("stroke", "none").style("stroke-width", 0);
         d3.select("#" + val).style("stroke", "black").style("stroke-width", 2);
@@ -325,4 +328,4 @@ module.exports = pieGraph;
 /***/ })
 
 /******/ });
-//# sourceMappingURL=pieGraph-475d710ed42ef4735fbb.js.map
+//# sourceMappingURL=pieGraph-6a1a6e803b783a2f7563.js.map

@@ -126,6 +126,10 @@ const pieGraph = {
 	        })
 	      .on("click", function(d) {
 	      	hoverInfo.style("display", "none");
+	      	d3.selectAll(".slice")
+		    		.style("stroke", "none")
+		    		.style("stroke-width", 0);
+
 	      	if(d.data.label=="Other"){
 	      		customArray = state.leftovers.map((el,i)=> i);
 	      		pieGraph.update(pieGraph.createPieData(customArray, state.leftovers), svg, radius, state, stateDisplay)
@@ -161,6 +165,10 @@ const pieGraph = {
 		        hoverInfo.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
 		        hoverInfo.select("#hover-state-pop").text(d.value);
 		        hoverInfo.select("#hover-state-name").text(d.data.label);
+		        
+		        d3.select("#"+d.data.label.replace(/[,\s]+/g, ""))
+			    		.style("stroke", "black")
+			    		.style("stroke-width", 2)
 	      	}
 	    });
 
@@ -298,8 +306,9 @@ const pieGraph = {
 
 			  oDisplay.select("select")
 			    .on("change", function(d) {
+			    	hoverInfo.style("display", "none");
+			    	
 			    	let val = this.value.replace(/[,\s]+/g, "");
-
 
 			    	d3.selectAll(".slice")
 			    		.style("stroke", "none")
