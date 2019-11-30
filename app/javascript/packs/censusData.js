@@ -52,7 +52,7 @@ $(document).ready(function() {
           if(xPosition > $("#container").width() - 330)
             xPosition -= 330;
 
-          if(yPosition > $("#container").height() - 280)
+          if(yPosition > $("#container").height() - 400)
             yPosition -= 380;
 
           stateDisplay.style("display", null)
