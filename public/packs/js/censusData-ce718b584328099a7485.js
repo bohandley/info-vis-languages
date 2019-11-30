@@ -218,8 +218,8 @@ $(document).ready(function () {
       sD.stateDisplayEntrance(stateDisplay);
       var xPosition = d3.mouse(this)[0] * $("#container").width() / 970 - 5;
       var yPosition = d3.mouse(this)[1] * $("#container").width() / 970 - 5;
-      if (xPosition > $("#container").width() - 330) xPosition -= 300;
-      if (yPosition > $("#container").height() - 350) yPosition -= 330;
+      if (xPosition > $("#container").width() - 330) xPosition -= 330;
+      if (yPosition > $("#container").height() - 350) yPosition -= 350;
       stateDisplay.style("display", null);
       stateDisplay.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
       stateDisplay.select(".state-name").text(d.properties.name);
@@ -575,7 +575,6 @@ var pieGraph = {
       var opts = data.map(function (el) {
         return [el.label + " (" + (+el.value).toLocaleString() + ")", el.label];
       });
-      debugger;
       oDisplay.append("xhtml:div").attr("id", "other-container");
       oDisplay.select("#other-container").append("xhtml:select").attr("id", "other-select");
       oDisplay.select("#other-select").selectAll("option").data(opts).enter().append("xhtml:option").text(function (d) {
@@ -1514,4 +1513,4 @@ try {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=censusData-f03e9a2b6001d40e375a.js.map
+//# sourceMappingURL=censusData-ce718b584328099a7485.js.map

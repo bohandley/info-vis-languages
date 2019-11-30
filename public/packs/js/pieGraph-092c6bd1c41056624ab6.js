@@ -281,7 +281,6 @@ var pieGraph = {
       var opts = data.map(function (el) {
         return [el.label + " (" + (+el.value).toLocaleString() + ")", el.label];
       });
-      debugger;
       oDisplay.append("xhtml:div").attr("id", "other-container");
       oDisplay.select("#other-container").append("xhtml:select").attr("id", "other-select");
       oDisplay.select("#other-select").selectAll("option").data(opts).enter().append("xhtml:option").text(function (d) {
@@ -329,4 +328,4 @@ module.exports = pieGraph;
 /***/ })
 
 /******/ });
-//# sourceMappingURL=pieGraph-a4fd1792a9753b182ff0.js.map
+//# sourceMappingURL=pieGraph-092c6bd1c41056624ab6.js.map
