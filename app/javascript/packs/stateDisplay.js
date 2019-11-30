@@ -10,7 +10,7 @@ const stateDisplay = {
 	    .attr("height", 0)
 	    .attr("rx", 5)
 	    .attr("ry", 5)
-	    .attr("fill", "#fffff7")
+	    .attr("fill", "#fdfff7")
 	    .style("opacity", 1);
 
 	  // TASK 2: configure the text for the stateDisplay

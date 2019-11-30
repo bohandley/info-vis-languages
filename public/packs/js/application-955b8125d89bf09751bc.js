@@ -181,7 +181,7 @@ var barGraph = {
       var xPosition = d3.mouse(this)[0] - 5;
       var yPosition = d3.mouse(this)[1] - 5 + 40;
       hoverInfo.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
-      hoverInfo.select("#hover-state-pop").text(d[0]);
+      hoverInfo.select("#hover-state-pop").text((+d[0]).toLocaleString());
     });
     var s = d3.transition().delay(1000).duration(1000);
     rects.transition(s).attr("width", function (d) {
@@ -196,7 +196,7 @@ var barGraph = {
       var xPosition = d3.mouse(this)[0] - 5;
       var yPosition = d3.mouse(this)[1] - 5 + 40;
       hoverInfo.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
-      hoverInfo.select("#hover-state-pop").text(d[0]);
+      hoverInfo.select("#hover-state-pop").text((+d[0]).toLocaleString());
     });
     stateDisplay.selectAll(".hover-info").remove(); // create hover info
 
@@ -273,8 +273,8 @@ $(document).ready(function () {
     var stateDisplay = sD.buildStateDisplay(svg, state, getDataOnSelect, pG, bG); // display the stateDisplay on clicking a state
 
     states.on("click", function (d) {
-      d3.selectAll(".state-shapes").attr("fill", "#00acc1");
-      $(this).attr("fill", "steelblue");
+      d3.selectAll(".state-shapes").attr("fill", "#f2f2f2");
+      $(this).attr("fill", "#ccebc5");
       state.id = d.id;
       stateDisplay.selectAll(".hover-info").remove();
       stateDisplay.select("#revert").remove();
@@ -293,7 +293,7 @@ $(document).ready(function () {
       stateDisplay.select(".state-name").text(d.properties.name);
       stateDisplay.select(".exit").text("X").on("click", function () {
         d3.selectAll(".state-display").style("display", "none");
-        d3.selectAll(".state-shapes").attr("fill", "#00acc1");
+        d3.selectAll(".state-shapes").attr("fill", "#f2f2f2");
       });
       ;
       var choice = $("#lan-select").val();
@@ -574,7 +574,7 @@ var pieGraph = {
         var xPosition = d3.mouse(this)[0] - 5;
         var yPosition = d3.mouse(this)[1] - 5;
         hoverInfo.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
-        hoverInfo.select("#hover-state-pop").text(d.value);
+        hoverInfo.select("#hover-state-pop").text(d.value.toLocaleString());
         hoverInfo.select("#hover-state-name").text(d.data.label);
         d3.select("#" + d.data.label.replace(/[,\s]+/g, "")).style("stroke", "black").style("stroke-width", 2);
       }
@@ -641,8 +641,9 @@ var pieGraph = {
       stateDisplay.append("foreignObject").attr("id", "other-display-select").attr("x", 75).attr("y", 270).attr("width", 250).attr("height", 250);
       var oDisplay = d3.select("#other-display-select");
       var opts = data.map(function (el) {
-        return [el.label + " (" + el.value + ")", el.label];
+        return [el.label + " (" + (+el.value).toLocaleString() + ")", el.label];
       });
+      debugger;
       oDisplay.append("xhtml:div").attr("id", "other-container");
       oDisplay.select("#other-container").append("xhtml:select").attr("id", "other-select");
       oDisplay.select("#other-select").selectAll("option").data(opts).enter().append("xhtml:option").text(function (d) {
@@ -700,7 +701,7 @@ var stateDisplay = {
   buildStateDisplay: function buildStateDisplay(svg, state, callback, pG, bG) {
     var stateDisplay = svg.append("g").attr("class", "state-display").style("display", "none"); // TASK 2: build rect display for the tool tip  
 
-    stateDisplay.append("rect").attr("width", 0).attr("height", 0).attr("rx", 5).attr("ry", 5).attr("fill", "#fffff7").style("opacity", 1); // TASK 2: configure the text for the stateDisplay
+    stateDisplay.append("rect").attr("width", 0).attr("height", 0).attr("rx", 5).attr("ry", 5).attr("fill", "#fdfff7").style("opacity", 1); // TASK 2: configure the text for the stateDisplay
 
     stateDisplay.append("text").attr("class", "state-name").attr("x", 10).attr("dy", "1.2em").style("text-align", "center").attr("font-size", "12px").attr("font-weight", "bold"); // // TASK 2: configure the text for the stateDisplay
 
@@ -818,7 +819,7 @@ var usMap = {
   buildStates: function buildStates(svg, path, us, colors) {
     var accent = d3.scaleOrdinal().range(colors).domain(_toConsumableArray(Array(50).keys()));
     return svg.append("g").attr("class", "states").selectAll("path").data(topojson.feature(us, us.objects.states).features).enter().append("path").attr("class", "state-shapes").attr("fill", function (d) {
-      return "#bcffad"; // return accent(d.id);
+      return "#f2f2f2";
     }).attr("d", path).attr("transform", "scale(" + $("#container").width() / 970 + ")");
   },
   buildBorders: function buildBorders(svg, path, us) {
@@ -2875,7 +2876,7 @@ Released under the MIT license
 
 exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(true);
 // Module
-exports.push([module.i, ".states {\n  /*fill: grey;*/\n}\n.states :hover {\n  fill: steelblue;\n}\n.state-borders {\n  fill: none;\n  stroke: #fff;\n  stroke-width: 0.5px;\n  stroke-linejoin: round;\n  stroke-linecap: round;\n  pointer-events: none;\n}\n#container {\n\tmargin:2%;\n\tpadding:20px;\n\tborder:2px solid #d0d0d0;\n\tborder-radius: 5px;\n}\n.svg-container {\n  display: inline-block;\n  position: relative;\n  width: 100%;\n  padding-bottom: 100%; /* aspect ratio */\n  vertical-align: top;\n  overflow: hidden;\n}\n.svg-content-responsive {\n  display: inline-block;\n  position: absolute;\n  top: 10px;\n  left: 0;\n}\n.hover-info {\n\tz-index: 1;\n}\n.exit, .bar-graph {\n\tcursor: default; \n}\npolyline{\n    opacity: .3;\n    stroke: black;\n    stroke-width: 2px;\n    fill: none;\n}\n\n", "",{"version":3,"sources":["application.css"],"names":[],"mappings":"AAAA;EACE,cAAc;AAChB;AACA;EACE,eAAe;AACjB;AAEA;EACE,UAAU;EACV,YAAY;EACZ,mBAAmB;EACnB,sBAAsB;EACtB,qBAAqB;EACrB,oBAAoB;AACtB;AAEA;CACC,SAAS;CACT,YAAY;CACZ,wBAAwB;CACxB,kBAAkB;AACnB;AAEA;EACE,qBAAqB;EACrB,kBAAkB;EAClB,WAAW;EACX,oBAAoB,EAAE,iBAAiB;EACvC,mBAAmB;EACnB,gBAAgB;AAClB;AACA;EACE,qBAAqB;EACrB,kBAAkB;EAClB,SAAS;EACT,OAAO;AACT;AAEA;CACC,UAAU;AACX;AAEA;CACC,eAAe;AAChB;AAEA;IACI,WAAW;IACX,aAAa;IACb,iBAAiB;IACjB,UAAU;AACd","file":"application.css","sourcesContent":[".states {\n  /*fill: grey;*/\n}\n.states :hover {\n  fill: steelblue;\n}\n\n.state-borders {\n  fill: none;\n  stroke: #fff;\n  stroke-width: 0.5px;\n  stroke-linejoin: round;\n  stroke-linecap: round;\n  pointer-events: none;\n}\n\n#container {\n\tmargin:2%;\n\tpadding:20px;\n\tborder:2px solid #d0d0d0;\n\tborder-radius: 5px;\n}\n\n.svg-container {\n  display: inline-block;\n  position: relative;\n  width: 100%;\n  padding-bottom: 100%; /* aspect ratio */\n  vertical-align: top;\n  overflow: hidden;\n}\n.svg-content-responsive {\n  display: inline-block;\n  position: absolute;\n  top: 10px;\n  left: 0;\n}\n\n.hover-info {\n\tz-index: 1;\n}\n\n.exit, .bar-graph {\n\tcursor: default; \n}\n\npolyline{\n    opacity: .3;\n    stroke: black;\n    stroke-width: 2px;\n    fill: none;\n}\n\n"]}]);
+exports.push([module.i, ".states {\n  /*fill: grey;*/\n}\n.states :hover {\n  fill: #ccebc5;\n}\n.state-borders {\n  fill: none;\n  stroke: #fff;\n  stroke-width: 0.5px;\n  stroke-linejoin: round;\n  stroke-linecap: round;\n  pointer-events: none;\n}\n#container {\n\tmargin:2%;\n\tpadding:20px;\n\tborder:2px solid #d0d0d0;\n\tborder-radius: 5px;\n}\n.svg-container {\n  display: inline-block;\n  position: relative;\n  width: 100%;\n  padding-bottom: 100%; /* aspect ratio */\n  vertical-align: top;\n  overflow: hidden;\n}\n.svg-content-responsive {\n  display: inline-block;\n  position: absolute;\n  top: 10px;\n  left: 0;\n}\n.hover-info {\n\tz-index: 1;\n}\n.exit, .bar-graph {\n\tcursor: default; \n}\npolyline{\n    opacity: .3;\n    stroke: black;\n    stroke-width: 2px;\n    fill: none;\n}\n\n", "",{"version":3,"sources":["application.css"],"names":[],"mappings":"AAAA;EACE,cAAc;AAChB;AACA;EACE,aAAa;AACf;AAEA;EACE,UAAU;EACV,YAAY;EACZ,mBAAmB;EACnB,sBAAsB;EACtB,qBAAqB;EACrB,oBAAoB;AACtB;AAEA;CACC,SAAS;CACT,YAAY;CACZ,wBAAwB;CACxB,kBAAkB;AACnB;AAEA;EACE,qBAAqB;EACrB,kBAAkB;EAClB,WAAW;EACX,oBAAoB,EAAE,iBAAiB;EACvC,mBAAmB;EACnB,gBAAgB;AAClB;AACA;EACE,qBAAqB;EACrB,kBAAkB;EAClB,SAAS;EACT,OAAO;AACT;AAEA;CACC,UAAU;AACX;AAEA;CACC,eAAe;AAChB;AAEA;IACI,WAAW;IACX,aAAa;IACb,iBAAiB;IACjB,UAAU;AACd","file":"application.css","sourcesContent":[".states {\n  /*fill: grey;*/\n}\n.states :hover {\n  fill: #ccebc5;\n}\n\n.state-borders {\n  fill: none;\n  stroke: #fff;\n  stroke-width: 0.5px;\n  stroke-linejoin: round;\n  stroke-linecap: round;\n  pointer-events: none;\n}\n\n#container {\n\tmargin:2%;\n\tpadding:20px;\n\tborder:2px solid #d0d0d0;\n\tborder-radius: 5px;\n}\n\n.svg-container {\n  display: inline-block;\n  position: relative;\n  width: 100%;\n  padding-bottom: 100%; /* aspect ratio */\n  vertical-align: top;\n  overflow: hidden;\n}\n.svg-content-responsive {\n  display: inline-block;\n  position: absolute;\n  top: 10px;\n  left: 0;\n}\n\n.hover-info {\n\tz-index: 1;\n}\n\n.exit, .bar-graph {\n\tcursor: default; \n}\n\npolyline{\n    opacity: .3;\n    stroke: black;\n    stroke-width: 2px;\n    fill: none;\n}\n\n"]}]);
 
 
 
@@ -5317,4 +5318,4 @@ module.exports = function(module) {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=application-55b5afee8888aabb6294.js.map
+//# sourceMappingURL=application-955b8125d89bf09751bc.js.map

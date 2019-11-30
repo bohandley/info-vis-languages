@@ -163,7 +163,7 @@ const pieGraph = {
 		        var xPosition = d3.mouse(this)[0] - 5;
 		        var yPosition = d3.mouse(this)[1] - 5;
 		        hoverInfo.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
-		        hoverInfo.select("#hover-state-pop").text(d.value);
+		        hoverInfo.select("#hover-state-pop").text(d.value.toLocaleString());
 		        hoverInfo.select("#hover-state-name").text(d.data.label);
 
 		        d3.select("#"+d.data.label.replace(/[,\s]+/g, ""))
@@ -281,8 +281,8 @@ const pieGraph = {
 
 				let oDisplay = d3.select("#other-display-select")
 
-				let opts = data.map(el=> [el.label+" (" + el.value + ")", el.label]);
-				
+				let opts = data.map(el=> [el.label+" (" + (+el.value).toLocaleString() + ")", el.label]);
+				debugger
 				oDisplay
 			    .append("xhtml:div")
 			    .attr("id","other-container")

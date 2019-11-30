@@ -97,7 +97,7 @@ var stateDisplay = {
   buildStateDisplay: function buildStateDisplay(svg, state, callback, pG, bG) {
     var stateDisplay = svg.append("g").attr("class", "state-display").style("display", "none"); // TASK 2: build rect display for the tool tip  
 
-    stateDisplay.append("rect").attr("width", 0).attr("height", 0).attr("rx", 5).attr("ry", 5).attr("fill", "#fffff7").style("opacity", 1); // TASK 2: configure the text for the stateDisplay
+    stateDisplay.append("rect").attr("width", 0).attr("height", 0).attr("rx", 5).attr("ry", 5).attr("fill", "#fdfff7").style("opacity", 1); // TASK 2: configure the text for the stateDisplay
 
     stateDisplay.append("text").attr("class", "state-name").attr("x", 10).attr("dy", "1.2em").style("text-align", "center").attr("font-size", "12px").attr("font-weight", "bold"); // // TASK 2: configure the text for the stateDisplay
 
@@ -174,4 +174,4 @@ module.exports = stateDisplay;
 /***/ })
 
 /******/ });
-//# sourceMappingURL=stateDisplay-4e3e9e385a2b509b177c.js.map
+//# sourceMappingURL=stateDisplay-b34f08326128204e04c0.js.map

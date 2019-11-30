@@ -113,7 +113,7 @@ var barGraph = {
       var xPosition = d3.mouse(this)[0] - 5;
       var yPosition = d3.mouse(this)[1] - 5 + 40;
       hoverInfo.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
-      hoverInfo.select("#hover-state-pop").text(d[0]);
+      hoverInfo.select("#hover-state-pop").text((+d[0]).toLocaleString());
     });
     var s = d3.transition().delay(1000).duration(1000);
     rects.transition(s).attr("width", function (d) {
@@ -128,7 +128,7 @@ var barGraph = {
       var xPosition = d3.mouse(this)[0] - 5;
       var yPosition = d3.mouse(this)[1] - 5 + 40;
       hoverInfo.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
-      hoverInfo.select("#hover-state-pop").text(d[0]);
+      hoverInfo.select("#hover-state-pop").text((+d[0]).toLocaleString());
     });
     stateDisplay.selectAll(".hover-info").remove(); // create hover info
 
@@ -165,4 +165,4 @@ module.exports = barGraph;
 /***/ })
 
 /******/ });
-//# sourceMappingURL=barGraph-c266ef8d35dd02adaace.js.map
+//# sourceMappingURL=barGraph-cb83bc6f910f2324dd54.js.map

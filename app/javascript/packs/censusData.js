@@ -31,9 +31,9 @@ $(document).ready(function() {
       states
         .on("click", function(d) {
           d3.selectAll(".state-shapes")
-            .attr("fill", "#00acc1")
+            .attr("fill", "#f2f2f2")
 
-          $(this).attr("fill", "steelblue");  
+          $(this).attr("fill", "#ccebc5");  
 
           state.id = d.id;       
 
@@ -65,7 +65,7 @@ $(document).ready(function() {
                 .style("display", "none");
 
               d3.selectAll(".state-shapes")
-                .attr("fill", "#00acc1");
+                .attr("fill", "#f2f2f2");
             });;
 
           let choice = $("#lan-select").val();

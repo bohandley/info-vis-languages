@@ -32,7 +32,7 @@ const barGraph = {
         var xPosition = d3.mouse(this)[0] - 5;
         var yPosition = d3.mouse(this)[1] - 5 + 40;
         hoverInfo.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
-        hoverInfo.select("#hover-state-pop").text(d[0]);
+        hoverInfo.select("#hover-state-pop").text((+d[0]).toLocaleString());
         
 			});
 	
@@ -62,7 +62,7 @@ const barGraph = {
         var xPosition = d3.mouse(this)[0] - 5;
         var yPosition = d3.mouse(this)[1] - 5 + 40;
         hoverInfo.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
-        hoverInfo.select("#hover-state-pop").text(d[0]);
+        hoverInfo.select("#hover-state-pop").text((+d[0]).toLocaleString());
 			});
 
 		stateDisplay.selectAll(".hover-info").remove();

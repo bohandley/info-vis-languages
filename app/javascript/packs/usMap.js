@@ -38,10 +38,7 @@ const usMap = {
 	    .data(topojson.feature(us, us.objects.states).features)
 	    .enter().append("path")
 	    	.attr("class", "state-shapes")
-	      .attr("fill", function(d) { 
-	      	return "#00acc1";
-	        // return accent(d.id);
-	      })
+	      .attr("fill", (d)=> "#f2f2f2")
 	      .attr("d", path)
 	      .attr("transform", "scale(" + $("#container").width()/970 + ")");
 	},

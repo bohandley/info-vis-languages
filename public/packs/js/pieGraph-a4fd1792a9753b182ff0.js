@@ -212,7 +212,7 @@ var pieGraph = {
         var xPosition = d3.mouse(this)[0] - 5;
         var yPosition = d3.mouse(this)[1] - 5;
         hoverInfo.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
-        hoverInfo.select("#hover-state-pop").text(d.value);
+        hoverInfo.select("#hover-state-pop").text(d.value.toLocaleString());
         hoverInfo.select("#hover-state-name").text(d.data.label);
         d3.select("#" + d.data.label.replace(/[,\s]+/g, "")).style("stroke", "black").style("stroke-width", 2);
       }
@@ -279,8 +279,9 @@ var pieGraph = {
       stateDisplay.append("foreignObject").attr("id", "other-display-select").attr("x", 75).attr("y", 270).attr("width", 250).attr("height", 250);
       var oDisplay = d3.select("#other-display-select");
       var opts = data.map(function (el) {
-        return [el.label + " (" + el.value + ")", el.label];
+        return [el.label + " (" + (+el.value).toLocaleString() + ")", el.label];
       });
+      debugger;
       oDisplay.append("xhtml:div").attr("id", "other-container");
       oDisplay.select("#other-container").append("xhtml:select").attr("id", "other-select");
       oDisplay.select("#other-select").selectAll("option").data(opts).enter().append("xhtml:option").text(function (d) {
@@ -328,4 +329,4 @@ module.exports = pieGraph;
 /***/ })
 
 /******/ });
-//# sourceMappingURL=pieGraph-766cc91550ce17eb3d0b.js.map
+//# sourceMappingURL=pieGraph-a4fd1792a9753b182ff0.js.map

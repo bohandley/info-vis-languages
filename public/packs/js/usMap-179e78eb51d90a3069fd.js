@@ -128,7 +128,7 @@ var usMap = {
   buildStates: function buildStates(svg, path, us, colors) {
     var accent = d3.scaleOrdinal().range(colors).domain(_toConsumableArray(Array(50).keys()));
     return svg.append("g").attr("class", "states").selectAll("path").data(topojson.feature(us, us.objects.states).features).enter().append("path").attr("class", "state-shapes").attr("fill", function (d) {
-      return "#bcffad"; // return accent(d.id);
+      return "#f2f2f2";
     }).attr("d", path).attr("transform", "scale(" + $("#container").width() / 970 + ")");
   },
   buildBorders: function buildBorders(svg, path, us) {
@@ -142,4 +142,4 @@ module.exports = usMap;
 /***/ })
 
 /******/ });
-//# sourceMappingURL=usMap-789becd7669a0d50bc48.js.map
+//# sourceMappingURL=usMap-179e78eb51d90a3069fd.js.map
