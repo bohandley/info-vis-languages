@@ -52,8 +52,8 @@ $(document).ready(function() {
           if(xPosition > $("#container").width() - 330)
             xPosition -= 330;
 
-          if(yPosition > $("#container").height() - 400)
-            yPosition -= 380;
+          if(yPosition > $("#container").height() + 350)
+            yPosition -= 350;
 
           stateDisplay.style("display", null)
           stateDisplay.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
