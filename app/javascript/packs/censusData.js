@@ -38,6 +38,7 @@ $(document).ready(function() {
           state.id = d.id;       
 
           stateDisplay.select("#revert").remove();
+          stateDisplay.select("#other-display-select").remove();
           stateDisplay.selectAll("#pie-graph").remove();
           stateDisplay.selectAll("#legend").remove();
           stateDisplay.selectAll(".bar-graph").remove();
@@ -68,7 +69,7 @@ $(document).ready(function() {
 
           let choice = $("#lan-select").val();
           state.choice = choice;
-          
+
           getDataOnSelect(state, choice)
             .then(data=>{
               console.log(data);

@@ -133,6 +133,7 @@ var stateDisplay = {
       var choice = $("#lan-select").val();
       state.choice = choice;
       object.select("#revert").remove();
+      object.select("#other-display-select").remove();
       object.selectAll("#pie-graph").remove();
       object.selectAll("#legend").remove();
       object.selectAll(".bar-graph").remove();
@@ -172,4 +173,4 @@ module.exports = stateDisplay;
 /***/ })
 
 /******/ });
-//# sourceMappingURL=stateDisplay-974f291e2f83a36a27c4.js.map
+//# sourceMappingURL=stateDisplay-1ecf330fa4777b37fc83.js.map

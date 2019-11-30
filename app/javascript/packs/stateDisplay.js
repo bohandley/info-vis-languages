@@ -121,6 +121,7 @@ const stateDisplay = {
 	    	state.choice = choice;
 
 	    	object.select("#revert").remove();
+	    	object.select("#other-display-select").remove();
         object.selectAll("#pie-graph").remove();
         object.selectAll("#legend").remove();
         object.selectAll(".bar-graph").remove();

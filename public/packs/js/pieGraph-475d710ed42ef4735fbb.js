@@ -167,7 +167,10 @@ var pieGraph = {
     var arc = d3.arc().outerRadius(radius * 1.0).innerRadius(radius * 0.0);
     var outerArc = d3.arc().innerRadius(radius * 0.5).outerRadius(radius * 1);
     var keys = data[1];
-    data = data[0];
+    data = data[0]; // hard coded to check for 'other' display
+
+    var otherDisplay = false;
+    if (data.length > 7) otherDisplay = true;
     var color = d3.scaleOrdinal(d3.schemePastel1.concat(d3.schemePastel1)).domain(keys);
     var duration = 500;
     var oldData = svg.select(".slices").selectAll("path").data().map(function (d) {
@@ -179,7 +182,9 @@ var pieGraph = {
     var slice = svg.select(".slices").selectAll("path").data(pie(was), function (d) {
       return d.data.label;
     });
-    slice.enter().insert("path").attr("class", "slice").style("fill", function (d) {
+    slice.enter().insert("path").attr("class", "slice").attr("id", function (d) {
+      return d.data.label.replace(/[,\s]+/g, "");
+    }).style("fill", function (d) {
       return color(d.data.label);
     }).each(function (d) {
       this._current = d;
@@ -191,9 +196,10 @@ var pieGraph = {
           return i;
         });
         pieGraph.update(pieGraph.createPieData(customArray, state.leftovers), svg, radius, state, stateDisplay);
-        stateDisplay.append("foreignObject").attr("id", "revert").attr("x", 20).attr("y", 100).attr("width", 60).attr("height", 20);
+        stateDisplay.append("foreignObject").attr("id", "revert").attr("x", 40).attr("y", 270).attr("width", 60).attr("height", 20);
         stateDisplay.select("#revert").append("xhtml:button").attr("class", "rev").text("Revert").attr("x", 300).attr("dy", "1.2em").style("text-align", "center").attr("font-size", "12px").attr("font-weight", "bold").on("click", function (d) {
           stateDisplay.select("#revert").remove();
+          stateDisplay.select("#other-display-select").remove();
           customArray = state.filtered.map(function (el, i) {
             return i;
           });
@@ -225,30 +231,68 @@ var pieGraph = {
     slice = svg.select(".slices").selectAll("path").data(pie(data), function (d) {
       return d.data.label;
     });
-    slice.exit().transition().delay(duration).duration(0).remove();
+    slice.exit().transition().delay(duration).duration(0).remove(); // make the legend for LAN7 and the top 5 LAN
+
     var legend = d3.select("#legend");
     legend.selectAll("circle").remove();
-    var mydots = legend.selectAll("mydots").data(keys) //data)
-    .enter().append("circle").attr("class", "circle").attr("cx", function (d, i) {
-      if (i < 3) return 40;else return 200;
-    }).attr("cy", function (d, i) {
-      if (i < 3) return 265 + i * 25;else return 265 + (i - 3) * 25;
-    }) // 100 is where the first dot appears. 25 is the distance between dots
-    .attr("r", 7).style("fill", function (d) {
-      return color(d);
-    });
-    legend.selectAll("text").remove(); // Add one dot in the legend for each name.
 
-    var mylabels = legend.selectAll("mylabels").data(keys) //data)
-    .enter().append("text").attr("x", function (d, i) {
-      if (i < 3) return 60;else return 220;
-    }).attr("y", function (d, i) {
-      if (i < 3) return 265 + i * 25;else return 265 + (i - 3) * 25;
-    }) // 100 is where the first dot appears. 25 is the distance between dots
-    .style("fill", "grey") //function(d){ return color(d)})
-    .text(function (d) {
-      return d;
-    }).attr("text-anchor", "left").attr("font-size", "12px").style("alignment-baseline", "middle");
+    if (!otherDisplay) {
+      var mydots = legend.selectAll("mydots").data(keys) //data)
+      .enter().append("circle").attr("class", "circle").attr("value", function (d) {
+        d.replace(/[,\s]+/g, "");
+      }).attr("cx", function (d, i) {
+        if (i < 3) return 40;else return 200;
+      }).attr("cy", function (d, i) {
+        if (i < 3) return 265 + i * 25;else return 265 + (i - 3) * 25;
+      }) // 100 is where the first dot appears. 25 is the distance between dots
+      .attr("r", 7).style("fill", function (d) {
+        return color(d);
+      }).on("click", function (d) {
+        hoverInfo.style("display", "none");
+        var val = d.replace(/[,\s]+/g, "");
+        d3.selectAll(".slice").style("stroke", "none").style("stroke-width", 0);
+        d3.select("#" + val).style("stroke", "black").style("stroke-width", 2);
+      });
+    }
+
+    legend.selectAll("text").remove();
+
+    if (!otherDisplay) {
+      // Add one dot in the legend for each name.
+      var mylabels = legend.selectAll("mylabels").data(keys) //data)
+      .enter().append("text").attr("x", function (d, i) {
+        if (i < 3) return 60;else return 220;
+      }).attr("y", function (d, i) {
+        if (i < 3) return 265 + i * 25;else return 265 + (i - 3) * 25;
+      }) // 100 is where the first dot appears. 25 is the distance between dots
+      .style("fill", "grey") //function(d){ return color(d)})
+      .text(function (d) {
+        return d;
+      }).attr("text-anchor", "left").attr("font-size", "12px").style("alignment-baseline", "middle");
+    } // make a select for the other display that
+    // lists all the languages
+
+
+    if (otherDisplay) {
+      stateDisplay.append("foreignObject").attr("id", "other-display-select").attr("x", 150).attr("y", 270).attr("width", 250).attr("height", 250);
+      var oDisplay = d3.select("#other-display-select");
+      var opts = data.map(function (el) {
+        return [el.label + " (" + el.value + ")", el.label];
+      });
+      oDisplay.append("xhtml:div").attr("id", "other-container");
+      oDisplay.select("#other-container").append("xhtml:select").attr("id", "other-select");
+      oDisplay.select("#other-select").selectAll("option").data(opts).enter().append("xhtml:option").text(function (d) {
+        return d[0];
+      }).attr("value", function (d) {
+        return d[1];
+      }).attr("class", "year");
+      oDisplay.select("select").on("change", function (d) {
+        var val = this.value.replace(/[,\s]+/g, "");
+        d3.selectAll(".slice").style("stroke", "none").style("stroke-width", 0);
+        d3.select("#" + val).style("stroke", "black").style("stroke-width", 2);
+      });
+    }
+
     svg.selectAll(".hover-info").remove(); // create hover info
 
     var hoverInfo = svg.append("g").attr("class", "hover-info").style("display", "none");
@@ -260,9 +304,9 @@ var pieGraph = {
       x = 30;
       dy = "1.2em";
     } else if (choice == "LAN") {
-      width = 80;
+      width = 90;
       height = 33;
-      x = 40;
+      x = 45;
       dy = "2.2em";
     } // TASK 2: build rect display for the tool tip  
 
@@ -281,4 +325,4 @@ module.exports = pieGraph;
 /***/ })
 
 /******/ });
-//# sourceMappingURL=pieGraph-10879df5819eb2cb1042.js.map
+//# sourceMappingURL=pieGraph-475d710ed42ef4735fbb.js.map
