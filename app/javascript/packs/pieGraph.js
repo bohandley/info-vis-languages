@@ -282,7 +282,7 @@ const pieGraph = {
 				let oDisplay = d3.select("#other-display-select")
 
 				let opts = data.map(el=> [el.label+" (" + (+el.value).toLocaleString() + ")", el.label]);
-				debugger
+				
 				oDisplay
 			    .append("xhtml:div")
 			    .attr("id","other-container")

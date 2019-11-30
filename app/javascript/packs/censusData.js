@@ -50,10 +50,10 @@ $(document).ready(function() {
           let yPosition = d3.mouse(this)[1]*$("#container").width()/970 - 5;
 
           if(xPosition > $("#container").width() - 330)
-            xPosition -= 300;
+            xPosition -= 330;
 
           if(yPosition > $("#container").height() - 350)
-            yPosition -= 330;
+            yPosition -= 350;
 
           stateDisplay.style("display", null)
           stateDisplay.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
