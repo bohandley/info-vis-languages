@@ -197,7 +197,7 @@ var pieGraph = {
           return i;
         });
         pieGraph.update(pieGraph.createPieData(customArray, state.leftovers), svg, radius, state, stateDisplay);
-        stateDisplay.append("foreignObject").attr("id", "revert").attr("x", 40).attr("y", 270).attr("width", 60).attr("height", 20);
+        stateDisplay.append("foreignObject").attr("id", "revert").attr("x", 75).attr("y", 300).attr("width", 60).attr("height", 20);
         stateDisplay.select("#revert").append("xhtml:button").attr("class", "rev").text("Revert").attr("x", 300).attr("dy", "1.2em").style("text-align", "center").attr("font-size", "12px").attr("font-weight", "bold").on("click", function (d) {
           stateDisplay.select("#revert").remove();
           stateDisplay.select("#other-display-select").remove();
@@ -276,7 +276,7 @@ var pieGraph = {
 
 
     if (otherDisplay) {
-      stateDisplay.append("foreignObject").attr("id", "other-display-select").attr("x", 150).attr("y", 270).attr("width", 250).attr("height", 250);
+      stateDisplay.append("foreignObject").attr("id", "other-display-select").attr("x", 75).attr("y", 270).attr("width", 250).attr("height", 250);
       var oDisplay = d3.select("#other-display-select");
       var opts = data.map(function (el) {
         return [el.label + " (" + el.value + ")", el.label];
@@ -328,4 +328,4 @@ module.exports = pieGraph;
 /***/ })
 
 /******/ });
-//# sourceMappingURL=pieGraph-6a1a6e803b783a2f7563.js.map
+//# sourceMappingURL=pieGraph-766cc91550ce17eb3d0b.js.map

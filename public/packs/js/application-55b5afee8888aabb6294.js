@@ -163,19 +163,69 @@ __webpack_require__(/*! packs/censusData */ "./app/javascript/packs/censusData.j
 
 var barGraph = {
   buildBarGraph: function buildBarGraph(stateDisplay, state) {
-    var data = state.data.slice(1);
+    var data = state.data.slice(1).sort(function (a, b) {
+      return +b[0] - +a[0];
+    });
+    var greatestPop = data[0][0];
+    var widthScale = d3.scaleLog().domain([1, greatestPop]).range([0, 300]);
+    var color = d3.scaleOrdinal(d3.schemePastel1.concat(d3.schemePastel1)).domain(data.map(function (el) {
+      return el[1];
+    })); // .attr("height", function(d) {return myscale(d);})
+
     var rects = stateDisplay.selectAll('this').data(data).enter().append("rect").attr("class", "bar-graph").attr("transform", "translate(0, 40)").attr("x", 10).attr("y", function (d, i) {
       return 10 + i * (10 + 10); // return padding + i * (barHeight + padding);
-    }).attr("height", 15).style("fill", "orange");
+    }).attr("height", 15).style("fill", function (d, i) {
+      return color(i);
+    }).on("click", function (d) {
+      hoverInfo.style("display", null);
+      var xPosition = d3.mouse(this)[0] - 5;
+      var yPosition = d3.mouse(this)[1] - 5 + 40;
+      hoverInfo.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
+      hoverInfo.select("#hover-state-pop").text(d[0]);
+    });
     var s = d3.transition().delay(1000).duration(1000);
-    rects.transition(s).attr("width", function (d, i) {
-      return d[0] * .001;
+    rects.transition(s).attr("width", function (d) {
+      return widthScale(d[0]);
     });
     var texts = stateDisplay.selectAll('thing').data(data).enter().append("text").attr("class", "bar-graph").attr("transform", "translate(0, 40)").attr('x', 10).attr('y', function (d, i) {
       return (i + 1) * (10 + 10);
     }).attr('font-size', 12).text(function (d) {
       return d[1];
+    }).on("click", function (d) {
+      hoverInfo.style("display", null);
+      var xPosition = d3.mouse(this)[0] - 5;
+      var yPosition = d3.mouse(this)[1] - 5 + 40;
+      hoverInfo.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
+      hoverInfo.select("#hover-state-pop").text(d[0]);
     });
+    stateDisplay.selectAll(".hover-info").remove(); // create hover info
+
+    var hoverInfo = stateDisplay.append("g").attr("class", "hover-info").style("display", "none");
+    var width, height, x, dy; // if(choice=="LAN7"){
+
+    width = 60;
+    height = 20;
+    x = 30;
+    dy = "1.2em"; // } else if(choice=="LAN"){
+    // 	width = 90;
+    // 	height = 33;
+    // 	x = 45;
+    // 	dy = "2.2em";
+    // }
+    // TASK 2: build rect display for the tool tip  
+
+    hoverInfo.append("rect").attr("id", "hover-info-rect").attr("width", width).attr("height", height).attr("rx", 5).attr("ry", 5).attr("fill", "white").style("opacity", 1); // // TASK 2: configure the text for the hoverInfo
+    // if(choice=="LAN"){
+    //  hoverInfo.append("text")
+    //  	.attr("id", "hover-state-name")
+    //    .attr("x", x)
+    //    .attr("dy", "1.2em")
+    //    .style("text-anchor", "middle")
+    //    .attr("font-size", "12px")
+    //    .attr("font-weight", "bold");
+    // }
+
+    hoverInfo.append("text").attr("id", "hover-state-pop").attr("x", x).attr("dy", dy).style("text-anchor", "middle").attr("font-size", "12px").attr("font-weight", "bold");
   }
 };
 module.exports = barGraph;
@@ -226,6 +276,7 @@ $(document).ready(function () {
       d3.selectAll(".state-shapes").attr("fill", "#00acc1");
       $(this).attr("fill", "steelblue");
       state.id = d.id;
+      stateDisplay.selectAll(".hover-info").remove();
       stateDisplay.select("#revert").remove();
       stateDisplay.select("#other-display-select").remove();
       stateDisplay.selectAll("#pie-graph").remove();
@@ -508,7 +559,7 @@ var pieGraph = {
           return i;
         });
         pieGraph.update(pieGraph.createPieData(customArray, state.leftovers), svg, radius, state, stateDisplay);
-        stateDisplay.append("foreignObject").attr("id", "revert").attr("x", 40).attr("y", 270).attr("width", 60).attr("height", 20);
+        stateDisplay.append("foreignObject").attr("id", "revert").attr("x", 75).attr("y", 300).attr("width", 60).attr("height", 20);
         stateDisplay.select("#revert").append("xhtml:button").attr("class", "rev").text("Revert").attr("x", 300).attr("dy", "1.2em").style("text-align", "center").attr("font-size", "12px").attr("font-weight", "bold").on("click", function (d) {
           stateDisplay.select("#revert").remove();
           stateDisplay.select("#other-display-select").remove();
@@ -587,7 +638,7 @@ var pieGraph = {
 
 
     if (otherDisplay) {
-      stateDisplay.append("foreignObject").attr("id", "other-display-select").attr("x", 150).attr("y", 270).attr("width", 250).attr("height", 250);
+      stateDisplay.append("foreignObject").attr("id", "other-display-select").attr("x", 75).attr("y", 270).attr("width", 250).attr("height", 250);
       var oDisplay = d3.select("#other-display-select");
       var opts = data.map(function (el) {
         return [el.label + " (" + el.value + ")", el.label];
@@ -653,7 +704,7 @@ var stateDisplay = {
 
     stateDisplay.append("text").attr("class", "state-name").attr("x", 10).attr("dy", "1.2em").style("text-align", "center").attr("font-size", "12px").attr("font-weight", "bold"); // // TASK 2: configure the text for the stateDisplay
 
-    stateDisplay.append("foreignObject").attr("id", "close").attr("x", 300).attr("y", 5).attr("width", 25).attr("height", 20);
+    stateDisplay.append("foreignObject").attr("id", "close").attr("x", 303).attr("y", 2).attr("width", 25).attr("height", 20);
     stateDisplay.select("#close").append("xhtml:button").attr("class", "exit") // stateDisplay.append("text")
     // 	.attr("class", "exit")
     .attr("x", 300).attr("dy", "1.2em").style("text-align", "center").attr("font-size", "12px").attr("font-weight", "bold");
@@ -671,9 +722,9 @@ var stateDisplay = {
     stateDisplay.select("select").transition(s2).style("display", null);
   },
   createSelect: function createSelect(object, state, callback, pG, bG) {
-    var opts = [["Language Snapshot", "LAN7"], ["Language families in 39 major categories", "LAN39"], ["Choose a detailed language", "LAN"]]; // <foreignObject x="20" y="20" width="160" height="160">
+    var opts = [["Top 5 Langugages Plus More", "LAN"], ["Language Snapshot", "LAN7"], ["Language Major Categories", "LAN39"]]; // <foreignObject x="20" y="20" width="160" height="160">
 
-    object.append("foreignObject").attr("id", "dropdown").attr("x", 40).attr("y", 20).attr("width", 250).attr("height", 250);
+    object.append("foreignObject").attr("id", "dropdown").attr("x", 75).attr("y", 20).attr("width", 250).attr("height", 250);
     object.select("#dropdown").append("xhtml:div").attr("id", "lan");
     object.select("#lan").append("xhtml:select").attr("id", "lan-select");
     object.select("select").selectAll("option").data(opts).enter().append("xhtml:option").text(function (d) {
@@ -684,6 +735,7 @@ var stateDisplay = {
     object.select("select").on("change", function (d) {
       var choice = $("#lan-select").val();
       state.choice = choice;
+      object.selectAll(".hover-info").remove();
       object.select("#revert").remove();
       object.select("#other-display-select").remove();
       object.selectAll("#pie-graph").remove();
@@ -766,7 +818,7 @@ var usMap = {
   buildStates: function buildStates(svg, path, us, colors) {
     var accent = d3.scaleOrdinal().range(colors).domain(_toConsumableArray(Array(50).keys()));
     return svg.append("g").attr("class", "states").selectAll("path").data(topojson.feature(us, us.objects.states).features).enter().append("path").attr("class", "state-shapes").attr("fill", function (d) {
-      return "#00acc1"; // return accent(d.id);
+      return "#bcffad"; // return accent(d.id);
     }).attr("d", path).attr("transform", "scale(" + $("#container").width() / 970 + ")");
   },
   buildBorders: function buildBorders(svg, path, us) {
@@ -2823,7 +2875,7 @@ Released under the MIT license
 
 exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(true);
 // Module
-exports.push([module.i, ".states {\n  /*fill: grey;*/\n}\n.states :hover {\n  fill: steelblue;\n}\n.state-borders {\n  fill: none;\n  stroke: #fff;\n  stroke-width: 0.5px;\n  stroke-linejoin: round;\n  stroke-linecap: round;\n  pointer-events: none;\n}\n#container {\n\tmargin:2%;\n\tpadding:20px;\n\tborder:2px solid #d0d0d0;\n\tborder-radius: 5px;\n}\n.svg-container {\n  display: inline-block;\n  position: relative;\n  width: 100%;\n  padding-bottom: 100%; /* aspect ratio */\n  vertical-align: top;\n  overflow: hidden;\n}\n.svg-content-responsive {\n  display: inline-block;\n  position: absolute;\n  top: 10px;\n  left: 0;\n}\n.hover-info {\n\tz-index: 1;\n}\n.exit {\n\tcursor: default; \n}\npolyline{\n    opacity: .3;\n    stroke: black;\n    stroke-width: 2px;\n    fill: none;\n}\n\n", "",{"version":3,"sources":["application.css"],"names":[],"mappings":"AAAA;EACE,cAAc;AAChB;AACA;EACE,eAAe;AACjB;AAEA;EACE,UAAU;EACV,YAAY;EACZ,mBAAmB;EACnB,sBAAsB;EACtB,qBAAqB;EACrB,oBAAoB;AACtB;AAEA;CACC,SAAS;CACT,YAAY;CACZ,wBAAwB;CACxB,kBAAkB;AACnB;AAEA;EACE,qBAAqB;EACrB,kBAAkB;EAClB,WAAW;EACX,oBAAoB,EAAE,iBAAiB;EACvC,mBAAmB;EACnB,gBAAgB;AAClB;AACA;EACE,qBAAqB;EACrB,kBAAkB;EAClB,SAAS;EACT,OAAO;AACT;AAEA;CACC,UAAU;AACX;AAEA;CACC,eAAe;AAChB;AAEA;IACI,WAAW;IACX,aAAa;IACb,iBAAiB;IACjB,UAAU;AACd","file":"application.css","sourcesContent":[".states {\n  /*fill: grey;*/\n}\n.states :hover {\n  fill: steelblue;\n}\n\n.state-borders {\n  fill: none;\n  stroke: #fff;\n  stroke-width: 0.5px;\n  stroke-linejoin: round;\n  stroke-linecap: round;\n  pointer-events: none;\n}\n\n#container {\n\tmargin:2%;\n\tpadding:20px;\n\tborder:2px solid #d0d0d0;\n\tborder-radius: 5px;\n}\n\n.svg-container {\n  display: inline-block;\n  position: relative;\n  width: 100%;\n  padding-bottom: 100%; /* aspect ratio */\n  vertical-align: top;\n  overflow: hidden;\n}\n.svg-content-responsive {\n  display: inline-block;\n  position: absolute;\n  top: 10px;\n  left: 0;\n}\n\n.hover-info {\n\tz-index: 1;\n}\n\n.exit {\n\tcursor: default; \n}\n\npolyline{\n    opacity: .3;\n    stroke: black;\n    stroke-width: 2px;\n    fill: none;\n}\n\n"]}]);
+exports.push([module.i, ".states {\n  /*fill: grey;*/\n}\n.states :hover {\n  fill: steelblue;\n}\n.state-borders {\n  fill: none;\n  stroke: #fff;\n  stroke-width: 0.5px;\n  stroke-linejoin: round;\n  stroke-linecap: round;\n  pointer-events: none;\n}\n#container {\n\tmargin:2%;\n\tpadding:20px;\n\tborder:2px solid #d0d0d0;\n\tborder-radius: 5px;\n}\n.svg-container {\n  display: inline-block;\n  position: relative;\n  width: 100%;\n  padding-bottom: 100%; /* aspect ratio */\n  vertical-align: top;\n  overflow: hidden;\n}\n.svg-content-responsive {\n  display: inline-block;\n  position: absolute;\n  top: 10px;\n  left: 0;\n}\n.hover-info {\n\tz-index: 1;\n}\n.exit, .bar-graph {\n\tcursor: default; \n}\npolyline{\n    opacity: .3;\n    stroke: black;\n    stroke-width: 2px;\n    fill: none;\n}\n\n", "",{"version":3,"sources":["application.css"],"names":[],"mappings":"AAAA;EACE,cAAc;AAChB;AACA;EACE,eAAe;AACjB;AAEA;EACE,UAAU;EACV,YAAY;EACZ,mBAAmB;EACnB,sBAAsB;EACtB,qBAAqB;EACrB,oBAAoB;AACtB;AAEA;CACC,SAAS;CACT,YAAY;CACZ,wBAAwB;CACxB,kBAAkB;AACnB;AAEA;EACE,qBAAqB;EACrB,kBAAkB;EAClB,WAAW;EACX,oBAAoB,EAAE,iBAAiB;EACvC,mBAAmB;EACnB,gBAAgB;AAClB;AACA;EACE,qBAAqB;EACrB,kBAAkB;EAClB,SAAS;EACT,OAAO;AACT;AAEA;CACC,UAAU;AACX;AAEA;CACC,eAAe;AAChB;AAEA;IACI,WAAW;IACX,aAAa;IACb,iBAAiB;IACjB,UAAU;AACd","file":"application.css","sourcesContent":[".states {\n  /*fill: grey;*/\n}\n.states :hover {\n  fill: steelblue;\n}\n\n.state-borders {\n  fill: none;\n  stroke: #fff;\n  stroke-width: 0.5px;\n  stroke-linejoin: round;\n  stroke-linecap: round;\n  pointer-events: none;\n}\n\n#container {\n\tmargin:2%;\n\tpadding:20px;\n\tborder:2px solid #d0d0d0;\n\tborder-radius: 5px;\n}\n\n.svg-container {\n  display: inline-block;\n  position: relative;\n  width: 100%;\n  padding-bottom: 100%; /* aspect ratio */\n  vertical-align: top;\n  overflow: hidden;\n}\n.svg-content-responsive {\n  display: inline-block;\n  position: absolute;\n  top: 10px;\n  left: 0;\n}\n\n.hover-info {\n\tz-index: 1;\n}\n\n.exit, .bar-graph {\n\tcursor: default; \n}\n\npolyline{\n    opacity: .3;\n    stroke: black;\n    stroke-width: 2px;\n    fill: none;\n}\n\n"]}]);
 
 
 
@@ -5265,4 +5317,4 @@ module.exports = function(module) {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=application-f9a21a87fa3059a49e6a.js.map
+//# sourceMappingURL=application-55b5afee8888aabb6294.js.map

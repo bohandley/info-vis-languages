@@ -81,38 +81,65 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = "./app/javascript/packs/barGraph.js");
+/******/ 	return __webpack_require__(__webpack_require__.s = "./app/javascript/packs/usMap.js");
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ "./app/javascript/packs/barGraph.js":
-/*!******************************************!*\
-  !*** ./app/javascript/packs/barGraph.js ***!
-  \******************************************/
+/***/ "./app/javascript/packs/usMap.js":
+/*!***************************************!*\
+  !*** ./app/javascript/packs/usMap.js ***!
+  \***************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-var barGraph = {
-  buildBarGraph: function buildBarGraph(stateDisplay, state) {
-    var data = state.data.slice(1);
-    var rects = stateDisplay.selectAll('this').data(data).enter().append("rect").attr("class", "bar-graph").attr("transform", "translate(0, 40)").attr("x", 10).attr("y", function (d, i) {
-      return 10 + i * (10 + 10); // return padding + i * (barHeight + padding);
-    }).attr("height", 15).style("fill", "orange");
-    var s = d3.transition().delay(1000).duration(1000);
-    rects.transition(s).attr("width", function (d, i) {
-      return d[0] * .001;
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+
+var usMap = {
+  buildMap: function buildMap(svg, path, colors) {
+    return new Promise(function (resolve, reject) {
+      d3.json("https://cdn.jsdelivr.net/npm/us-atlas@3/states-albers-10m.json", function (error, us) {
+        if (error) {
+          reject(error);
+        } else {
+          // let s = this.transition(0, 0);
+          var states = usMap.buildStates(svg, path, us, colors);
+          var borders = usMap.buildBorders(svg, path, us);
+          $("svg").height($("#container").width() * 0.618);
+          resolve({
+            svg: svg,
+            states: states
+          });
+        }
+      });
     });
-    var texts = stateDisplay.selectAll('thing').data(data).enter().append("text").attr("class", "bar-graph").attr("transform", "translate(0, 40)").attr('x', 10).attr('y', function (d, i) {
-      return (i + 1) * (10 + 10);
-    }).attr('font-size', 12).text(function (d) {
-      return d[1];
-    });
+  },
+  // transition: function(delay, length) {
+  //   return d3.transition()
+  //     .delay(delay)
+  //     .duration(length);
+  // },
+  buildStates: function buildStates(svg, path, us, colors) {
+    var accent = d3.scaleOrdinal().range(colors).domain(_toConsumableArray(Array(50).keys()));
+    return svg.append("g").attr("class", "states").selectAll("path").data(topojson.feature(us, us.objects.states).features).enter().append("path").attr("class", "state-shapes").attr("fill", function (d) {
+      return "#bcffad"; // return accent(d.id);
+    }).attr("d", path).attr("transform", "scale(" + $("#container").width() / 970 + ")");
+  },
+  buildBorders: function buildBorders(svg, path, us) {
+    return svg.append("path").attr("class", "state-borders").attr("d", path(topojson.mesh(us, us.objects.states, function (a, b) {
+      return a !== b;
+    }))).attr("transform", "scale(" + $("#container").width() / 970 + ")");
   }
 };
-module.exports = barGraph;
+module.exports = usMap;
 
 /***/ })
 
 /******/ });
-//# sourceMappingURL=barGraph-b1adb1aa3a70126c1d24.js.map
+//# sourceMappingURL=usMap-789becd7669a0d50bc48.js.map

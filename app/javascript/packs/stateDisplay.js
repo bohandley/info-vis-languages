@@ -25,8 +25,8 @@ const stateDisplay = {
 	  // // TASK 2: configure the text for the stateDisplay
 	  stateDisplay.append("foreignObject")
 	  	.attr("id", "close")
-	    .attr("x", 300)
-	    .attr("y", 5)
+	    .attr("x", 303)
+	    .attr("y", 2)
 	    .attr("width", 25)
 	    .attr("height", 20)
 
@@ -81,15 +81,15 @@ const stateDisplay = {
 
 	createSelect: function(object, state, callback, pG, bG) {
     let opts = [
+      ["Top 5 Langugages Plus More", "LAN"],
       ["Language Snapshot", "LAN7"],
-      ["Language families in 39 major categories", "LAN39"],
-      ["Choose a detailed language", "LAN"]
+      ["Language Major Categories", "LAN39"]
     ];
 
 	  // <foreignObject x="20" y="20" width="160" height="160">
 	  object.append("foreignObject")
 	  	.attr("id", "dropdown")
-	    .attr("x", 40)
+	    .attr("x", 75)
 	    .attr("y", 20)
 	    .attr("width", 250)
 	    .attr("height", 250)
@@ -120,6 +120,7 @@ const stateDisplay = {
 	    	let choice = $("#lan-select").val();
 	    	state.choice = choice;
 
+	    	object.selectAll(".hover-info").remove();
 	    	object.select("#revert").remove();
 	    	object.select("#other-display-select").remove();
         object.selectAll("#pie-graph").remove();

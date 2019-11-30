@@ -101,7 +101,7 @@ var stateDisplay = {
 
     stateDisplay.append("text").attr("class", "state-name").attr("x", 10).attr("dy", "1.2em").style("text-align", "center").attr("font-size", "12px").attr("font-weight", "bold"); // // TASK 2: configure the text for the stateDisplay
 
-    stateDisplay.append("foreignObject").attr("id", "close").attr("x", 300).attr("y", 5).attr("width", 25).attr("height", 20);
+    stateDisplay.append("foreignObject").attr("id", "close").attr("x", 303).attr("y", 2).attr("width", 25).attr("height", 20);
     stateDisplay.select("#close").append("xhtml:button").attr("class", "exit") // stateDisplay.append("text")
     // 	.attr("class", "exit")
     .attr("x", 300).attr("dy", "1.2em").style("text-align", "center").attr("font-size", "12px").attr("font-weight", "bold");
@@ -119,9 +119,9 @@ var stateDisplay = {
     stateDisplay.select("select").transition(s2).style("display", null);
   },
   createSelect: function createSelect(object, state, callback, pG, bG) {
-    var opts = [["Language Snapshot", "LAN7"], ["Language families in 39 major categories", "LAN39"], ["Choose a detailed language", "LAN"]]; // <foreignObject x="20" y="20" width="160" height="160">
+    var opts = [["Top 5 Langugages Plus More", "LAN"], ["Language Snapshot", "LAN7"], ["Language Major Categories", "LAN39"]]; // <foreignObject x="20" y="20" width="160" height="160">
 
-    object.append("foreignObject").attr("id", "dropdown").attr("x", 40).attr("y", 20).attr("width", 250).attr("height", 250);
+    object.append("foreignObject").attr("id", "dropdown").attr("x", 75).attr("y", 20).attr("width", 250).attr("height", 250);
     object.select("#dropdown").append("xhtml:div").attr("id", "lan");
     object.select("#lan").append("xhtml:select").attr("id", "lan-select");
     object.select("select").selectAll("option").data(opts).enter().append("xhtml:option").text(function (d) {
@@ -132,6 +132,7 @@ var stateDisplay = {
     object.select("select").on("change", function (d) {
       var choice = $("#lan-select").val();
       state.choice = choice;
+      object.selectAll(".hover-info").remove();
       object.select("#revert").remove();
       object.select("#other-display-select").remove();
       object.selectAll("#pie-graph").remove();
@@ -173,4 +174,4 @@ module.exports = stateDisplay;
 /***/ })
 
 /******/ });
-//# sourceMappingURL=stateDisplay-1ecf330fa4777b37fc83.js.map
+//# sourceMappingURL=stateDisplay-4e3e9e385a2b509b177c.js.map

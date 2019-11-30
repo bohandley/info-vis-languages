@@ -136,8 +136,8 @@ const pieGraph = {
 
 	      		stateDisplay.append("foreignObject")
 					  	.attr("id", "revert")
-					    .attr("x", 40)
-					    .attr("y", 270)
+					    .attr("x", 75)
+					    .attr("y", 300)
 					    .attr("width", 60)
 					    .attr("height", 20)
 
@@ -165,7 +165,7 @@ const pieGraph = {
 		        hoverInfo.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
 		        hoverInfo.select("#hover-state-pop").text(d.value);
 		        hoverInfo.select("#hover-state-name").text(d.data.label);
-		        
+
 		        d3.select("#"+d.data.label.replace(/[,\s]+/g, ""))
 			    		.style("stroke", "black")
 			    		.style("stroke-width", 2)
@@ -274,7 +274,7 @@ const pieGraph = {
 			if(otherDisplay){
 				stateDisplay.append("foreignObject")
 					.attr("id", "other-display-select")
-					.attr("x", 150)
+					.attr("x", 75)
 			    .attr("y", 270)
 			    .attr("width", 250)
 			    .attr("height", 250)

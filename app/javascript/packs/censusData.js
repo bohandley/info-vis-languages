@@ -37,6 +37,7 @@ $(document).ready(function() {
 
           state.id = d.id;       
 
+          stateDisplay.selectAll(".hover-info").remove();
           stateDisplay.select("#revert").remove();
           stateDisplay.select("#other-display-select").remove();
           stateDisplay.selectAll("#pie-graph").remove();
