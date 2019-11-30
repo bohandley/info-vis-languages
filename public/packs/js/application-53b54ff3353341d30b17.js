@@ -287,7 +287,7 @@ $(document).ready(function () {
       var xPosition = d3.mouse(this)[0] * $("#container").width() / 970 - 5;
       var yPosition = d3.mouse(this)[1] * $("#container").width() / 970 - 5;
       if (xPosition > $("#container").width() - 330) xPosition -= 330;
-      if (yPosition > $("#container").height() - 350) yPosition -= 300;
+      if (yPosition > $("#container").height() - 350) yPosition -= 280;
       stateDisplay.style("display", null);
       stateDisplay.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
       stateDisplay.select(".state-name").text(d.properties.name);
@@ -5317,4 +5317,4 @@ module.exports = function(module) {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=application-276a77ccfe9fe7214941.js.map
+//# sourceMappingURL=application-53b54ff3353341d30b17.js.map

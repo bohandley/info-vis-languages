@@ -53,7 +53,7 @@ $(document).ready(function() {
             xPosition -= 330;
 
           if(yPosition > $("#container").height() - 350)
-            yPosition -= 300;
+            yPosition -= 280;
 
           stateDisplay.style("display", null)
           stateDisplay.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
