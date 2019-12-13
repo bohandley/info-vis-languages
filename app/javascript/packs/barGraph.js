@@ -5,7 +5,7 @@ const barGraph = {
 
 		var greatestPop = data[0][0];
 		
-		var widthScale = d3.scaleLog()
+		var widthScale = d3.scaleLinear()
 			.domain([1, greatestPop])
 			.range([0, 300]);
 

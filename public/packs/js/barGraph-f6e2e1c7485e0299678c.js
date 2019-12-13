@@ -99,7 +99,7 @@ var barGraph = {
       return +b[0] - +a[0];
     });
     var greatestPop = data[0][0];
-    var widthScale = d3.scaleLog().domain([1, greatestPop]).range([0, 300]);
+    var widthScale = d3.scaleLinear().domain([1, greatestPop]).range([0, 300]);
     var color = d3.scaleOrdinal(d3.schemePastel1.concat(d3.schemePastel1)).domain(data.map(function (el) {
       return el[1];
     })); // .attr("height", function(d) {return myscale(d);})
@@ -165,4 +165,4 @@ module.exports = barGraph;
 /***/ })
 
 /******/ });
-//# sourceMappingURL=barGraph-cb83bc6f910f2324dd54.js.map
+//# sourceMappingURL=barGraph-f6e2e1c7485e0299678c.js.map

@@ -167,7 +167,7 @@ var barGraph = {
       return +b[0] - +a[0];
     });
     var greatestPop = data[0][0];
-    var widthScale = d3.scaleLog().domain([1, greatestPop]).range([0, 300]);
+    var widthScale = d3.scaleLinear().domain([1, greatestPop]).range([0, 300]);
     var color = d3.scaleOrdinal(d3.schemePastel1.concat(d3.schemePastel1)).domain(data.map(function (el) {
       return el[1];
     })); // .attr("height", function(d) {return myscale(d);})
@@ -245,6 +245,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
 
 
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+
 var colors = __webpack_require__(/*! ./colors.js */ "./app/javascript/packs/colors.js");
 
 var sD = __webpack_require__(/*! ./stateDisplay */ "./app/javascript/packs/stateDisplay.js");
@@ -286,8 +294,8 @@ $(document).ready(function () {
       sD.stateDisplayEntrance(stateDisplay);
       var xPosition = d3.mouse(this)[0] * $("#container").width() / 970 - 5;
       var yPosition = d3.mouse(this)[1] * $("#container").width() / 970 - 5;
-      if (xPosition > $("#container").width() - 330) xPosition -= 330;
-      if (yPosition > $("#container").height() - 350) yPosition -= 280;
+      if (xPosition > $("#container").width() - 300) xPosition -= 300;
+      if (yPosition > $("#container").height() - 330) yPosition -= 330;
       stateDisplay.style("display", null);
       stateDisplay.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
       stateDisplay.select(".state-name").text(d.properties.name);
@@ -326,35 +334,535 @@ $(document).ready(function () {
   })["catch"](function (error) {
     console.error(error);
   });
+
+  function getData() {
+    var params, response, stateData;
+    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.async(function getData$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            params = {
+              "get": "EST,LANLABEL,NAME",
+              "for": "state:*",
+              "LAN": '' //+ state.id
+
+            };
+            _context.next = 3;
+            return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.awrap(fetch("/data", opts(params)));
+
+          case 3:
+            response = _context.sent;
+            _context.next = 6;
+            return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.awrap(response.json());
+
+          case 6:
+            stateData = _context.sent;
+            return _context.abrupt("return", stateData);
+
+          case 8:
+          case "end":
+            return _context.stop();
+        }
+      }
+    });
+  }
+
+  getData().then(function (langs) {
+    var elms = langs[0];
+    var fltrd = langs.slice(1).sort(function (a, b) {
+      return +b[0] - +a[0];
+    });
+    var langs1 = [elms];
+    langs = langs1.concat(fltrd);
+    var dimensions = [];
+    var allStates = langs.slice(1).map(function (el) {
+      return el[2];
+    });
+
+    var stateSet = _toConsumableArray(new Set(allStates)).sort();
+
+    var allLangs = langs.slice(1).map(function (el) {
+      return el[1];
+    }); // top 20 languages
+
+    var langSet = new Set(allLangs);
+    var langOrd = {};
+    langSet.forEach(function (el) {
+      langs.slice(1).forEach(function (el2) {
+        if (el == el2[1] && langOrd[el] == null) langOrd[el] = +el2[0];else if (el == el2[1]) langOrd[el] += +el2[0];
+      });
+    });
+    var langOrdArr = [];
+
+    for (var key in langOrd) {
+      langOrdArr.push([key, langOrd[key]]);
+    }
+
+    langOrdArr.sort(function (a, b) {
+      return +b[1] - +a[1];
+    });
+    langSet = langOrdArr.map(function (el) {
+      return el[0];
+    }); // SLICE TO DISPLAY
+
+    langSet = _toConsumableArray(langSet).slice(0, 10);
+    var margin = {
+      top: 66,
+      right: 60,
+      bottom: 20,
+      left: 130
+    },
+        width = document.body.clientWidth - margin.left - margin.right,
+        height = 500 - margin.top - margin.bottom,
+        innerHeight = height - 2;
+    var devicePixelRatio = window.devicePixelRatio || 1;
+    var color = d3.scaleOrdinal().domain(langSet) // .domain(["Radial Velocity", "Imaging", "Eclipse Timing Variations", "Astrometry", "Microlensing", "Orbital Brightness Modulation", "Pulsar Timing", "Pulsation Timing Variations", "Transit", "Transit Timing Variations"])
+    .range(["#DB7F85", "#50AB84", "#4C6C86", "#C47DCB", "#B59248", "#DD6CA7", "#E15E5A", "#5DA5B3", "#725D82", "#54AF52", "#954D56", "#8C92E8", "#D8597D", "#AB9C27", "#D67D4B", "#D58323", "#BA89AD", "#357468", "#8F86C2", "#7D9E33", "#517C3F", "#9D5130", "#5E9ACF", "#776327", "#944F7E"]);
+    var types = {
+      "Number": {
+        key: "Number",
+        coerce: function coerce(d) {
+          return +d;
+        },
+        extent: d3.extent,
+        within: function within(d, extent, dim) {
+          return extent[0] <= dim.scale(d) && dim.scale(d) <= extent[1];
+        },
+        defaultScale: d3.scaleLinear().range([innerHeight, 0])
+      },
+      "String": {
+        key: "String",
+        coerce: String,
+        extent: function extent(data) {
+          return data.sort();
+        },
+        within: function within(d, extent, dim) {
+          return extent[0] <= dim.scale(d) && dim.scale(d) <= extent[1];
+        },
+        defaultScale: d3.scalePoint().range([0, innerHeight])
+      },
+      "Date": {
+        key: "Date",
+        coerce: function coerce(d) {
+          return new Date(d);
+        },
+        extent: d3.extent,
+        within: function within(d, extent, dim) {
+          return extent[0] <= dim.scale(d) && dim.scale(d) <= extent[1];
+        },
+        defaultScale: d3.scaleTime().range([innerHeight, 0])
+      }
+    }; // create the collection for each language
+    // has all states with a value or not
+
+    var newDataCollection = [];
+    var dataObj = {};
+    stateSet.forEach(function (el) {
+      return dataObj[el.replace(/ /g, "_")] = '0';
+    });
+    var newdata = langSet.forEach(function (lang) {
+      var nObj = Object.assign({}, dataObj);
+      nObj["LANLABEL"] = lang;
+      langs.forEach(function (langArr) {
+        if (langArr[1] == lang) {
+          nObj[langArr[2].replace(/ /g, "_")] = langArr[0];
+        }
+      });
+      newDataCollection.push(nObj);
+    });
+    stateSet.forEach(function (el) {
+      var obj = {
+        key: el.replace(/ /g, "_"),
+        description: el,
+        type: types["Number"]
+      };
+      dimensions.push(obj);
+    });
+    var langScaleObj = {
+      key: "LANLABEL",
+      description: "Languages",
+      type: types["String"],
+      domain: _toConsumableArray(langSet),
+      axis: d3.axisLeft().tickFormat(function (d, i) {
+        return d;
+      })
+    };
+    var langScaleObj2 = {
+      key: "LANLABEL",
+      description: "",
+      type: types["String"],
+      domain: _toConsumableArray(langSet) // axis: d3.axisLeft()
+      //   .tickFormat(function(d,i) {
+      //     return d;
+      //   })
+
+    };
+    dimensions.unshift(langScaleObj);
+    dimensions.push(langScaleObj2); // var dimensions = [
+    //   {
+    //     key: "pl_discmethod",
+    //     description: "Discovery Method",
+    //     type: types["String"],
+    //     axis: d3.axisLeft()
+    //       .tickFormat(function(d,i) {
+    //         return d;
+    //       })
+    //   },
+    //   {
+    //     key: "pl_letter",
+    //     description: "Planet Letter",
+    //     type: types["String"]
+    //   },
+    //   {
+    //     key: "pl_pnum",
+    //     description: "Number of Planets in System",
+    //     type: types["Number"]
+    //   },
+    //   {
+    //     key: "pl_orbper",
+    //     type: types["Number"],
+    //     description: "Planet Orbital Period",
+    //     scale: d3.scaleLog().range([innerHeight, 0])
+    //   },
+    //   {
+    //     key: "pl_orbsmax",
+    //     type: types["Number"],
+    //     description: "Planet Semi-Major Axis",
+    //     scale: d3.scaleLog().range([innerHeight, 0])
+    //   },
+    //   {
+    //     key: "pl_orbeccen",
+    //     description: "Planet Eccentricity",
+    //     type: types["Number"]
+    //   },
+    //   {
+    //     key: "pl_orbincl",
+    //     description: "Planet Inclination",
+    //     type: types["Number"]
+    //   },
+    //   {
+    //     key: "pl_bmassj",
+    //     description: "Mass in Jupiters",
+    //     type: types["Number"]
+    //   },
+    //   {
+    //     key: "pl_rade",
+    //     description: "Planet Radius in Earth Radii",
+    //     type: types["Number"]
+    //   },
+    //   {
+    //     key: "pl_eqt",
+    //     description: "Planet Equilibrium Temperature (K)",
+    //     type: types["Number"]
+    //   },
+    //   {
+    //     key: "pl_imppar",
+    //     description: "Impact Parameter",
+    //     type: types["Number"]
+    //   },
+    //   {
+    //     key: "pl_trandep",
+    //     description: "Transit Depth (%)",
+    //     type: types["Number"]
+    //   },
+    //   {
+    //     key: "pl_trandur",
+    //     description: "Transit Duration (days)",
+    //     type: types["Number"]
+    //   },
+    //   {
+    //     key: "pl_ratror",
+    //     description: "Planet-Star Radius Ratio",
+    //     type: types["Number"]
+    //   },
+    //   {
+    //     key: "st_spstr",
+    //     description: "Star Spectral Type",
+    //     type: types["String"],
+    //     axis: d3.axisLeft()
+    //       .tickFormat(function(d,i) {
+    //         if (i % 4) return;
+    //         return d;
+    //       })
+    //   },
+    //   {
+    //     key: "pl_locale",
+    //     description: "Locale",
+    //     type: types["String"],
+    //     axis: d3.axisLeft()
+    //       .tickFormat(function(d,i) {
+    //         if (d == "Multiple Locales") return "Multiple";
+    //         return d;
+    //       })
+    //   },
+    //   {
+    //     key: "pl_disc",
+    //     description: "Year of Discovery",
+    //     type: types["Date"]
+    //   },
+    //   {
+    //     key: "pl_facility",
+    //     description: "Facility",
+    //     type: types["String"],
+    //     domain: ["Kepler", "La Silla Observatory", "K2", "W. M. Keck Observatory", "SuperWASP", "Multiple Observatories", "HATNet", "Haute-Provence Observatory", "Anglo-Australian Telescope", "OGLE", "Lick Observatory", "HATSouth", "CoRoT", "McDonald Observatory", "Okayama Astrophysical Observatory", "MOA", "Bohyunsan Optical Astronomical Observatory", "Las Campanas Observatory", "SuperWASP-South", "Roque de los Muchachos Observatory", "Paranal Observatory", "Gemini Observatory", "KELT", "Subaru Telescope", "Thueringer Landessternwarte Tautenburg", "XO", "Multiple Facilities", "Hubble Space Telescope", "Fred Lawrence Whipple Observatory", "TrES", "kepler", "KELT-South", "Spitzer Space Telescope", "Arecibo Observatory", "United Kingdom Infrared Telescope", "Large Binocular Telescope Observatory", "Xinglong Station", "Cerro Tololo Inter-American Observatory", "Palomar Observatory", "SuperWASP-North", "Qatar", "Teide Observatory", "European Southern Observatory", "Leoncito Astronomical Complex", "Infrared Survey Facility", "KMTNet", "Parkes Observatory", "Apache Point Observatory", "Oak Ridge Observatory", "MEarth Project", "Yunnan Astronomical Observatory", "Kitt Peak National Observatory"],
+    //     axis: d3.axisRight()
+    //       .tickFormat(function(d,i) {
+    //         return d;
+    //       })
+    //   }
+
+    /*
+    {
+      key: "pl_telescope",
+      description: "Telescope",
+      type: types["String"],
+      axis: d3.axisRight()
+        .tickFormat(function(d,i) {
+          return d;
+        })
+    }
+    */
+
+    /*
+    {
+      key: "pl_instrument",
+      description: "Instrument",
+      type: types["String"],
+      axis: d3.axisRight()
+        .tickFormat(function(d,i) {
+          return d;
+        })
+    }
+    */
+    // ];
+
+    var xscale = d3.scalePoint().domain(d3.range(dimensions.length)).range([0, width]);
+    var yAxis = d3.axisLeft().tickValues([]);
+    var container = d3.select("body").append("div").attr("class", "parcoords").style("width", width + margin.left + margin.right + "px").style("height", height + margin.top + margin.bottom + "px");
+    var svg = container.append("svg").attr("width", width + margin.left + margin.right).attr("height", height + margin.top + margin.bottom).append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    var canvas = container.append("canvas").attr("width", width * devicePixelRatio).attr("height", height * devicePixelRatio).style("width", width + "px").style("height", height + "px").style("margin-top", margin.top + "px").style("margin-left", margin.left + "px");
+    var ctx = canvas.node().getContext("2d");
+    ctx.globalCompositeOperation = 'darken';
+    ctx.globalAlpha = 0.15;
+    ctx.lineWidth = 1.5;
+    ctx.scale(devicePixelRatio, devicePixelRatio);
+    var output = d3.select("body").append("pre");
+    var axes = svg.selectAll(".axis").data(dimensions).enter().append("g").attr("class", function (d) {
+      return "axis " + d.key.replace(/ /g, "_");
+    }).attr("transform", function (d, i) {
+      return "translate(" + xscale(i) + ")";
+    }); //////////
+
+    d3.csv("planets.csv", function (error, data) {
+      if (error) throw error;
+      data = newDataCollection;
+      data.forEach(function (el) {
+        for (var key in el) {
+          if (el[key] == null) {
+            el[key] = "0";
+          }
+        }
+      });
+      data.forEach(function (d) {
+        dimensions.forEach(function (p) {
+          d[p.key] = !d[p.key] ? null : p.type.coerce(d[p.key]);
+        }); // truncate long text strings to fit in data table
+
+        for (var key in d) {
+          if (d[key] && d[key].length > 35) d[key] = d[key].slice(0, 36);
+        }
+      }); // type/dimension default setting happens here
+
+      dimensions.forEach(function (dim) {
+        if (!("domain" in dim)) {
+          // detect domain using dimension type's extent function
+          var dataExtent = data.map(function (d) {
+            return d[dim.key];
+          });
+          dataExtent.sort(function (a, b) {
+            return a - b;
+          });
+          var total = dataExtent.reduce(function (acc, el) {
+            return acc + el;
+          }, 0); // let greaterVal = dataExtent[dataExtent.length - 1]/5 + dataExtent[dataExtent.length - 1]
+          // dataExtent.push(greaterVal);
+
+          dataExtent.push(total);
+          dim.domain = d3_functor(dim.type.extent)(dataExtent); //(data.map(function(d) { return d[dim.key]; }));
+        }
+
+        if (!("scale" in dim)) {
+          // use type's default scale for dimension
+          dim.scale = dim.type.defaultScale.copy();
+        }
+
+        dim.scale.domain(dim.domain);
+      });
+      var render = renderQueue(draw).rate(30);
+      ctx.clearRect(0, 0, width, height);
+      ctx.globalAlpha = d3.min([1.15 / Math.pow(data.length, 0.3), 1]);
+      render(data);
+      axes.append("g").each(function (d) {
+        var renderAxis = "axis" in d ? d.axis.scale(d.scale) // custom axis
+        : yAxis.scale(d.scale); // default axis
+
+        d3.select(this).call(renderAxis);
+      }).append("text").attr("class", "title").attr("text-anchor", "start").text(function (d) {
+        return "description" in d ? d.description : d.key;
+      }); // Add and store a brush for each axis.
+
+      axes.append("g").attr("class", "brush").each(function (d) {
+        d3.select(this).call(d.brush = d3.brushY().extent([[-10, 0], [10, height]]).on("start", brushstart).on("brush", brush).on("end", brush));
+      }).selectAll("rect").attr("x", -8).attr("width", 16);
+      d3.selectAll(".axis.LANLABEL .tick text").style("fill", color);
+      debugger;
+      output.text(d3.tsvFormat(data.slice(0, 24)));
+
+      function project(d) {
+        return dimensions.map(function (p, i) {
+          // check if data element has property and contains a value
+          if (!(p.key in d) || d[p.key] === null) return null;
+          return [xscale(i), p.scale(d[p.key])];
+        });
+      }
+
+      ;
+
+      function draw(d) {
+        ctx.strokeStyle = color(d.LANLABEL);
+        ctx.beginPath();
+        var coords = project(d);
+        coords.forEach(function (p, i) {
+          // this tricky bit avoids rendering null values as 0
+          if (p === null) {
+            // this bit renders horizontal lines on the previous/next
+            // dimensions, so that sandwiched null values are visible
+            if (i > 0) {
+              var prev = coords[i - 1];
+
+              if (prev !== null) {
+                ctx.moveTo(prev[0], prev[1]);
+                ctx.lineTo(prev[0] + 6, prev[1]);
+              }
+            }
+
+            if (i < coords.length - 1) {
+              var next = coords[i + 1];
+
+              if (next !== null) {
+                ctx.moveTo(next[0] - 6, next[1]);
+              }
+            }
+
+            return;
+          }
+
+          if (i == 0) {
+            ctx.moveTo(p[0], p[1]);
+            return;
+          }
+
+          ctx.lineTo(p[0], p[1]);
+        });
+        ctx.stroke();
+      }
+
+      function brushstart() {
+        d3.event.sourceEvent.stopPropagation();
+      } // Handles a brush event, toggling the display of foreground lines.
+
+
+      function brush() {
+        render.invalidate();
+        var actives = [];
+        svg.selectAll(".axis .brush").filter(function (d) {
+          return d3.brushSelection(this);
+        }).each(function (d) {
+          actives.push({
+            dimension: d,
+            extent: d3.brushSelection(this)
+          });
+        });
+        var selected = data.filter(function (d) {
+          if (actives.every(function (active) {
+            var dim = active.dimension; // test if point is within extents for each active brush
+
+            return dim.type.within(d[dim.key], active.extent, dim);
+          })) {
+            return true;
+          }
+        }); // show ticks for active brush dimensions
+        // and filter ticks to only those within brush extents
+
+        /*
+        svg.selectAll(".axis")
+            .filter(function(d) {
+              return actives.indexOf(d) > -1 ? true : false;
+            })
+            .classed("active", true)
+            .each(function(dimension, i) {
+              var extent = extents[i];
+              d3.select(this)
+                .selectAll(".tick text")
+                .style("display", function(d) {
+                  var value = dimension.type.coerce(d);
+                  return dimension.type.within(value, extent, dimension) ? null : "none";
+                });
+            });
+         // reset dimensions without active brushes
+        svg.selectAll(".axis")
+            .filter(function(d) {
+              return actives.indexOf(d) > -1 ? false : true;
+            })
+            .classed("active", false)
+            .selectAll(".tick text")
+              .style("display", null);
+        */
+
+        ctx.clearRect(0, 0, width, height);
+        ctx.globalAlpha = d3.min([0.85 / Math.pow(selected.length, 0.3), 1]);
+        render(selected);
+        output.text(d3.tsvFormat(selected.slice(0, 24)));
+      }
+    });
+
+    function d3_functor(v) {
+      return typeof v === "function" ? v : function () {
+        return v;
+      };
+    }
+
+    ;
+  });
 });
 
 function getDataOnSelect(state, choice) {
   var params, response, stateData;
-  return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.async(function getDataOnSelect$(_context) {
+  return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.async(function getDataOnSelect$(_context2) {
     while (1) {
-      switch (_context.prev = _context.next) {
+      switch (_context2.prev = _context2.next) {
         case 0:
           params = {
             "get": "EST,LANLABEL,NAME",
             "for": "state:" + state.id
           };
           params[choice] = '';
-          _context.next = 4;
+          _context2.next = 4;
           return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.awrap(fetch("/data", opts(params)));
 
         case 4:
-          response = _context.sent;
-          _context.next = 7;
+          response = _context2.sent;
+          _context2.next = 7;
           return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.awrap(response.json());
 
         case 7:
-          stateData = _context.sent;
+          stateData = _context2.sent;
           console.log(stateData);
-          return _context.abrupt("return", stateData);
+          return _context2.abrupt("return", stateData);
 
         case 10:
         case "end":
-          return _context.stop();
+          return _context2.stop();
       }
     }
   });
@@ -2875,7 +3383,7 @@ Released under the MIT license
 
 exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(true);
 // Module
-exports.push([module.i, ".states {\n  /*fill: grey;*/\n}\n.states :hover {\n  fill: #ccebc5;\n}\n.state-borders {\n  fill: none;\n  stroke: #fff;\n  stroke-width: 0.5px;\n  stroke-linejoin: round;\n  stroke-linecap: round;\n  pointer-events: none;\n}\n#container {\n\tmargin:2%;\n\tpadding:20px;\n\tborder:2px solid #d0d0d0;\n\tborder-radius: 5px;\n}\n.svg-container {\n  display: inline-block;\n  position: relative;\n  width: 100%;\n  padding-bottom: 100%; /* aspect ratio */\n  vertical-align: top;\n  overflow: hidden;\n}\n.svg-content-responsive {\n  display: inline-block;\n  position: absolute;\n  top: 10px;\n  left: 0;\n}\n.hover-info {\n\tz-index: 1;\n}\n.exit, .bar-graph {\n\tcursor: default; \n}\npolyline{\n    opacity: .3;\n    stroke: black;\n    stroke-width: 2px;\n    fill: none;\n}\n\n", "",{"version":3,"sources":["application.css"],"names":[],"mappings":"AAAA;EACE,cAAc;AAChB;AACA;EACE,aAAa;AACf;AAEA;EACE,UAAU;EACV,YAAY;EACZ,mBAAmB;EACnB,sBAAsB;EACtB,qBAAqB;EACrB,oBAAoB;AACtB;AAEA;CACC,SAAS;CACT,YAAY;CACZ,wBAAwB;CACxB,kBAAkB;AACnB;AAEA;EACE,qBAAqB;EACrB,kBAAkB;EAClB,WAAW;EACX,oBAAoB,EAAE,iBAAiB;EACvC,mBAAmB;EACnB,gBAAgB;AAClB;AACA;EACE,qBAAqB;EACrB,kBAAkB;EAClB,SAAS;EACT,OAAO;AACT;AAEA;CACC,UAAU;AACX;AAEA;CACC,eAAe;AAChB;AAEA;IACI,WAAW;IACX,aAAa;IACb,iBAAiB;IACjB,UAAU;AACd","file":"application.css","sourcesContent":[".states {\n  /*fill: grey;*/\n}\n.states :hover {\n  fill: #ccebc5;\n}\n\n.state-borders {\n  fill: none;\n  stroke: #fff;\n  stroke-width: 0.5px;\n  stroke-linejoin: round;\n  stroke-linecap: round;\n  pointer-events: none;\n}\n\n#container {\n\tmargin:2%;\n\tpadding:20px;\n\tborder:2px solid #d0d0d0;\n\tborder-radius: 5px;\n}\n\n.svg-container {\n  display: inline-block;\n  position: relative;\n  width: 100%;\n  padding-bottom: 100%; /* aspect ratio */\n  vertical-align: top;\n  overflow: hidden;\n}\n.svg-content-responsive {\n  display: inline-block;\n  position: absolute;\n  top: 10px;\n  left: 0;\n}\n\n.hover-info {\n\tz-index: 1;\n}\n\n.exit, .bar-graph {\n\tcursor: default; \n}\n\npolyline{\n    opacity: .3;\n    stroke: black;\n    stroke-width: 2px;\n    fill: none;\n}\n\n"]}]);
+exports.push([module.i, ".states {\n  /*fill: grey;*/\n}\n.states :hover {\n  fill: #ccebc5;\n}\n.state-borders {\n  fill: none;\n  stroke: #fff;\n  stroke-width: 0.5px;\n  stroke-linejoin: round;\n  stroke-linecap: round;\n  pointer-events: none;\n}\n#container {\n\tmargin:2%;\n\tpadding:20px;\n\tborder:2px solid #d0d0d0;\n\tborder-radius: 5px;\n}\n.svg-container {\n  display: inline-block;\n  position: relative;\n  width: 100%;\n  padding-bottom: 100%; /* aspect ratio */\n  vertical-align: top;\n  overflow: hidden;\n}\n.svg-content-responsive {\n  display: inline-block;\n  position: absolute;\n  top: 10px;\n  left: 0;\n}\n.hover-info {\n\tz-index: 1;\n}\n.exit, .bar-graph {\n\tcursor: default; \n}\npolyline{\n    opacity: .3;\n    stroke: black;\n    stroke-width: 2px;\n    fill: none;\n}\nbody {\n  min-width: 760px;\n}\n.parcoords {\n  display: block;\n}\n.parcoords svg,\n.parcoords canvas {\n  font: 10px sans-serif;\n  position: absolute;\n}\n.parcoords canvas {\n  opacity: 0.9;\n  pointer-events: none;\n}\n.axis .title {\n  font-size: 10px;\n  -webkit-transform: rotate(-21deg) translate(-5px,-6px);\n          transform: rotate(-21deg) translate(-5px,-6px);\n  fill: #222;\n}\n.axis line,\n.axis path {\n  fill: none;\n  stroke: #ccc;\n  stroke-width: 1px;\n}\n.axis .tick text {\n  fill: #222;\n  opacity: 0.5;\n  pointer-events: none;\n}\n.axis.manufac_name .tick text,\n.axis.food_group .tick text {\n  opacity: 1;\n}\n.axis:hover line,\n.axis:hover path,\n.axis.active line,\n.axis.active path {\n  fill: none;\n  stroke: #222;\n  stroke-width: 1px;\n}\n.axis:hover .title {\n  font-weight: bold;\n}\n.axis:hover .tick text {\n  opacity: 1;\n}\n.axis.active .title {\n  font-weight: bold;\n}\n.axis.active .tick text {\n  opacity: 1;\n  font-weight: bold;\n}\n.brush .extent {\n  fill-opacity: .3;\n  stroke: #fff;\n  stroke-width: 1px;\n}\npre {\n  width: 100%;\n  height: 300px;\n  margin: 6px 12px;\n  -moz-tab-size: 40;\n    -o-tab-size: 40;\n       tab-size: 40;\n  font-size: 10px;\n  overflow: auto;\n}", "",{"version":3,"sources":["application.css"],"names":[],"mappings":"AAAA;EACE,cAAc;AAChB;AACA;EACE,aAAa;AACf;AAEA;EACE,UAAU;EACV,YAAY;EACZ,mBAAmB;EACnB,sBAAsB;EACtB,qBAAqB;EACrB,oBAAoB;AACtB;AAEA;CACC,SAAS;CACT,YAAY;CACZ,wBAAwB;CACxB,kBAAkB;AACnB;AAEA;EACE,qBAAqB;EACrB,kBAAkB;EAClB,WAAW;EACX,oBAAoB,EAAE,iBAAiB;EACvC,mBAAmB;EACnB,gBAAgB;AAClB;AACA;EACE,qBAAqB;EACrB,kBAAkB;EAClB,SAAS;EACT,OAAO;AACT;AAEA;CACC,UAAU;AACX;AAEA;CACC,eAAe;AAChB;AAEA;IACI,WAAW;IACX,aAAa;IACb,iBAAiB;IACjB,UAAU;AACd;AAEA;EACE,gBAAgB;AAClB;AAEA;EACE,cAAc;AAChB;AAEA;;EAEE,qBAAqB;EACrB,kBAAkB;AACpB;AAEA;EACE,YAAY;EACZ,oBAAoB;AACtB;AAEA;EACE,eAAe;EACf,sDAA8C;UAA9C,8CAA8C;EAC9C,UAAU;AACZ;AAEA;;EAEE,UAAU;EACV,YAAY;EACZ,iBAAiB;AACnB;AAEA;EACE,UAAU;EACV,YAAY;EACZ,oBAAoB;AACtB;AAEA;;EAEE,UAAU;AACZ;AAEA;;;;EAIE,UAAU;EACV,YAAY;EACZ,iBAAiB;AACnB;AAEA;EACE,iBAAiB;AACnB;AAEA;EACE,UAAU;AACZ;AAEA;EACE,iBAAiB;AACnB;AAEA;EACE,UAAU;EACV,iBAAiB;AACnB;AAEA;EACE,gBAAgB;EAChB,YAAY;EACZ,iBAAiB;AACnB;AAEA;EACE,WAAW;EACX,aAAa;EACb,gBAAgB;EAChB,iBAAY;IAAZ,eAAY;OAAZ,YAAY;EACZ,eAAe;EACf,cAAc;AAChB","file":"application.css","sourcesContent":[".states {\n  /*fill: grey;*/\n}\n.states :hover {\n  fill: #ccebc5;\n}\n\n.state-borders {\n  fill: none;\n  stroke: #fff;\n  stroke-width: 0.5px;\n  stroke-linejoin: round;\n  stroke-linecap: round;\n  pointer-events: none;\n}\n\n#container {\n\tmargin:2%;\n\tpadding:20px;\n\tborder:2px solid #d0d0d0;\n\tborder-radius: 5px;\n}\n\n.svg-container {\n  display: inline-block;\n  position: relative;\n  width: 100%;\n  padding-bottom: 100%; /* aspect ratio */\n  vertical-align: top;\n  overflow: hidden;\n}\n.svg-content-responsive {\n  display: inline-block;\n  position: absolute;\n  top: 10px;\n  left: 0;\n}\n\n.hover-info {\n\tz-index: 1;\n}\n\n.exit, .bar-graph {\n\tcursor: default; \n}\n\npolyline{\n    opacity: .3;\n    stroke: black;\n    stroke-width: 2px;\n    fill: none;\n}\n\nbody {\n  min-width: 760px;\n}\n\n.parcoords {\n  display: block;\n}\n\n.parcoords svg,\n.parcoords canvas {\n  font: 10px sans-serif;\n  position: absolute;\n}\n\n.parcoords canvas {\n  opacity: 0.9;\n  pointer-events: none;\n}\n\n.axis .title {\n  font-size: 10px;\n  transform: rotate(-21deg) translate(-5px,-6px);\n  fill: #222;\n}\n\n.axis line,\n.axis path {\n  fill: none;\n  stroke: #ccc;\n  stroke-width: 1px;\n}\n\n.axis .tick text {\n  fill: #222;\n  opacity: 0.5;\n  pointer-events: none;\n}\n\n.axis.manufac_name .tick text,\n.axis.food_group .tick text {\n  opacity: 1;\n}\n\n.axis:hover line,\n.axis:hover path,\n.axis.active line,\n.axis.active path {\n  fill: none;\n  stroke: #222;\n  stroke-width: 1px;\n}\n\n.axis:hover .title {\n  font-weight: bold;\n}\n\n.axis:hover .tick text {\n  opacity: 1;\n}\n\n.axis.active .title {\n  font-weight: bold;\n}\n\n.axis.active .tick text {\n  opacity: 1;\n  font-weight: bold;\n}\n\n.brush .extent {\n  fill-opacity: .3;\n  stroke: #fff;\n  stroke-width: 1px;\n}\n\npre {\n  width: 100%;\n  height: 300px;\n  margin: 6px 12px;\n  tab-size: 40;\n  font-size: 10px;\n  overflow: auto;\n}"]}]);
 
 
 
@@ -5317,4 +5825,4 @@ module.exports = function(module) {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=application-53b54ff3353341d30b17.js.map
+//# sourceMappingURL=application-89c477392621e20a719a.js.map
