@@ -17,10 +17,31 @@
   </head>
 
   <body>
+    <div>
+      <h1>Info-Vis-Languages</h1>
+    </div>
+    <div>
+      <h3>US Map with Languages Spoken by State</h3>
+      <p>Click a state and select an option to display language information</p>
+      <ul>
+        <li>Click each section(slice in pie graph or bar in bar graph) to display population values.</li>
+        <li>Click the yellow slice of the Top 5 pie graph to drill down to view all other languages spoken</li>
+
+      </ul>
+    </div> 
     <div id="select-language"></div>
     <div id="container"></div>
+    <div>
+      <h3>Parallel Coordinate Visualization of Languages Spoke by State</h3>
+      <p>Select a group of states and a group of languages to build the visualization.</p>
+    </div>
     <div id="multi-st-select"></div>
-    <div id="multi-la-select"></div>
+    <ul>
+      <li>
+        Brush each axis to select individual languages.
+      </li>
+    </ul>
+    
     <%= yield %>
   </body>
   

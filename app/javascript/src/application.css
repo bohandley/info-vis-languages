@@ -137,5 +137,14 @@ pre {
 
 #multi-st-select {
 	width: 350px;
-	margin: 0 auto;
+	/*margin: 0 auto;*/
+	margin-left: 50px;
 }
+
+#multi-st-select select {
+	height: 100px;
+	border-radius: 5px;
+}
+#multi-st-select select, #multi-st-select button {
+	margin: 10px;
+} 

@@ -287,14 +287,14 @@ $(document).ready(function () {
     // can be sliced to filter data
 
     var langSet = pCrds.createLangSet(langs); //.slice(0,10);
+    // build each select for filtering the parallel coordinate visualization
 
-    var stateOpts = stateSet;
     buildSelect("multi-st-select", "state-coords", "m-state", stateSet);
     var multiSelect = buildSelect("multi-st-select", "lang-coords", "m-lang", langSet);
-    multiSelect.append("button").attr("type", "button").attr("id", "state-multi-select").text("Submit");
-    d3.select("#state-multi-select").on("click", function (d) {
-      d3.selectAll(".parcoords").remove();
-      d3.selectAll("pre").remove();
+    multiSelect.append("button").attr("type", "button").attr("id", "multi-select-submit").text("Submit");
+    d3.select("#multi-select-submit").on("click", function (d) {
+      // to rebuild the whole parallel coordinate vis
+      removeParaCoords();
       var statesChoice = $("#state-coords").val();
       var langsChoice = $("#lang-coords").val(); // build a data set collection
       // each object of the array has all states(as keys) and a LANLABEL(key)
@@ -305,40 +305,9 @@ $(document).ready(function () {
       // continue with states
       // finish with a langugage axis without labels
 
-      var dimensions = pCrds.createDimensions(statesChoice, langsChoice, types); // state.choice = choice;
+      var dimensions = pCrds.createDimensions(statesChoice, langsChoice, types); // build the parallel coordinate vis
 
-      pCrds.buildParaCoords(measures, stateSet, langSet, dimensions, newDataCollection); // object.selectAll(".hover-info").remove();
-      // object.select("#revert").remove();
-      // object.select("#other-display-select").remove();
-      // object.selectAll("#pie-graph").remove();
-      // object.selectAll("#legend").remove();
-      // object.selectAll(".bar-graph").remove();
-      // callback(state, choice)
-      //   .then(data=>{
-      //     // REFACTOR THIS
-      //     state.data = data;
-      //     object.selectAll("#pie-graph").remove();
-      //     object.selectAll("#legend").remove();
-      //     object.selectAll(".bar-graph").remove();
-      //     if(choice == 'LAN7')
-      //       pG.buildPieGraph(object, state, choice)
-      //     else if(choice == 'LAN39')
-      //       bG.buildBarGraph(object, state)
-      //     else if(choice == 'LAN'){
-      //       // remove headers and null values
-      //       let preData = data.slice(1).filter(el=> el[0] != null)
-      //       preData.sort((a,b) => +b[0] - +a[0]);
-      //       // group into top 5 languages plus other
-      //       let top5 = preData.slice(0,5);
-      //       let other = preData.slice(5);
-      //       let otherVal = other.reduce((acc, cur)=> +cur[0] + acc, 0)
-      //       let otherArray = [[otherVal].concat(['Other'])];
-      //       let top5PlusOther = top5.concat(otherArray);
-      //       state.filtered = top5PlusOther;
-      //       state.leftovers = other;
-      //       pG.buildPieGraph(object, state, choice);
-      //     }
-      //   });
+      pCrds.buildParaCoords(measures, stateSet, langSet, dimensions, newDataCollection);
     });
   });
 });
@@ -444,7 +413,10 @@ function buildSelect(divId, selectId, optClass, opts) {
   return multiSelect;
 }
 
-function buildSubmit(text) {}
+function removeParaCoords() {
+  d3.selectAll(".parcoords").remove();
+  d3.selectAll("pre").remove();
+}
 
 /***/ }),
 
@@ -1966,4 +1938,4 @@ try {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=censusData-b90ac577eb8022f2b7f4.js.map
+//# sourceMappingURL=censusData-851b9b4488bbce736be5.js.map

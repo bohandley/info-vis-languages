@@ -149,10 +149,10 @@ getData()
 
     multiSelect.append("button")
       .attr("type", "button")
-      .attr("id", "state-multi-select")
+      .attr("id", "multi-select-submit")
       .text("Submit");
       
-    d3.select("#state-multi-select")
+    d3.select("#multi-select-submit")
       .on("click", function(d) {
         // to rebuild the whole parallel coordinate vis
         removeParaCoords();
