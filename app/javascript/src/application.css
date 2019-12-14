@@ -134,3 +134,8 @@ pre {
   font-size: 10px;
   overflow: auto;
 }
+
+#multi-st-select {
+	width: 350px;
+	margin: 0 auto;
+}
