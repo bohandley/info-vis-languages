@@ -121,7 +121,7 @@ const paraCoords = {
       //   })
     };
     
-    
+
     dimensions.unshift(langScaleObj);
     dimensions.push(langScaleObj2);
 
@@ -180,6 +180,7 @@ const paraCoords = {
         .attr("transform", function(d,i) { return "translate(" + xscale(i) + ")"; });
 //////////
 // begin building with the data
+let x;
     data.forEach(el=>{
       
       for(var key in el) {

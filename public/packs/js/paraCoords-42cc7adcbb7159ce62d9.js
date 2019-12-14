@@ -257,6 +257,7 @@ var paraCoords = {
     }); //////////
     // begin building with the data
 
+    var x;
     data.forEach(function (el) {
       for (var key in el) {
         if (el[key] == null) {
@@ -410,4 +411,4 @@ module.exports = paraCoords;
 /***/ })
 
 /******/ });
-//# sourceMappingURL=paraCoords-99073595af1c8ad2d504.js.map
+//# sourceMappingURL=paraCoords-42cc7adcbb7159ce62d9.js.map

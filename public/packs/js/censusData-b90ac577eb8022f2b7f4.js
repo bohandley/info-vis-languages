@@ -680,6 +680,7 @@ var paraCoords = {
     }); //////////
     // begin building with the data
 
+    var x;
     data.forEach(function (el) {
       for (var key in el) {
         if (el[key] == null) {
@@ -1965,4 +1966,4 @@ try {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=censusData-783f29bf0cf140a0502c.js.map
+//# sourceMappingURL=censusData-b90ac577eb8022f2b7f4.js.map
