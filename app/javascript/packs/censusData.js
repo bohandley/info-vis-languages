@@ -141,11 +141,8 @@ getData()
     // create a set of languages ordered from most spoke in the US to least spoken
     // can be sliced to filter data
     let langSet = pCrds.createLangSet(langs)//.slice(0,10);
-        
 
-
-    let stateOpts = stateSet;
-
+    // build each select for filtering the parallel coordinate visualization
     buildSelect("multi-st-select", "state-coords", "m-state", stateSet)
     
     let multiSelect = buildSelect("multi-st-select", "lang-coords", "m-lang", langSet)
@@ -157,8 +154,9 @@ getData()
       
     d3.select("#state-multi-select")
       .on("click", function(d) {
-        d3.selectAll(".parcoords").remove();
-        d3.selectAll("pre").remove();
+        // to rebuild the whole parallel coordinate vis
+        removeParaCoords();
+
         let statesChoice = $("#state-coords").val();
         let langsChoice = $("#lang-coords").val();
 
@@ -172,50 +170,10 @@ getData()
         // continue with states
         // finish with a langugage axis without labels
         let dimensions = pCrds.createDimensions(statesChoice, langsChoice, types);
-        // state.choice = choice;
+        
+        // build the parallel coordinate vis
         pCrds.buildParaCoords(measures, stateSet, langSet, dimensions, newDataCollection);
-        // object.selectAll(".hover-info").remove();
-        // object.select("#revert").remove();
-        // object.select("#other-display-select").remove();
-        // object.selectAll("#pie-graph").remove();
-        // object.selectAll("#legend").remove();
-        // object.selectAll(".bar-graph").remove();
-
-        // callback(state, choice)
-        //   .then(data=>{
-        //     // REFACTOR THIS
-        //     state.data = data;
-
-
-        //     object.selectAll("#pie-graph").remove();
-        //     object.selectAll("#legend").remove();
-        //     object.selectAll(".bar-graph").remove();
-
-        //     if(choice == 'LAN7')
-        //       pG.buildPieGraph(object, state, choice)
-        //     else if(choice == 'LAN39')
-        //       bG.buildBarGraph(object, state)
-        //     else if(choice == 'LAN'){
-        //       // remove headers and null values
-        //       let preData = data.slice(1).filter(el=> el[0] != null)
-
-        //       preData.sort((a,b) => +b[0] - +a[0]);
-        //       // group into top 5 languages plus other
-        //       let top5 = preData.slice(0,5);
-        //       let other = preData.slice(5);
-
-        //       let otherVal = other.reduce((acc, cur)=> +cur[0] + acc, 0)
-        //       let otherArray = [[otherVal].concat(['Other'])];
-
-        //       let top5PlusOther = top5.concat(otherArray);
-
-        //       state.filtered = top5PlusOther;
-
-        //       state.leftovers = other;
-              
-        //       pG.buildPieGraph(object, state, choice);
-        //     }
-        //   });
+        
       });
   });
 });
@@ -295,6 +253,7 @@ function buildSelect(divId, selectId, optClass, opts){
   return multiSelect;
 }
 
-function buildSubmit(text){
-
+function removeParaCoords(){
+  d3.selectAll(".parcoords").remove();
+  d3.selectAll("pre").remove();
 }
