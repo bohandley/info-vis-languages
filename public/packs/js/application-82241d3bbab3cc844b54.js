@@ -295,6 +295,7 @@ $(document).ready(function () {
       d3.selectAll(".state-shapes").attr("fill", "#f2f2f2");
       $(this).attr("fill", "#ccebc5");
       state.id = d.id;
+      d3.select("#radio-buttons").remove();
       stateDisplay.selectAll(".hover-info").remove();
       stateDisplay.select("#revert").remove();
       stateDisplay.select("#other-display-select").remove();
@@ -320,7 +321,10 @@ $(document).ready(function () {
       getDataOnSelect(state, choice).then(function (data) {
         console.log(data);
         state.data = data;
-        if (choice == 'LAN7') pG.buildPieGraph(stateDisplay, state, choice);else if (choice == 'LAN39') bG.buildBarGraph(stateDisplay, state);else if (choice == 'LAN') {
+        if (choice == 'LAN7') pG.buildPieGraph(stateDisplay, state, choice);else if (choice == 'LAN39') {
+          bG.buildBarGraph(stateDisplay, state);
+          sD.buildGrowBarButton(state, bG);
+        } else if (choice == 'LAN') {
           // remove headers and null values
           var preData = data.slice(1).filter(function (el) {
             return el[0] != null;
@@ -5775,4 +5779,4 @@ module.exports = function(module) {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=application-bb5efac850a373dc59c8.js.map
+//# sourceMappingURL=application-82241d3bbab3cc844b54.js.map

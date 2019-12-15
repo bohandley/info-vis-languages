@@ -120,7 +120,7 @@ const stateDisplay = {
 	    	let choice = $("#lan-select").val();
 	    	state.choice = choice;
 
-	    	d3.select("#radio-buttons").remove()
+	    	d3.select("#radio-buttons").remove();
 	    	object.selectAll(".hover-info").remove();
 	    	object.select("#revert").remove();
 	    	object.select("#other-display-select").remove();

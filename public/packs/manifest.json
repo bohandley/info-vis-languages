@@ -1,19 +1,19 @@
 {
-  "application.js": "/packs/js/application-bb5efac850a373dc59c8.js",
-  "application.js.map": "/packs/js/application-bb5efac850a373dc59c8.js.map",
+  "application.js": "/packs/js/application-82241d3bbab3cc844b54.js",
+  "application.js.map": "/packs/js/application-82241d3bbab3cc844b54.js.map",
   "barGraph.js": "/packs/js/barGraph-1d23a8b7cc78719cd5df.js",
   "barGraph.js.map": "/packs/js/barGraph-1d23a8b7cc78719cd5df.js.map",
-  "censusData.js": "/packs/js/censusData-dca5a9bebc59eaf2b143.js",
-  "censusData.js.map": "/packs/js/censusData-dca5a9bebc59eaf2b143.js.map",
+  "censusData.js": "/packs/js/censusData-6ec2ba3699a874e752e6.js",
+  "censusData.js.map": "/packs/js/censusData-6ec2ba3699a874e752e6.js.map",
   "colors.js": "/packs/js/colors-03427b5c148b38710063.js",
   "colors.js.map": "/packs/js/colors-03427b5c148b38710063.js.map",
   "entrypoints": {
     "application": {
       "js": [
-        "/packs/js/application-bb5efac850a373dc59c8.js"
+        "/packs/js/application-82241d3bbab3cc844b54.js"
       ],
       "js.map": [
-        "/packs/js/application-bb5efac850a373dc59c8.js.map"
+        "/packs/js/application-82241d3bbab3cc844b54.js.map"
       ]
     },
     "barGraph": {
@@ -26,10 +26,10 @@
     },
     "censusData": {
       "js": [
-        "/packs/js/censusData-dca5a9bebc59eaf2b143.js"
+        "/packs/js/censusData-6ec2ba3699a874e752e6.js"
       ],
       "js.map": [
-        "/packs/js/censusData-dca5a9bebc59eaf2b143.js.map"
+        "/packs/js/censusData-6ec2ba3699a874e752e6.js.map"
       ]
     },
     "colors": {

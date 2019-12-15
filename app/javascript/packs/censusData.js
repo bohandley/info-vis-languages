@@ -41,6 +41,7 @@ $(document).ready(function() {
 
           state.id = d.id;       
 
+          d3.select("#radio-buttons").remove();
           stateDisplay.selectAll(".hover-info").remove();
           stateDisplay.select("#revert").remove();
           stateDisplay.select("#other-display-select").remove();
@@ -82,8 +83,10 @@ $(document).ready(function() {
               
               if(choice == 'LAN7')
                 pG.buildPieGraph(stateDisplay, state, choice)
-              else if(choice == 'LAN39')
+              else if(choice == 'LAN39'){
                 bG.buildBarGraph(stateDisplay, state)
+                sD.buildGrowBarButton(state, bG);
+              }
               else if(choice == 'LAN'){
                 // remove headers and null values
                 let preData = data.slice(1).filter(el=> el[0] != null)
