@@ -119,9 +119,9 @@ var stateDisplay = {
     stateDisplay.select("select").transition(s2).style("display", null);
   },
   createSelect: function createSelect(object, state, callback, pG, bG) {
-    var opts = [["Top 5 Langugages Plus More", "LAN"], ["Language Snapshot", "LAN7"], ["Language Major Categories", "LAN39"]]; // <foreignObject x="20" y="20" width="160" height="160">
+    var opts = [["Top 5 Plus", "LAN"], ["Language Snapshot", "LAN7"], ["Language Categories", "LAN39"]]; // <foreignObject x="20" y="20" width="160" height="160">
 
-    object.append("foreignObject").attr("id", "dropdown").attr("x", 75).attr("y", 20).attr("width", 250).attr("height", 250);
+    object.append("foreignObject").attr("id", "dropdown").attr("x", 10).attr("y", 20).attr("width", 250).attr("height", 250);
     object.select("#dropdown").append("xhtml:div").attr("id", "lan");
     object.select("#lan").append("xhtml:select").attr("id", "lan-select");
     object.select("select").selectAll("option").data(opts).enter().append("xhtml:option").text(function (d) {
@@ -132,6 +132,7 @@ var stateDisplay = {
     object.select("select").on("change", function (d) {
       var choice = $("#lan-select").val();
       state.choice = choice;
+      d3.select("#radio-buttons").remove();
       object.selectAll(".hover-info").remove();
       object.select("#revert").remove();
       object.select("#other-display-select").remove();
@@ -144,7 +145,10 @@ var stateDisplay = {
         object.selectAll("#pie-graph").remove();
         object.selectAll("#legend").remove();
         object.selectAll(".bar-graph").remove();
-        if (choice == 'LAN7') pG.buildPieGraph(object, state, choice);else if (choice == 'LAN39') bG.buildBarGraph(object, state);else if (choice == 'LAN') {
+        if (choice == 'LAN7') pG.buildPieGraph(object, state, choice);else if (choice == 'LAN39') {
+          bG.buildBarGraph(object, state);
+          stateDisplay.buildGrowBarButton(state, bG);
+        } else if (choice == 'LAN') {
           // remove headers and null values
           var preData = data.slice(1).filter(function (el) {
             return el[0] != null;
@@ -167,6 +171,19 @@ var stateDisplay = {
       });
     });
     return object;
+  },
+  buildGrowBarButton: function buildGrowBarButton(state, bG) {
+    d3.select("#lan").append("xhtml:div").attr("id", "radio-buttons");
+    d3.select("#radio-buttons").append("xhtml:input").attr("type", "radio").text("Log").attr("id", "log-scale").attr("checked", true).on("click", function () {
+      bG.growBars(state, "log");
+      $("#lin-scale").prop("checked", false);
+    });
+    d3.select("#radio-buttons").append("text").attr("class", "radio-button-text").text("Log");
+    d3.select("#radio-buttons").append("xhtml:input").attr("type", "radio").text("Linear").attr("id", "lin-scale").on("click", function () {
+      bG.growBars(state, "linear");
+      $("#log-scale").prop("checked", false);
+    });
+    d3.select("#radio-buttons").append("text").attr("class", "radio-button-text").text("Linear");
   }
 };
 module.exports = stateDisplay;
@@ -174,4 +191,4 @@ module.exports = stateDisplay;
 /***/ })
 
 /******/ });
-//# sourceMappingURL=stateDisplay-b34f08326128204e04c0.js.map
+//# sourceMappingURL=stateDisplay-e06af3b84edb5f248bdc.js.map

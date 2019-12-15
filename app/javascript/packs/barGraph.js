@@ -1,13 +1,7 @@
 const barGraph = {
 	buildBarGraph: function(stateDisplay, state){
 
-		var data = state.data.slice(1).sort((a,b)=> +b[0] - +a[0]);
-
-		var greatestPop = data[0][0];
-		
-		var widthScale = d3.scaleLinear()
-			.domain([1, greatestPop])
-			.range([0, 300]);
+		var data = this.sortFixData(state);
 
 		var color = d3.scaleOrdinal(d3.schemePastel1.concat(d3.schemePastel1))
 		    .domain(data.map(el=> el[1]));
@@ -36,13 +30,14 @@ const barGraph = {
         
 			});
 	
-		var s = d3.transition()
-			.delay(1000)
-			.duration(1000);
+		this.growBars(state, "log")
+		// var s = d3.transition()
+		// 	.delay(1000)
+		// 	.duration(1000);
 
-		rects
-			.transition(s)
-			.attr("width", (d) => widthScale(d[0]));	
+		// rects
+		// 	.transition(s)
+		// 	.attr("width", (d) => widthScale(d[0]));	
 
 		var texts = stateDisplay.selectAll('thing')
 			.data(data)
@@ -112,6 +107,38 @@ const barGraph = {
 	    .style("text-anchor", "middle")
 	    .attr("font-size", "12px")
 	    .attr("font-weight", "bold");
+	},
+
+	growBars: function(state, scale) {
+
+		let data = this.sortFixData(state);
+
+		var greatestPop = data[0][0];
+			
+		let scaleType;
+
+		if(scale == "linear")	
+			scaleType = d3.scaleLinear();
+		else if(scale == "log")
+			scaleType = d3.scaleLog();
+
+		var widthScale = scaleType
+			.domain([1, greatestPop])
+			.range([0, 300]);
+
+		var s = d3.transition()
+			.delay(1000)
+			.duration(1000);
+
+		d3.selectAll(".bar-graph")
+			.transition(s)
+			.attr("width", (d) => widthScale(d[0]));
+	}, 
+
+	sortFixData: function(state){
+		var data = state.data.slice(1).sort((a,b)=> +b[0] - +a[0]);
+
+		return data;
 	}
 
 		

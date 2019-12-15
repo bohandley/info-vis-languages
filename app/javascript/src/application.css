@@ -148,3 +148,11 @@ pre {
 #multi-st-select select, #multi-st-select button {
 	margin: 10px;
 } 
+
+#radio-buttons {
+	display: inline-block;
+}
+
+.radio-button-text {
+	font-size: 12px;
+}

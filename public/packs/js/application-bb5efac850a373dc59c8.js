@@ -163,11 +163,7 @@ __webpack_require__(/*! packs/censusData */ "./app/javascript/packs/censusData.j
 
 var barGraph = {
   buildBarGraph: function buildBarGraph(stateDisplay, state) {
-    var data = state.data.slice(1).sort(function (a, b) {
-      return +b[0] - +a[0];
-    });
-    var greatestPop = data[0][0];
-    var widthScale = d3.scaleLinear().domain([1, greatestPop]).range([0, 300]);
+    var data = this.sortFixData(state);
     var color = d3.scaleOrdinal(d3.schemePastel1.concat(d3.schemePastel1)).domain(data.map(function (el) {
       return el[1];
     })); // .attr("height", function(d) {return myscale(d);})
@@ -183,10 +179,13 @@ var barGraph = {
       hoverInfo.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
       hoverInfo.select("#hover-state-pop").text((+d[0]).toLocaleString());
     });
-    var s = d3.transition().delay(1000).duration(1000);
-    rects.transition(s).attr("width", function (d) {
-      return widthScale(d[0]);
-    });
+    this.growBars(state, "log"); // var s = d3.transition()
+    // 	.delay(1000)
+    // 	.duration(1000);
+    // rects
+    // 	.transition(s)
+    // 	.attr("width", (d) => widthScale(d[0]));	
+
     var texts = stateDisplay.selectAll('thing').data(data).enter().append("text").attr("class", "bar-graph").attr("transform", "translate(0, 40)").attr('x', 10).attr('y', function (d, i) {
       return (i + 1) * (10 + 10);
     }).attr('font-size', 12).text(function (d) {
@@ -226,6 +225,23 @@ var barGraph = {
     // }
 
     hoverInfo.append("text").attr("id", "hover-state-pop").attr("x", x).attr("dy", dy).style("text-anchor", "middle").attr("font-size", "12px").attr("font-weight", "bold");
+  },
+  growBars: function growBars(state, scale) {
+    var data = this.sortFixData(state);
+    var greatestPop = data[0][0];
+    var scaleType;
+    if (scale == "linear") scaleType = d3.scaleLinear();else if (scale == "log") scaleType = d3.scaleLog();
+    var widthScale = scaleType.domain([1, greatestPop]).range([0, 300]);
+    var s = d3.transition().delay(1000).duration(1000);
+    d3.selectAll(".bar-graph").transition(s).attr("width", function (d) {
+      return widthScale(d[0]);
+    });
+  },
+  sortFixData: function sortFixData(state) {
+    var data = state.data.slice(1).sort(function (a, b) {
+      return +b[0] - +a[0];
+    });
+    return data;
   }
 };
 module.exports = barGraph;
@@ -1147,9 +1163,9 @@ var stateDisplay = {
     stateDisplay.select("select").transition(s2).style("display", null);
   },
   createSelect: function createSelect(object, state, callback, pG, bG) {
-    var opts = [["Top 5 Langugages Plus More", "LAN"], ["Language Snapshot", "LAN7"], ["Language Major Categories", "LAN39"]]; // <foreignObject x="20" y="20" width="160" height="160">
+    var opts = [["Top 5 Plus", "LAN"], ["Language Snapshot", "LAN7"], ["Language Categories", "LAN39"]]; // <foreignObject x="20" y="20" width="160" height="160">
 
-    object.append("foreignObject").attr("id", "dropdown").attr("x", 75).attr("y", 20).attr("width", 250).attr("height", 250);
+    object.append("foreignObject").attr("id", "dropdown").attr("x", 10).attr("y", 20).attr("width", 250).attr("height", 250);
     object.select("#dropdown").append("xhtml:div").attr("id", "lan");
     object.select("#lan").append("xhtml:select").attr("id", "lan-select");
     object.select("select").selectAll("option").data(opts).enter().append("xhtml:option").text(function (d) {
@@ -1160,6 +1176,7 @@ var stateDisplay = {
     object.select("select").on("change", function (d) {
       var choice = $("#lan-select").val();
       state.choice = choice;
+      d3.select("#radio-buttons").remove();
       object.selectAll(".hover-info").remove();
       object.select("#revert").remove();
       object.select("#other-display-select").remove();
@@ -1172,7 +1189,10 @@ var stateDisplay = {
         object.selectAll("#pie-graph").remove();
         object.selectAll("#legend").remove();
         object.selectAll(".bar-graph").remove();
-        if (choice == 'LAN7') pG.buildPieGraph(object, state, choice);else if (choice == 'LAN39') bG.buildBarGraph(object, state);else if (choice == 'LAN') {
+        if (choice == 'LAN7') pG.buildPieGraph(object, state, choice);else if (choice == 'LAN39') {
+          bG.buildBarGraph(object, state);
+          stateDisplay.buildGrowBarButton(state, bG);
+        } else if (choice == 'LAN') {
           // remove headers and null values
           var preData = data.slice(1).filter(function (el) {
             return el[0] != null;
@@ -1195,6 +1215,19 @@ var stateDisplay = {
       });
     });
     return object;
+  },
+  buildGrowBarButton: function buildGrowBarButton(state, bG) {
+    d3.select("#lan").append("xhtml:div").attr("id", "radio-buttons");
+    d3.select("#radio-buttons").append("xhtml:input").attr("type", "radio").text("Log").attr("id", "log-scale").attr("checked", true).on("click", function () {
+      bG.growBars(state, "log");
+      $("#lin-scale").prop("checked", false);
+    });
+    d3.select("#radio-buttons").append("text").attr("class", "radio-button-text").text("Log");
+    d3.select("#radio-buttons").append("xhtml:input").attr("type", "radio").text("Linear").attr("id", "lin-scale").on("click", function () {
+      bG.growBars(state, "linear");
+      $("#log-scale").prop("checked", false);
+    });
+    d3.select("#radio-buttons").append("text").attr("class", "radio-button-text").text("Linear");
   }
 };
 module.exports = stateDisplay;
@@ -3300,7 +3333,7 @@ Released under the MIT license
 
 exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(true);
 // Module
-exports.push([module.i, ".states {\n  /*fill: grey;*/\n}\n.states :hover {\n  fill: #ccebc5;\n}\n.state-borders {\n  fill: none;\n  stroke: #fff;\n  stroke-width: 0.5px;\n  stroke-linejoin: round;\n  stroke-linecap: round;\n  pointer-events: none;\n}\n#container {\n\tmargin:2%;\n\tpadding:20px;\n\tborder:2px solid #d0d0d0;\n\tborder-radius: 5px;\n}\n.svg-container {\n  display: inline-block;\n  position: relative;\n  width: 100%;\n  padding-bottom: 100%; /* aspect ratio */\n  vertical-align: top;\n  overflow: hidden;\n}\n.svg-content-responsive {\n  display: inline-block;\n  position: absolute;\n  top: 10px;\n  left: 0;\n}\n.hover-info {\n\tz-index: 1;\n}\n.exit, .bar-graph {\n\tcursor: default; \n}\npolyline{\n    opacity: .3;\n    stroke: black;\n    stroke-width: 2px;\n    fill: none;\n}\nbody {\n  min-width: 760px;\n}\n.parcoords {\n  display: block;\n}\n.parcoords svg,\n.parcoords canvas {\n  font: 10px sans-serif;\n  position: absolute;\n}\n.parcoords canvas {\n  opacity: 0.9;\n  pointer-events: none;\n}\n.axis .title {\n  font-size: 10px;\n  -webkit-transform: rotate(-21deg) translate(-5px,-6px);\n          transform: rotate(-21deg) translate(-5px,-6px);\n  fill: #222;\n}\n.axis line,\n.axis path {\n  fill: none;\n  stroke: #ccc;\n  stroke-width: 1px;\n}\n.axis .tick text {\n  fill: #222;\n  opacity: 0.5;\n  pointer-events: none;\n}\n.axis.manufac_name .tick text,\n.axis.food_group .tick text {\n  opacity: 1;\n}\n.axis:hover line,\n.axis:hover path,\n.axis.active line,\n.axis.active path {\n  fill: none;\n  stroke: #222;\n  stroke-width: 1px;\n}\n.axis:hover .title {\n  font-weight: bold;\n}\n.axis:hover .tick text {\n  opacity: 1;\n}\n.axis.active .title {\n  font-weight: bold;\n}\n.axis.active .tick text {\n  opacity: 1;\n  font-weight: bold;\n}\n.brush .extent {\n  fill-opacity: .3;\n  stroke: #fff;\n  stroke-width: 1px;\n}\npre {\n  width: 100%;\n  height: 300px;\n  margin: 6px 12px;\n  -moz-tab-size: 40;\n    -o-tab-size: 40;\n       tab-size: 40;\n  font-size: 10px;\n  overflow: auto;\n}\n#multi-st-select {\n\twidth: 350px;\n\t/*margin: 0 auto;*/\n\tmargin-left: 50px;\n}\n#multi-st-select select {\n\theight: 100px;\n\tborder-radius: 5px;\n}\n#multi-st-select select, #multi-st-select button {\n\tmargin: 10px;\n} ", "",{"version":3,"sources":["application.css"],"names":[],"mappings":"AAAA;EACE,cAAc;AAChB;AACA;EACE,aAAa;AACf;AAEA;EACE,UAAU;EACV,YAAY;EACZ,mBAAmB;EACnB,sBAAsB;EACtB,qBAAqB;EACrB,oBAAoB;AACtB;AAEA;CACC,SAAS;CACT,YAAY;CACZ,wBAAwB;CACxB,kBAAkB;AACnB;AAEA;EACE,qBAAqB;EACrB,kBAAkB;EAClB,WAAW;EACX,oBAAoB,EAAE,iBAAiB;EACvC,mBAAmB;EACnB,gBAAgB;AAClB;AACA;EACE,qBAAqB;EACrB,kBAAkB;EAClB,SAAS;EACT,OAAO;AACT;AAEA;CACC,UAAU;AACX;AAEA;CACC,eAAe;AAChB;AAEA;IACI,WAAW;IACX,aAAa;IACb,iBAAiB;IACjB,UAAU;AACd;AAEA;EACE,gBAAgB;AAClB;AAEA;EACE,cAAc;AAChB;AAEA;;EAEE,qBAAqB;EACrB,kBAAkB;AACpB;AAEA;EACE,YAAY;EACZ,oBAAoB;AACtB;AAEA;EACE,eAAe;EACf,sDAA8C;UAA9C,8CAA8C;EAC9C,UAAU;AACZ;AAEA;;EAEE,UAAU;EACV,YAAY;EACZ,iBAAiB;AACnB;AAEA;EACE,UAAU;EACV,YAAY;EACZ,oBAAoB;AACtB;AAEA;;EAEE,UAAU;AACZ;AAEA;;;;EAIE,UAAU;EACV,YAAY;EACZ,iBAAiB;AACnB;AAEA;EACE,iBAAiB;AACnB;AAEA;EACE,UAAU;AACZ;AAEA;EACE,iBAAiB;AACnB;AAEA;EACE,UAAU;EACV,iBAAiB;AACnB;AAEA;EACE,gBAAgB;EAChB,YAAY;EACZ,iBAAiB;AACnB;AAEA;EACE,WAAW;EACX,aAAa;EACb,gBAAgB;EAChB,iBAAY;IAAZ,eAAY;OAAZ,YAAY;EACZ,eAAe;EACf,cAAc;AAChB;AAEA;CACC,YAAY;CACZ,kBAAkB;CAClB,iBAAiB;AAClB;AAEA;CACC,aAAa;CACb,kBAAkB;AACnB;AACA;CACC,YAAY;AACb","file":"application.css","sourcesContent":[".states {\n  /*fill: grey;*/\n}\n.states :hover {\n  fill: #ccebc5;\n}\n\n.state-borders {\n  fill: none;\n  stroke: #fff;\n  stroke-width: 0.5px;\n  stroke-linejoin: round;\n  stroke-linecap: round;\n  pointer-events: none;\n}\n\n#container {\n\tmargin:2%;\n\tpadding:20px;\n\tborder:2px solid #d0d0d0;\n\tborder-radius: 5px;\n}\n\n.svg-container {\n  display: inline-block;\n  position: relative;\n  width: 100%;\n  padding-bottom: 100%; /* aspect ratio */\n  vertical-align: top;\n  overflow: hidden;\n}\n.svg-content-responsive {\n  display: inline-block;\n  position: absolute;\n  top: 10px;\n  left: 0;\n}\n\n.hover-info {\n\tz-index: 1;\n}\n\n.exit, .bar-graph {\n\tcursor: default; \n}\n\npolyline{\n    opacity: .3;\n    stroke: black;\n    stroke-width: 2px;\n    fill: none;\n}\n\nbody {\n  min-width: 760px;\n}\n\n.parcoords {\n  display: block;\n}\n\n.parcoords svg,\n.parcoords canvas {\n  font: 10px sans-serif;\n  position: absolute;\n}\n\n.parcoords canvas {\n  opacity: 0.9;\n  pointer-events: none;\n}\n\n.axis .title {\n  font-size: 10px;\n  transform: rotate(-21deg) translate(-5px,-6px);\n  fill: #222;\n}\n\n.axis line,\n.axis path {\n  fill: none;\n  stroke: #ccc;\n  stroke-width: 1px;\n}\n\n.axis .tick text {\n  fill: #222;\n  opacity: 0.5;\n  pointer-events: none;\n}\n\n.axis.manufac_name .tick text,\n.axis.food_group .tick text {\n  opacity: 1;\n}\n\n.axis:hover line,\n.axis:hover path,\n.axis.active line,\n.axis.active path {\n  fill: none;\n  stroke: #222;\n  stroke-width: 1px;\n}\n\n.axis:hover .title {\n  font-weight: bold;\n}\n\n.axis:hover .tick text {\n  opacity: 1;\n}\n\n.axis.active .title {\n  font-weight: bold;\n}\n\n.axis.active .tick text {\n  opacity: 1;\n  font-weight: bold;\n}\n\n.brush .extent {\n  fill-opacity: .3;\n  stroke: #fff;\n  stroke-width: 1px;\n}\n\npre {\n  width: 100%;\n  height: 300px;\n  margin: 6px 12px;\n  tab-size: 40;\n  font-size: 10px;\n  overflow: auto;\n}\n\n#multi-st-select {\n\twidth: 350px;\n\t/*margin: 0 auto;*/\n\tmargin-left: 50px;\n}\n\n#multi-st-select select {\n\theight: 100px;\n\tborder-radius: 5px;\n}\n#multi-st-select select, #multi-st-select button {\n\tmargin: 10px;\n} "]}]);
+exports.push([module.i, ".states {\n  /*fill: grey;*/\n}\n.states :hover {\n  fill: #ccebc5;\n}\n.state-borders {\n  fill: none;\n  stroke: #fff;\n  stroke-width: 0.5px;\n  stroke-linejoin: round;\n  stroke-linecap: round;\n  pointer-events: none;\n}\n#container {\n\tmargin:2%;\n\tpadding:20px;\n\tborder:2px solid #d0d0d0;\n\tborder-radius: 5px;\n}\n.svg-container {\n  display: inline-block;\n  position: relative;\n  width: 100%;\n  padding-bottom: 100%; /* aspect ratio */\n  vertical-align: top;\n  overflow: hidden;\n}\n.svg-content-responsive {\n  display: inline-block;\n  position: absolute;\n  top: 10px;\n  left: 0;\n}\n.hover-info {\n\tz-index: 1;\n}\n.exit, .bar-graph {\n\tcursor: default; \n}\npolyline{\n    opacity: .3;\n    stroke: black;\n    stroke-width: 2px;\n    fill: none;\n}\nbody {\n  min-width: 760px;\n}\n.parcoords {\n  display: block;\n}\n.parcoords svg,\n.parcoords canvas {\n  font: 10px sans-serif;\n  position: absolute;\n}\n.parcoords canvas {\n  opacity: 0.9;\n  pointer-events: none;\n}\n.axis .title {\n  font-size: 10px;\n  -webkit-transform: rotate(-21deg) translate(-5px,-6px);\n          transform: rotate(-21deg) translate(-5px,-6px);\n  fill: #222;\n}\n.axis line,\n.axis path {\n  fill: none;\n  stroke: #ccc;\n  stroke-width: 1px;\n}\n.axis .tick text {\n  fill: #222;\n  opacity: 0.5;\n  pointer-events: none;\n}\n.axis.manufac_name .tick text,\n.axis.food_group .tick text {\n  opacity: 1;\n}\n.axis:hover line,\n.axis:hover path,\n.axis.active line,\n.axis.active path {\n  fill: none;\n  stroke: #222;\n  stroke-width: 1px;\n}\n.axis:hover .title {\n  font-weight: bold;\n}\n.axis:hover .tick text {\n  opacity: 1;\n}\n.axis.active .title {\n  font-weight: bold;\n}\n.axis.active .tick text {\n  opacity: 1;\n  font-weight: bold;\n}\n.brush .extent {\n  fill-opacity: .3;\n  stroke: #fff;\n  stroke-width: 1px;\n}\npre {\n  width: 100%;\n  height: 300px;\n  margin: 6px 12px;\n  -moz-tab-size: 40;\n    -o-tab-size: 40;\n       tab-size: 40;\n  font-size: 10px;\n  overflow: auto;\n}\n#multi-st-select {\n\twidth: 350px;\n\t/*margin: 0 auto;*/\n\tmargin-left: 50px;\n}\n#multi-st-select select {\n\theight: 100px;\n\tborder-radius: 5px;\n}\n#multi-st-select select, #multi-st-select button {\n\tmargin: 10px;\n}\n#radio-buttons {\n\tdisplay: inline-block;\n}\n.radio-button-text {\n\tfont-size: 12px;\n}\n", "",{"version":3,"sources":["application.css"],"names":[],"mappings":"AAAA;EACE,cAAc;AAChB;AACA;EACE,aAAa;AACf;AAEA;EACE,UAAU;EACV,YAAY;EACZ,mBAAmB;EACnB,sBAAsB;EACtB,qBAAqB;EACrB,oBAAoB;AACtB;AAEA;CACC,SAAS;CACT,YAAY;CACZ,wBAAwB;CACxB,kBAAkB;AACnB;AAEA;EACE,qBAAqB;EACrB,kBAAkB;EAClB,WAAW;EACX,oBAAoB,EAAE,iBAAiB;EACvC,mBAAmB;EACnB,gBAAgB;AAClB;AACA;EACE,qBAAqB;EACrB,kBAAkB;EAClB,SAAS;EACT,OAAO;AACT;AAEA;CACC,UAAU;AACX;AAEA;CACC,eAAe;AAChB;AAEA;IACI,WAAW;IACX,aAAa;IACb,iBAAiB;IACjB,UAAU;AACd;AAEA;EACE,gBAAgB;AAClB;AAEA;EACE,cAAc;AAChB;AAEA;;EAEE,qBAAqB;EACrB,kBAAkB;AACpB;AAEA;EACE,YAAY;EACZ,oBAAoB;AACtB;AAEA;EACE,eAAe;EACf,sDAA8C;UAA9C,8CAA8C;EAC9C,UAAU;AACZ;AAEA;;EAEE,UAAU;EACV,YAAY;EACZ,iBAAiB;AACnB;AAEA;EACE,UAAU;EACV,YAAY;EACZ,oBAAoB;AACtB;AAEA;;EAEE,UAAU;AACZ;AAEA;;;;EAIE,UAAU;EACV,YAAY;EACZ,iBAAiB;AACnB;AAEA;EACE,iBAAiB;AACnB;AAEA;EACE,UAAU;AACZ;AAEA;EACE,iBAAiB;AACnB;AAEA;EACE,UAAU;EACV,iBAAiB;AACnB;AAEA;EACE,gBAAgB;EAChB,YAAY;EACZ,iBAAiB;AACnB;AAEA;EACE,WAAW;EACX,aAAa;EACb,gBAAgB;EAChB,iBAAY;IAAZ,eAAY;OAAZ,YAAY;EACZ,eAAe;EACf,cAAc;AAChB;AAEA;CACC,YAAY;CACZ,kBAAkB;CAClB,iBAAiB;AAClB;AAEA;CACC,aAAa;CACb,kBAAkB;AACnB;AACA;CACC,YAAY;AACb;AAEA;CACC,qBAAqB;AACtB;AAEA;CACC,eAAe;AAChB","file":"application.css","sourcesContent":[".states {\n  /*fill: grey;*/\n}\n.states :hover {\n  fill: #ccebc5;\n}\n\n.state-borders {\n  fill: none;\n  stroke: #fff;\n  stroke-width: 0.5px;\n  stroke-linejoin: round;\n  stroke-linecap: round;\n  pointer-events: none;\n}\n\n#container {\n\tmargin:2%;\n\tpadding:20px;\n\tborder:2px solid #d0d0d0;\n\tborder-radius: 5px;\n}\n\n.svg-container {\n  display: inline-block;\n  position: relative;\n  width: 100%;\n  padding-bottom: 100%; /* aspect ratio */\n  vertical-align: top;\n  overflow: hidden;\n}\n.svg-content-responsive {\n  display: inline-block;\n  position: absolute;\n  top: 10px;\n  left: 0;\n}\n\n.hover-info {\n\tz-index: 1;\n}\n\n.exit, .bar-graph {\n\tcursor: default; \n}\n\npolyline{\n    opacity: .3;\n    stroke: black;\n    stroke-width: 2px;\n    fill: none;\n}\n\nbody {\n  min-width: 760px;\n}\n\n.parcoords {\n  display: block;\n}\n\n.parcoords svg,\n.parcoords canvas {\n  font: 10px sans-serif;\n  position: absolute;\n}\n\n.parcoords canvas {\n  opacity: 0.9;\n  pointer-events: none;\n}\n\n.axis .title {\n  font-size: 10px;\n  transform: rotate(-21deg) translate(-5px,-6px);\n  fill: #222;\n}\n\n.axis line,\n.axis path {\n  fill: none;\n  stroke: #ccc;\n  stroke-width: 1px;\n}\n\n.axis .tick text {\n  fill: #222;\n  opacity: 0.5;\n  pointer-events: none;\n}\n\n.axis.manufac_name .tick text,\n.axis.food_group .tick text {\n  opacity: 1;\n}\n\n.axis:hover line,\n.axis:hover path,\n.axis.active line,\n.axis.active path {\n  fill: none;\n  stroke: #222;\n  stroke-width: 1px;\n}\n\n.axis:hover .title {\n  font-weight: bold;\n}\n\n.axis:hover .tick text {\n  opacity: 1;\n}\n\n.axis.active .title {\n  font-weight: bold;\n}\n\n.axis.active .tick text {\n  opacity: 1;\n  font-weight: bold;\n}\n\n.brush .extent {\n  fill-opacity: .3;\n  stroke: #fff;\n  stroke-width: 1px;\n}\n\npre {\n  width: 100%;\n  height: 300px;\n  margin: 6px 12px;\n  tab-size: 40;\n  font-size: 10px;\n  overflow: auto;\n}\n\n#multi-st-select {\n\twidth: 350px;\n\t/*margin: 0 auto;*/\n\tmargin-left: 50px;\n}\n\n#multi-st-select select {\n\theight: 100px;\n\tborder-radius: 5px;\n}\n#multi-st-select select, #multi-st-select button {\n\tmargin: 10px;\n} \n\n#radio-buttons {\n\tdisplay: inline-block;\n}\n\n.radio-button-text {\n\tfont-size: 12px;\n}\n"]}]);
 
 
 
@@ -5742,4 +5775,4 @@ module.exports = function(module) {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=application-bf81094adbb2deb31b5b.js.map
+//# sourceMappingURL=application-bb5efac850a373dc59c8.js.map

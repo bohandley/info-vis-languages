@@ -95,11 +95,7 @@
 
 var barGraph = {
   buildBarGraph: function buildBarGraph(stateDisplay, state) {
-    var data = state.data.slice(1).sort(function (a, b) {
-      return +b[0] - +a[0];
-    });
-    var greatestPop = data[0][0];
-    var widthScale = d3.scaleLinear().domain([1, greatestPop]).range([0, 300]);
+    var data = this.sortFixData(state);
     var color = d3.scaleOrdinal(d3.schemePastel1.concat(d3.schemePastel1)).domain(data.map(function (el) {
       return el[1];
     })); // .attr("height", function(d) {return myscale(d);})
@@ -115,10 +111,13 @@ var barGraph = {
       hoverInfo.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
       hoverInfo.select("#hover-state-pop").text((+d[0]).toLocaleString());
     });
-    var s = d3.transition().delay(1000).duration(1000);
-    rects.transition(s).attr("width", function (d) {
-      return widthScale(d[0]);
-    });
+    this.growBars(state, "log"); // var s = d3.transition()
+    // 	.delay(1000)
+    // 	.duration(1000);
+    // rects
+    // 	.transition(s)
+    // 	.attr("width", (d) => widthScale(d[0]));	
+
     var texts = stateDisplay.selectAll('thing').data(data).enter().append("text").attr("class", "bar-graph").attr("transform", "translate(0, 40)").attr('x', 10).attr('y', function (d, i) {
       return (i + 1) * (10 + 10);
     }).attr('font-size', 12).text(function (d) {
@@ -158,6 +157,23 @@ var barGraph = {
     // }
 
     hoverInfo.append("text").attr("id", "hover-state-pop").attr("x", x).attr("dy", dy).style("text-anchor", "middle").attr("font-size", "12px").attr("font-weight", "bold");
+  },
+  growBars: function growBars(state, scale) {
+    var data = this.sortFixData(state);
+    var greatestPop = data[0][0];
+    var scaleType;
+    if (scale == "linear") scaleType = d3.scaleLinear();else if (scale == "log") scaleType = d3.scaleLog();
+    var widthScale = scaleType.domain([1, greatestPop]).range([0, 300]);
+    var s = d3.transition().delay(1000).duration(1000);
+    d3.selectAll(".bar-graph").transition(s).attr("width", function (d) {
+      return widthScale(d[0]);
+    });
+  },
+  sortFixData: function sortFixData(state) {
+    var data = state.data.slice(1).sort(function (a, b) {
+      return +b[0] - +a[0];
+    });
+    return data;
   }
 };
 module.exports = barGraph;
@@ -165,4 +181,4 @@ module.exports = barGraph;
 /***/ })
 
 /******/ });
-//# sourceMappingURL=barGraph-f6e2e1c7485e0299678c.js.map
+//# sourceMappingURL=barGraph-1d23a8b7cc78719cd5df.js.map

@@ -81,15 +81,15 @@ const stateDisplay = {
 
 	createSelect: function(object, state, callback, pG, bG) {
     let opts = [
-      ["Top 5 Langugages Plus More", "LAN"],
+      ["Top 5 Plus", "LAN"],
       ["Language Snapshot", "LAN7"],
-      ["Language Major Categories", "LAN39"]
+      ["Language Categories", "LAN39"]
     ];
 
 	  // <foreignObject x="20" y="20" width="160" height="160">
 	  object.append("foreignObject")
 	  	.attr("id", "dropdown")
-	    .attr("x", 75)
+	    .attr("x", 10)
 	    .attr("y", 20)
 	    .attr("width", 250)
 	    .attr("height", 250)
@@ -120,6 +120,7 @@ const stateDisplay = {
 	    	let choice = $("#lan-select").val();
 	    	state.choice = choice;
 
+	    	d3.select("#radio-buttons").remove()
 	    	object.selectAll(".hover-info").remove();
 	    	object.select("#revert").remove();
 	    	object.select("#other-display-select").remove();
@@ -139,9 +140,10 @@ const stateDisplay = {
 
 	          if(choice == 'LAN7')
 	          	pG.buildPieGraph(object, state, choice)
-	          else if(choice == 'LAN39')
+	          else if(choice == 'LAN39'){
 	          	bG.buildBarGraph(object, state)
-	          else if(choice == 'LAN'){
+	          	stateDisplay.buildGrowBarButton(state, bG);
+	          } else if(choice == 'LAN'){
 	          	// remove headers and null values
 	          	let preData = data.slice(1).filter(el=> el[0] != null)
 
@@ -166,6 +168,43 @@ const stateDisplay = {
 
 	  return object;
 	},
+
+	buildGrowBarButton(state, bG){
+		d3.select("#lan")
+			.append("xhtml:div")
+			.attr("id", "radio-buttons")
+
+		d3.select("#radio-buttons")
+			.append("xhtml:input")
+			.attr("type", "radio")
+			.text("Log")
+			.attr("id", "log-scale")
+			.attr("checked", true)
+			.on("click", function(){
+				bG.growBars(state, "log");
+				$("#lin-scale").prop( "checked", false);
+			});
+
+		d3.select("#radio-buttons")
+			.append("text")
+			.attr("class", "radio-button-text")
+			.text("Log")
+
+		d3.select("#radio-buttons")
+			.append("xhtml:input")
+			.attr("type", "radio")
+			.text("Linear")
+			.attr("id", "lin-scale")
+			.on("click", function(){
+				bG.growBars(state, "linear");
+				$("#log-scale").prop( "checked", false);
+			});
+
+		d3.select("#radio-buttons")
+			.append("text")
+			.attr("class", "radio-button-text")
+			.text("Linear")
+	}
 };
 
 module.exports = stateDisplay;
