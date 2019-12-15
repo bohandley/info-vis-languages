@@ -1,19 +1,19 @@
 {
-  "application.js": "/packs/js/application-82241d3bbab3cc844b54.js",
-  "application.js.map": "/packs/js/application-82241d3bbab3cc844b54.js.map",
+  "application.js": "/packs/js/application-197f2ce84f20bddab8d0.js",
+  "application.js.map": "/packs/js/application-197f2ce84f20bddab8d0.js.map",
   "barGraph.js": "/packs/js/barGraph-1d23a8b7cc78719cd5df.js",
   "barGraph.js.map": "/packs/js/barGraph-1d23a8b7cc78719cd5df.js.map",
-  "censusData.js": "/packs/js/censusData-6ec2ba3699a874e752e6.js",
-  "censusData.js.map": "/packs/js/censusData-6ec2ba3699a874e752e6.js.map",
+  "censusData.js": "/packs/js/censusData-a2d6ef9c8baf77108101.js",
+  "censusData.js.map": "/packs/js/censusData-a2d6ef9c8baf77108101.js.map",
   "colors.js": "/packs/js/colors-03427b5c148b38710063.js",
   "colors.js.map": "/packs/js/colors-03427b5c148b38710063.js.map",
   "entrypoints": {
     "application": {
       "js": [
-        "/packs/js/application-82241d3bbab3cc844b54.js"
+        "/packs/js/application-197f2ce84f20bddab8d0.js"
       ],
       "js.map": [
-        "/packs/js/application-82241d3bbab3cc844b54.js.map"
+        "/packs/js/application-197f2ce84f20bddab8d0.js.map"
       ]
     },
     "barGraph": {
@@ -26,10 +26,10 @@
     },
     "censusData": {
       "js": [
-        "/packs/js/censusData-6ec2ba3699a874e752e6.js"
+        "/packs/js/censusData-a2d6ef9c8baf77108101.js"
       ],
       "js.map": [
-        "/packs/js/censusData-6ec2ba3699a874e752e6.js.map"
+        "/packs/js/censusData-a2d6ef9c8baf77108101.js.map"
       ]
     },
     "colors": {
@@ -50,10 +50,10 @@
     },
     "pieGraph": {
       "js": [
-        "/packs/js/pieGraph-092c6bd1c41056624ab6.js"
+        "/packs/js/pieGraph-da473e895351ab9d3429.js"
       ],
       "js.map": [
-        "/packs/js/pieGraph-092c6bd1c41056624ab6.js.map"
+        "/packs/js/pieGraph-da473e895351ab9d3429.js.map"
       ]
     },
     "stateDisplay": {
@@ -75,8 +75,8 @@
   },
   "paraCoords.js": "/packs/js/paraCoords-42cc7adcbb7159ce62d9.js",
   "paraCoords.js.map": "/packs/js/paraCoords-42cc7adcbb7159ce62d9.js.map",
-  "pieGraph.js": "/packs/js/pieGraph-092c6bd1c41056624ab6.js",
-  "pieGraph.js.map": "/packs/js/pieGraph-092c6bd1c41056624ab6.js.map",
+  "pieGraph.js": "/packs/js/pieGraph-da473e895351ab9d3429.js",
+  "pieGraph.js.map": "/packs/js/pieGraph-da473e895351ab9d3429.js.map",
   "stateDisplay.js": "/packs/js/stateDisplay-e06af3b84edb5f248bdc.js",
   "stateDisplay.js.map": "/packs/js/stateDisplay-e06af3b84edb5f248bdc.js.map",
   "usMap.js": "/packs/js/usMap-179e78eb51d90a3069fd.js",

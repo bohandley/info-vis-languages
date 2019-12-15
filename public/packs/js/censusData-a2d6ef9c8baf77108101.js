@@ -839,7 +839,7 @@ var pieGraph = {
     // need array to map over data, 
 
     if (choice == 'LAN7') {
-      customArray = [4, 5, 6];
+      customArray = [2, 3, 4, 5, 6];
       data = this.createPieData(customArray, state.data);
     } else if (choice == 'LAN') {
       customArray = state.filtered.map(function (el, i) {
@@ -1008,6 +1008,8 @@ var pieGraph = {
       }) // 100 is where the first dot appears. 25 is the distance between dots
       .style("fill", "grey") //function(d){ return color(d)})
       .text(function (d) {
+        // these are too large for the popup, shorten them
+        if (d == "Speak only English") d = "Only English";else if (d == "Speak a language other than English at home") d = "Other than English";else if (d == "OTHER INDO-EUROPEAN LANGUAGES") d = "Other Indo European Langs.";else if (d == "ASIAN AND PACIFIC ISLAND LANGUAGES") d = "Asian and Pacific Is.";else if (d == "ALL OTHER LANGUAGES") d = "All Others";
         return d;
       }).attr("text-anchor", "left").attr("font-size", "12px").style("alignment-baseline", "middle");
     } // make a select for the other display that
@@ -1975,4 +1977,4 @@ try {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=censusData-6ec2ba3699a874e752e6.js.map
+//# sourceMappingURL=censusData-a2d6ef9c8baf77108101.js.map
