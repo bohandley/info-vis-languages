@@ -306,7 +306,6 @@ $(document).ready(function () {
       sD.stateDisplayEntrance(stateDisplay);
       var xPosition = d3.mouse(this)[0] * $("#container").width() / 970 - 5;
       var yPosition = d3.mouse(this)[1] * $("#container").width() / 970 - 5;
-      debugger;
 
       if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) && d3.mouse(this)[0] < $("#container").width() / 2) {
         // place on the right side
@@ -5791,4 +5790,4 @@ module.exports = function(module) {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=application-99efcae2239864187b1a.js.map
+//# sourceMappingURL=application-eb59fdf0c6caf651f9d3.js.map
