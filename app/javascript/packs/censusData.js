@@ -229,7 +229,7 @@ function appendSvg() {
 }
 
 function resize(){
-  d3.select("#container").selectAll("path").attr("transform", "scale(" + $("#container").width()/970 + ")");  
+  d3.select("#container").selectAll("path:not(.slice)").attr("transform", "scale(" + $("#container").width()/970 + ")");  
   $("svg").height($("#container").width()*0.618);
 }
 
