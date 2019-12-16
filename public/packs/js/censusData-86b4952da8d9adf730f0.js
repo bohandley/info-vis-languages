@@ -238,12 +238,13 @@ $(document).ready(function () {
       sD.stateDisplayEntrance(stateDisplay);
       var xPosition = d3.mouse(this)[0] * $("#container").width() / 970 - 5;
       var yPosition = d3.mouse(this)[1] * $("#container").width() / 970 - 5;
+      debugger;
 
-      if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) && d3.mouse(this)[0] < $("#container").width() / 2.5) {
+      if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) && d3.mouse(this)[0] < $("#container").width() / 2) {
         // place on the right side
         xPosition = $("#container").width() * .5;
         yPosition = $("#container").height() * .18;
-      } else if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) && d3.mouse(this)[0] > $("#container").width() / 2.5) {
+      } else if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) && d3.mouse(this)[0] > $("#container").width() / 2) {
         xPosition = $("#container").width() * .15;
         yPosition = $("#container").height() * .18;
       }
@@ -1986,4 +1987,4 @@ try {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=censusData-81ae0dc818f633a7d776.js.map
+//# sourceMappingURL=censusData-86b4952da8d9adf730f0.js.map
