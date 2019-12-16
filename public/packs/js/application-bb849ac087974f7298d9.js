@@ -306,6 +306,16 @@ $(document).ready(function () {
       sD.stateDisplayEntrance(stateDisplay);
       var xPosition = d3.mouse(this)[0] * $("#container").width() / 970 - 5;
       var yPosition = d3.mouse(this)[1] * $("#container").width() / 970 - 5;
+
+      if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) && d3.mouse(this)[0] < $("#container").width() / 2.5) {
+        // place on the right side
+        xPosition = $("#container").width() * .5;
+        yPosition = $("#container").height() * .18;
+      } else if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) && d3.mouse(this)[0] > $("#container").width() / 2.5) {
+        xPosition = $("#container").width() * .15;
+        yPosition = $("#container").height() * .18;
+      }
+
       if (xPosition > $("#container").width() - 300) xPosition -= 300;
       if (yPosition > $("#container").height() - 330) yPosition -= 330;
       stateDisplay.style("display", null);
@@ -5780,4 +5790,4 @@ module.exports = function(module) {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=application-075fd606641e90329fa7.js.map
+//# sourceMappingURL=application-bb849ac087974f7298d9.js.map

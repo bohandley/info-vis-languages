@@ -238,6 +238,16 @@ $(document).ready(function () {
       sD.stateDisplayEntrance(stateDisplay);
       var xPosition = d3.mouse(this)[0] * $("#container").width() / 970 - 5;
       var yPosition = d3.mouse(this)[1] * $("#container").width() / 970 - 5;
+
+      if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) && d3.mouse(this)[0] < $("#container").width() / 2.5) {
+        // place on the right side
+        xPosition = $("#container").width() * .5;
+        yPosition = $("#container").height() * .18;
+      } else if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) && d3.mouse(this)[0] > $("#container").width() / 2.5) {
+        xPosition = $("#container").width() * .15;
+        yPosition = $("#container").height() * .18;
+      }
+
       if (xPosition > $("#container").width() - 300) xPosition -= 300;
       if (yPosition > $("#container").height() - 330) yPosition -= 330;
       stateDisplay.style("display", null);
@@ -1976,4 +1986,4 @@ try {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=censusData-72f25fff3c93392f8ff1.js.map
+//# sourceMappingURL=censusData-81ae0dc818f633a7d776.js.map
