@@ -418,7 +418,7 @@ function appendSvg() {
 }
 
 function resize() {
-  d3.select("#container").selectAll("path").attr("transform", "scale(" + $("#container").width() / 970 + ")");
+  d3.select("#container").selectAll("path:not(.slice)").attr("transform", "scale(" + $("#container").width() / 970 + ")");
   $("svg").height($("#container").width() * 0.618);
 }
 
@@ -1977,4 +1977,4 @@ try {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=censusData-a2d6ef9c8baf77108101.js.map
+//# sourceMappingURL=censusData-fb4bcc98b452105a348e.js.map

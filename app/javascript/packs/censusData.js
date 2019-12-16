@@ -64,6 +64,7 @@ $(document).ready(function() {
           stateDisplay.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
           stateDisplay.select(".state-name").text(d.properties.name);
           
+          
           stateDisplay.select(".exit").text("X")
             .on("click", ()=>{
               d3.selectAll(".state-display")

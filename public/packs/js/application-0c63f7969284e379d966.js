@@ -486,7 +486,7 @@ function appendSvg() {
 }
 
 function resize() {
-  d3.select("#container").selectAll("path").attr("transform", "scale(" + $("#container").width() / 970 + ")");
+  d3.select("#container").selectAll("path:not(.slice)").attr("transform", "scale(" + $("#container").width() / 970 + ")");
   $("svg").height($("#container").width() * 0.618);
 }
 
@@ -5781,4 +5781,4 @@ module.exports = function(module) {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=application-197f2ce84f20bddab8d0.js.map
+//# sourceMappingURL=application-0c63f7969284e379d966.js.map
