@@ -59,7 +59,7 @@ const paraCoords = {
     // sort the langugages
     langOrdArr.sort((a,b)=> +b[1] - +a[1]);
     // create an array of sroted langugages
-    langSet = langOrdArr.map(el=> el[0]); 
+    langSet = langOrdArr.map(el=> el[0].replace(/ /g,"_").replace(/\./g, "").replace(/\,/g, "")); 
     // SLICE TO DISPLAY
     return langSet = [...langSet];
 	},
@@ -69,15 +69,15 @@ const paraCoords = {
 
     var dataObj = {};
 
-    stateSet.forEach(el=> dataObj[el.replace(/ /g,"_")] = '0');
+    stateSet.forEach(el=> dataObj[el.replace(/ /g,"_").replace(/\./g, "").replace(/\,/g, "")] = '0');
 
     var newdata = langSet.forEach(lang=>{
       var nObj = Object.assign({}, dataObj)
 
-      nObj["LANLABEL"] = lang;
+      nObj["LANLABEL"] = lang.replace(/ /g,"_").replace(/\./g, "").replace(/\,/g, "");
       langs.forEach(langArr=>{
-        if(langArr[1] == lang){
-          nObj[langArr[2].replace(/ /g,"_")] = langArr[0]
+        if(langArr[1].replace(/ /g,"_").replace(/\./g, "").replace(/\,/g, "") == lang.replace(/ /g,"_").replace(/\./g, "").replace(/\,/g, "")){
+          nObj[langArr[2].replace(/ /g,"_").replace(/\./g, "").replace(/\,/g, "")] = langArr[0]
         }
       });
       newDataCollection.push(nObj);
@@ -91,7 +91,7 @@ const paraCoords = {
 
     stateSet.forEach(el=>{
       var obj = {
-        key: el.replace(/ /g,"_"),
+        key: el.replace(/ /g,"_").replace(/\./g, "").replace(/\,/g, ""),
         description: el,
         type: types["Number"]
       }
@@ -121,7 +121,6 @@ const paraCoords = {
       //   })
     };
     
-
     dimensions.unshift(langScaleObj);
     dimensions.push(langScaleObj2);
 
@@ -176,11 +175,10 @@ const paraCoords = {
     var axes = svg.selectAll(".axis")
         .data(dimensions)
       .enter().append("g")
-        .attr("class", function(d) { return "axis " + d.key.replace(/ /g, "_"); })
+        .attr("class", function(d) { return "axis " + d.key.replace(/ /g, "_").replace(/\./g, "").replace(/\,/g, ""); })
         .attr("transform", function(d,i) { return "translate(" + xscale(i) + ")"; });
 //////////
 // begin building with the data
-let x;
     data.forEach(el=>{
       
       for(var key in el) {
@@ -264,8 +262,9 @@ let x;
       return dimensions.map(function(p,i) {
         // check if data element has property and contains a value
         if (
-          !(p.key in d) ||
+          !(p.key.replace(/ /g, "_").replace(/\./g, "").replace(/\,/g, "") in d) ||
           d[p.key] === null
+
         ) return null;
 
         return [xscale(i),p.scale(d[p.key])];

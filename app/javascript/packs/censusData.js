@@ -63,7 +63,7 @@ $(document).ready(function() {
           stateDisplay.style("display", null)
           stateDisplay.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
           stateDisplay.select(".state-name").text(d.properties.name);
-          
+
           
           stateDisplay.select(".exit").text("X")
             .on("click", ()=>{
@@ -247,10 +247,10 @@ function buildSelect(divId, selectId, optClass, opts){
       .enter()
       .append("xhtml:option")
       .text(function(d){
-        return d.replace(/ /g,"_");
+        return d.replace(/ /g,"_").replace(/\./g, "").replace(/\,/g, "");
       })
       .attr("value", function(d){
-        return d.replace(/ /g,"_");
+        return d.replace(/ /g,"_").replace(/\./g, "").replace(/\,/g, "");
       })
       .attr("class", optClass);
 

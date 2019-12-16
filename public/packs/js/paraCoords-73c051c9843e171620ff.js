@@ -175,7 +175,7 @@ var paraCoords = {
     }); // create an array of sroted langugages
 
     langSet = langOrdArr.map(function (el) {
-      return el[0];
+      return el[0].replace(/ /g, "_").replace(/\./g, "").replace(/\,/g, "");
     }); // SLICE TO DISPLAY
 
     return langSet = _toConsumableArray(langSet);
@@ -184,25 +184,26 @@ var paraCoords = {
     var newDataCollection = [];
     var dataObj = {};
     stateSet.forEach(function (el) {
-      return dataObj[el.replace(/ /g, "_")] = '0';
+      return dataObj[el.replace(/ /g, "_").replace(/\./g, "").replace(/\,/g, "")] = '0';
     });
     var newdata = langSet.forEach(function (lang) {
       var nObj = Object.assign({}, dataObj);
-      nObj["LANLABEL"] = lang;
+      nObj["LANLABEL"] = lang.replace(/ /g, "_").replace(/\./g, "").replace(/\,/g, "");
       langs.forEach(function (langArr) {
-        if (langArr[1] == lang) {
-          nObj[langArr[2].replace(/ /g, "_")] = langArr[0];
+        if (langArr[1].replace(/ /g, "_").replace(/\./g, "").replace(/\,/g, "") == lang.replace(/ /g, "_").replace(/\./g, "").replace(/\,/g, "")) {
+          nObj[langArr[2].replace(/ /g, "_").replace(/\./g, "").replace(/\,/g, "")] = langArr[0];
         }
       });
       newDataCollection.push(nObj);
     });
+    debugger;
     return newDataCollection;
   },
   createDimensions: function createDimensions(stateSet, langSet, types) {
     var dimensions = [];
     stateSet.forEach(function (el) {
       var obj = {
-        key: el.replace(/ /g, "_"),
+        key: el.replace(/ /g, "_").replace(/\./g, "").replace(/\,/g, ""),
         description: el,
         type: types["Number"]
       };
@@ -251,13 +252,12 @@ var paraCoords = {
     ctx.scale(devicePixelRatio, devicePixelRatio);
     var output = d3.select("body").append("pre");
     var axes = svg.selectAll(".axis").data(dimensions).enter().append("g").attr("class", function (d) {
-      return "axis " + d.key.replace(/ /g, "_");
+      return "axis " + d.key.replace(/ /g, "_").replace(/\./g, "").replace(/\,/g, "");
     }).attr("transform", function (d, i) {
       return "translate(" + xscale(i) + ")";
     }); //////////
     // begin building with the data
 
-    var x;
     data.forEach(function (el) {
       for (var key in el) {
         if (el[key] == null) {
@@ -322,7 +322,7 @@ var paraCoords = {
     function project(d) {
       return dimensions.map(function (p, i) {
         // check if data element has property and contains a value
-        if (!(p.key in d) || d[p.key] === null) return null;
+        if (!(p.key.replace(/ /g, "_").replace(/\./g, "").replace(/\,/g, "") in d) || d[p.key] === null) return null;
         return [xscale(i), p.scale(d[p.key])];
       });
     }
@@ -411,4 +411,4 @@ module.exports = paraCoords;
 /***/ })
 
 /******/ });
-//# sourceMappingURL=paraCoords-42cc7adcbb7159ce62d9.js.map
+//# sourceMappingURL=paraCoords-73c051c9843e171620ff.js.map
