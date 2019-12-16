@@ -196,7 +196,6 @@ var paraCoords = {
       });
       newDataCollection.push(nObj);
     });
-    debugger;
     return newDataCollection;
   },
   createDimensions: function createDimensions(stateSet, langSet, types) {
@@ -411,4 +410,4 @@ module.exports = paraCoords;
 /***/ })
 
 /******/ });
-//# sourceMappingURL=paraCoords-73c051c9843e171620ff.js.map
+//# sourceMappingURL=paraCoords-2e0f158f833f3a85919e.js.map

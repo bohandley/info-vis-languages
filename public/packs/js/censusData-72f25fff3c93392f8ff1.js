@@ -307,8 +307,7 @@ $(document).ready(function () {
     // can be sliced to filter data
 
     var langSet = pCrds.createLangSet(langs); //.slice(0,10);
-
-    debugger; // build each select for filtering the parallel coordinate visualization
+    // build each select for filtering the parallel coordinate visualization
 
     buildSelect("multi-st-select", "state-coords", "m-state", stateSet);
     var multiSelect = buildSelect("multi-st-select", "lang-coords", "m-lang", langSet);
@@ -612,7 +611,6 @@ var paraCoords = {
       });
       newDataCollection.push(nObj);
     });
-    debugger;
     return newDataCollection;
   },
   createDimensions: function createDimensions(stateSet, langSet, types) {
@@ -1978,4 +1976,4 @@ try {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=censusData-4a5c12051ba5e4e2471f.js.map
+//# sourceMappingURL=censusData-72f25fff3c93392f8ff1.js.map
