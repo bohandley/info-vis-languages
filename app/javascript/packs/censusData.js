@@ -53,7 +53,7 @@ $(document).ready(function() {
 
           let xPosition = d3.mouse(this)[0]*$("#container").width()/970 - 5;
           let yPosition = d3.mouse(this)[1]*$("#container").width()/970 - 5;
-          debugger
+          
           if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) && d3.mouse(this)[0] < $("#container").width()/2){
             // place on the right side
             xPosition = $("#container").width()*.5
